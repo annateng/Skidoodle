@@ -18,6 +18,7 @@ app.use('/api', (req, res, next) => require('@root/server')(req, res, next)) // 
 const watcher = chokidar.watch('server') // Watch server folder
 watcher.on('ready', () => {
   watcher.on('all', () => {
+    console.log('clearing server module cache')
     Object.keys(require.cache).forEach((id) => {
       if (id.includes('server')) delete require.cache[id] // Delete all require caches that point to server folder (*)
     })
