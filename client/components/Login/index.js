@@ -1,9 +1,10 @@
 import React from 'react'
+import { Link } from 'react-router-dom'
 
 const FrontPage = () => (
   <>
     Welcome
-    <a href="/messages">Messages</a>
+    <Link to="/messages">Messages</Link>
   </>
 )
 

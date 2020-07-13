@@ -1,11 +1,9 @@
 import axios from 'axios'
 
-const basePath = '/api/messages'
+const basePath = '/api/games'
 
-export const getMessages = async () => {
-  const response = await axios.get(basePath)
-  return response.data
-}
+export const sendDrawing = async () => {
+  
 
 export const postMessage = async (message) => {
   const response = await axios.post(basePath, { message })

@@ -3,6 +3,7 @@ require('module-alias/register')
 const chokidar = require('chokidar')
 const express = require('express')
 const path = require('path')
+const mongoose = require('mongoose')
 require('express-async-errors')
 
 const { PORT, inProduction } = require('@util/common')
@@ -21,6 +22,12 @@ watcher.on('ready', () => {
     console.log('clearing server module cache')
     Object.keys(require.cache).forEach((id) => {
       if (id.includes('server')) delete require.cache[id] // Delete all require caches that point to server folder (*)
+    })
+    Object.keys(mongoose.models).forEach((model) => {
+      delete mongoose.models[model];
+    })
+    Object.keys(mongoose.modelSchemas).forEach((schema) => {
+      delete mongoose.modelSchemas[schema];
     })
   })
 })

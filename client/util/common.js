@@ -1,10 +1,10 @@
 /**
  * Insert common items for frontend here
  */
-import toskaLogo from 'Assets/toskalogo_color.svg'
+import logo from 'Assets/logo.png'
 
 export const images = {
-  toskaLogo,
+  logo,
 }
 
 // Everything from application wide common items is available through here

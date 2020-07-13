@@ -2,6 +2,7 @@ import React from 'react'
 
 const MessageList = ({ messages, deleteMessage }) => {
   if (!messages) return null
+  console.log(messages)
 
   const handleDelete = (message) => () => {
     deleteMessage(message)
