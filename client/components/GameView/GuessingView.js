@@ -1,17 +1,18 @@
 import React, { useState, useEffect } from 'react'
 import paper from 'paper'
-import { useSelector, useDispatch } from 'react-redux'
-import { getGame, startGuessingRound } from 'Utilities/services/gameService'
-import { setActiveGame } from 'Utilities/reducers/gameReducer'
-import { setAllTokens } from 'Utilities/common'
+import { useDispatch } from 'react-redux'
+import { startGuessingRound } from 'Utilities/services/gameService'
+import { saveGuesses } from 'Utilities/reducers/gameReducer'
+import { ROUND_LEN } from 'Utilities/common'
 
 //TODO: figure out sizing
-const GuessingView = () => {
-  const [timeLeft, setTimeLeft] = useState(10)
+const GuessingView = ({ doodlesToGuess, setGameState }) => {
+  const [timeLeft, setTimeLeft] = useState(ROUND_LEN)
   const [canvas, setCanvas] = useState()
   const [guessInput, setGuessInput] = useState()
   const [guess, setGuess] = useState('')
-  const user = useSelector(state => state.user)
+  
+  const dispatch = useDispatch()
   
   useEffect(() => {
     const thisCanvas = document.getElementById('paper-canvas')
@@ -21,12 +22,10 @@ const GuessingView = () => {
     setGuessInput(document.getElementById('guess-input'))
   }, [])
 
-  if (user) setAllTokens(user.token)
-
   const handleStartGuessing = async () => {
-    const game = await getGame('5f11034019f50c232eba943b', user.id)
-    // console.log(game)
-    startGuessingRound(canvas, guessInput, game, setTimeLeft, setGuess)
+    const guesses = await startGuessingRound(canvas, guessInput, doodlesToGuess, setTimeLeft, setGuess)
+    dispatch(saveGuesses(guesses))
+    setGameState('DRAW')
   }
 
   return (

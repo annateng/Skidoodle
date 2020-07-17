@@ -18,7 +18,8 @@ const gameSchema = new mongoose.Schema({
     default: 2 // TODO: move to common
   },
   timeOfLastMove: Date,
-  rounds: [{ 
+  rounds: [{
+    completed: Boolean,
     doodles: [{
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Doodle'

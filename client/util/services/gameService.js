@@ -8,11 +8,17 @@ export const setToken = authToken => {
   token = `bearer ${authToken}`
 }
 
-export const sendRound = async (requesterId, receiverId, doodles, gameId, guessResults) => {
+export const sendRound = async gameData => {
   const config = { 
     headers: { Authorization: token },
   }
-  
+
+  const requesterId = gameData.activePlayer
+  const receiverId = gameData.player1 === requesterId ? gameData.player2 : gameData.player1
+  const doodles = gameData.doodlesToSend
+  const guessResults = gameData.guesses
+  const gameId = gameData.id
+
   const body = {
     requesterId, receiverId, doodles, guessResults
   }
@@ -94,10 +100,12 @@ export const getDrawing = canvas => {
   return drawing
 }
 
-export const startRound = async (drawing, setTimeLeft, activeGame, setWord, doodles) => {
-  //console.log(drawing)
+export const startRound = async (canvas, setTimeLeft, wordsToDraw, setWord) => {
+  
+  const drawing = getDrawing(canvas)
+  const doodles = []
 
-  for (const word of activeGame.nextWords) {
+  for (const word of wordsToDraw) {
     drawing.paths = []
     setWord(word)
     const completedDrawing = await startDrawing(drawing, setTimeLeft)
@@ -150,12 +158,12 @@ const startReplay = (replayDrawing, setTimeLeft) => {
     paper.project.activeLayer.removeChildren()
     replayDrawing.paper.view.draw()
     
-    const start = Date.now()
+    replayDrawing.curStartTime = Date.now()
   
     const tick = setInterval(async () => {
-      const timeLeft = replayDrawing.duration - ((Date.now() - start) / 1000) | 0
+      const timeLeft = replayDrawing.duration - ((Date.now() - replayDrawing.curStartTime) / 1000) | 0
       setTimeLeft(timeLeft < 0 ? 0 : timeLeft)
-      if (replayDrawing.i >= replayDrawing.curDrawing.length-1) {
+      if (replayDrawing.guessedCorrectly || replayDrawing.i >= replayDrawing.curDrawing.length-1) {
         clearInterval(tick)
         resolve(replayDrawing)
      }
@@ -163,16 +171,19 @@ const startReplay = (replayDrawing, setTimeLeft) => {
   })
 }
 
-const getReplay = (game, canvas, guessInput) => {
+const getReplay = (canvas, guessInput) => {
   const replayDrawing = {
     i: 0,
-    drawings: game.rounds[game.rounds.length - 1],
     curDrawing: null,
     paper: new paper.Project(canvas),
     lastIsDrawing: false,
     curPath: null,
-    curGuess: null,
-    duration: 10 // TODO
+    curGuess: [],
+    duration: 10, // TODO
+    curLabel: null,
+    curStartTime: null,
+    correctGuessTime: null,
+    guessedCorrectly: false
   }
 
   replayDrawing.paper.view.onFrame = event => {
@@ -196,31 +207,60 @@ const getReplay = (game, canvas, guessInput) => {
     }
 
     replayDrawing.lastIsDrawing = replayDrawing.curDrawing[replayDrawing.i].isDrawing
-    replayDrawing.curGuess.push(guessInput.value) // TODO
-    replayDrawing.i++
-  }
 
-  replayDrawing.paper.view.onResize = event => {
-    console.log(replayDrawing.paper.view)
+    const guessInputVal = guessInput.value
+    replayDrawing.curGuess.push(guessInputVal)
+    if (guessInputVal === replayDrawing.curLabel) {
+      replayDrawing.guessedCorrectly = true
+      replayDrawing.correctGuessTime = Date.now()
+    }
+    replayDrawing.i++
   }
 
   return replayDrawing
 }
 
-export const startGuessingRound = async (canvas, guessInput, game, setTimeLeft, setGuess) => {
+export const startGuessingRound = async (canvas, guessInput, doodlesToGuess, setTimeLeft, setGuess) => {
 
-  const replayDrawing = getReplay(game, canvas, guessInput)
-  console.log(replayDrawing.paper.view)
   const guesses = []
 
-  for (const doodle of replayDrawing.drawings.doodles) {
+  for (const doodle of doodlesToGuess) {
     setGuess('')
+    const replayDrawing = getReplay(canvas, guessInput)
     replayDrawing.curDrawing = doodle.drawing
-    replayDrawing.i = 0
-    replayDrawing.curGuess = []
+    replayDrawing.curLabel = doodle.label
     const completedReplay = await startReplay(replayDrawing, setTimeLeft)
-    guesses.push(completedReplay.curGuess)
+
+    const guessToPush = {
+      doodleId: doodle.id,
+      guesses: replayDrawing.curGuess,
+      isCorrect: replayDrawing.guessedCorrectly,
+      timeSpent: replayDrawing.correctGuessTime ? replayDrawing.correctGuessTime - replayDrawing.curStartTime : 10
+    }
+
+    guesses.push(guessToPush)
   }
 
+  return guesses
+}
 
+/**
+ * States:
+ * 'INACTIVE' : The game is over.
+ * 'GUESS' : It's the player's turn to guess.
+ * 'DRAW' : It's the player's turn to draw.
+ * 'OVER' : The round is over. Data should be sent to server.
+ * 'ERROR' : This should not occur.
+ * @param {*} gameData 
+ */
+export const getGameState = gameData => {
+  //console.log(gameData)
+
+  if (!gameData) return null
+  if (!gameData.isActive) return 'INACTIVE'
+  if (gameData.guesses && gameData.doodlesToSend) return 'OVER'
+  if (gameData.doodlesToGuess) return 'GUESS'
+  if (gameData.guesses && gameData.nextWords && gameData.nextWords.length > 0) return 'DRAW'
+
+  return 'ERROR'
 }

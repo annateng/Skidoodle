@@ -5,6 +5,8 @@ const { generateWords } = require('@util/gameUtil')
 const Doodle = require('@models/doodle')
 const Game = require('@models/game')
 
+const sizeof = require('object-sizeof') // TEST
+
 /** send userId in params */
 const getActive = async (req, res) => {
   checkAuthorization(req, req.params.id)
@@ -72,12 +74,10 @@ const sendRound = async (req, res) => {
         artist: gameData.requesterId,
         recipient: gameData.receiverId,
         drawing: doodle.drawing,
-        guesses: {},
         label: doodle.label,
-        result: {}
       })
 
-      console.log(newDoodle)
+      // console.log(newDoodle)
 
       const savedDoodle = await newDoodle.save()
 
@@ -88,6 +88,8 @@ const sendRound = async (req, res) => {
 
   const newResult = {...game.result}
   for (const guessResult of gameData.guessResults) {
+    // console.log(guessResult)
+
     const doodle = await Doodle.findById(guessResult.doodleId)
     doodle.guesses = guessResult.guesses
     doodle.isCorrect = guessResult.isCorrect
@@ -131,6 +133,7 @@ const getGame = async (req, res) => {
   if (!userId) throw new ApplicationError('Not authorized. Include userId as query param.', 401)
   
   const game = await Game.findById(req.params.gameId).populate('rounds.doodles')
+
   if (userId === game.player1.toString()) checkAuthorization(req, game.player1)
   else if (userId === game.player2.toString()) checkAuthorization(req, game.player2)
   else throw new ApplicationError('Not authorized.', 401)
@@ -138,6 +141,12 @@ const getGame = async (req, res) => {
   const gameToSend = game.toJSON()
 
   if (userId !== game.activePlayer.toString()) delete gameToSend.nextWords
+  delete gameToSend.rounds
+  if (game.isActive && game.rounds.length > 0) {
+    if (!game.rounds[game.rounds.length - 1].completed) {
+      gameToSend.doodlesToGuess = game.rounds[game.rounds.length - 1]
+    }
+  }
   
   res.json(gameToSend)
 }

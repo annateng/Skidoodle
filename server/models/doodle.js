@@ -28,12 +28,10 @@ const doodleSchema = new mongoose.Schema({
         ref: 'User'
     },
     drawing: [drawingSchema],
-    guesses: Object, // TODO
+    guesses: [String],
     label: String,
-    result: {
-      isCorrect: Boolean,
-      timeSpent: Number
-    }
+    isCorrect: Boolean,
+    timeSpent: Number
 })
 
 doodleSchema.set('toJSON', {

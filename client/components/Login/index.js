@@ -18,7 +18,7 @@ const LoginPage = () => {
       username, 
       password 
     }))
-    history.push('/draw')
+    history.push('/profile')
   }
 
   return (
