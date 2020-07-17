@@ -20,7 +20,7 @@ const Profile = () => {
 
   const handleGetActiveGames = async () => {
     const thisActiveGames = await getActiveGames(user.id)
-    console.log(thisActiveGames)
+    // console.log(thisActiveGames)
     setActiveGames(thisActiveGames)
   }
 

@@ -5,6 +5,11 @@ const gameReducer = (state = {}, action) => {
         ...state,
         activeGame: action.data
       }
+    case 'SET_LAST_GAME_PLAYED':
+      return {
+        ...state,
+        lastGamePlayed: action.data
+      }
     case 'SAVE_GUESSES':
       const gameWithGuesses = { 
         ...state.activeGame, 
@@ -20,6 +25,7 @@ const gameReducer = (state = {}, action) => {
         ...state.activeGame,
         doodlesToSend: action.data.doodles
       }
+      delete gameWithDoodles.nextWords
       return {
         ...state,
         activeGame: gameWithDoodles
@@ -33,6 +39,15 @@ export const setActiveGame = activeGame => {
     type: 'SET_ACTIVE_GAME',
     data: {
       ...activeGame
+    }
+  }
+}
+
+export const setLastGamePlayed = lastGame => {
+  return {
+    type: 'SET_LAST_GAME_PLAYED',
+    data: {
+      ...lastGame
     }
   }
 }

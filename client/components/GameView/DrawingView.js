@@ -15,7 +15,6 @@ const DrawingView = ({ wordsToDraw, setGameState }) => {
   useEffect(() => {
     const thisCanvas = document.getElementById('paper-canvas')
     setCanvas(thisCanvas)
-    paper.setup(thisCanvas)
     localStorage.setItem('scribbleColor', 'black')
   }, [])
 

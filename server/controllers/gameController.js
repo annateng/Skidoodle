@@ -87,21 +87,24 @@ const sendRound = async (req, res) => {
   }
 
   const newResult = {...game.result}
-  for (const guessResult of gameData.guessResults) {
-    // console.log(guessResult)
 
-    const doodle = await Doodle.findById(guessResult.doodleId)
-    doodle.guesses = guessResult.guesses
-    doodle.isCorrect = guessResult.isCorrect
-    doodle.timeSpent = guessResult.timeSpent
+  if (gameData.guessResults) {
+    for (const guessResult of gameData.guessResults) {
+      // console.log(guessResult)
 
-    newResult.scores.push({
-      isCorrect: guessResult.isCorrect,
-      timeSpent: guessResult.timeSpent
-    })
-    if (guessResult.isCorrect) newResult.totalScore.numCorrect++
-    newResult.totalScore.totalTimeSpent += guessResult.timeSpent 
-    await doodle.save()
+      const doodle = await Doodle.findById(guessResult.doodleId)
+      doodle.guesses = guessResult.guesses
+      doodle.isCorrect = guessResult.isCorrect
+      doodle.timeSpent = guessResult.timeSpent
+
+      newResult.scores.push({
+        isCorrect: guessResult.isCorrect,
+        timeSpent: guessResult.timeSpent
+      })
+      if (guessResult.isCorrect) newResult.totalScore.numCorrect++
+      newResult.totalScore.totalTimeSpent += guessResult.timeSpent 
+      await doodle.save()
+    }
   }
 
   game.timeOfLastMove = Date.now()

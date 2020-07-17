@@ -17,7 +17,6 @@ const GuessingView = ({ doodlesToGuess, setGameState }) => {
   useEffect(() => {
     const thisCanvas = document.getElementById('paper-canvas')
     setCanvas(thisCanvas)
-    paper.setup(thisCanvas)
 
     setGuessInput(document.getElementById('guess-input'))
   }, [])
