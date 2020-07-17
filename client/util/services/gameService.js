@@ -2,17 +2,38 @@ import paper from 'paper'
 import axios from 'axios'
 const basePath = '/api/games'
 
-const sendDrawingToDB = async drawing => {
-  const res = await axios.post(basePath, { drawing: drawing.paths })
+let token
+
+export const setToken = authToken => {
+  token = `bearer ${authToken}`
+}
+
+export const sendRound = async (requesterId, receiverId, doodles, gameId, guessResults) => {
+  const config = { 
+    headers: { Authorization: token },
+  }
+  
+  const body = {
+    requesterId, receiverId, doodles, guessResults
+  }
+
+  const res = await axios.post(`${basePath}/${gameId}`, body, config)
   return res.data
 }
 
-const getDrawingFromDB = async drawingId => {
-  const res = await axios.get(`${basePath}/${drawingId}`)
+export const getNewGame = async (requesterId, receiverId) => {
+  const config = { 
+    headers: { Authorization: token },
+    params: {
+      requesterId, receiverId
+    }
+  }
+  // console.log(config)
+  const res = await axios.get(`${basePath}/new-game`, config)
   return res.data
 }
 
-//TODO: figure out sizing, send to database, add colors
+// TODO: figure out sizing
 export const getDrawing = canvas => {
 
   const drawing = {
@@ -30,7 +51,7 @@ export const getDrawing = canvas => {
 
     if (drawing.curPath) drawing.curPath.selected = false
     
-    console.log(drawing)
+    // console.log(drawing)
     drawing.curPath = new paper.Path({
       segments: [event.point],
       strokeColor: localStorage.getItem('scribbleColor') || 'black',
@@ -62,7 +83,9 @@ export const getDrawing = canvas => {
     drawing.paths.push({
       x: drawing.curPoint ? drawing.curPoint.x : null,
       y: drawing.curPoint ? drawing.curPoint.y : null,
-      color: drawing.curPath ? drawing.curPath.strokeColor : null,
+      r: drawing.curPath ? drawing.curPath.strokeColor.red : null,
+      g: drawing.curPath ? drawing.curPath.strokeColor.green : null,
+      b: drawing.curPath ? drawing.curPath.strokeColor.blue : null,
       width: drawing.curPath ? drawing.curPath.strokeWidth : null,
       isDrawing: drawing.isDrawing
     })
@@ -71,60 +94,133 @@ export const getDrawing = canvas => {
   return drawing
 }
 
-export const startRound = (drawing, setTimeLeft) => {
+export const startRound = async (drawing, setTimeLeft, activeGame, setWord, doodles) => {
   //console.log(drawing)
 
-  paper.project.activeLayer.removeChildren()
-  drawing.paper.view.draw()
-  drawing.isActive = true
+  for (const word of activeGame.nextWords) {
+    drawing.paths = []
+    setWord(word)
+    const completedDrawing = await startDrawing(drawing, setTimeLeft)
+    doodles.push({
+      label: word,
+      drawing: completedDrawing.paths
+    })
+  }
 
-  const start = Date.now()
-
-  const tick = setInterval(async () => {
-    const timeLeft = drawing.duration - ((Date.now() - start) / 1000) | 0
-    setTimeLeft(timeLeft < 0 ? 0 : timeLeft)
-    if (timeLeft <= 0) {
-      clearInterval(tick)
-      drawing.isActive = false
-      const game = await sendDrawingToDB(drawing)
-   }
-  }, 100)
+  return doodles
 }
 
-export const replayGame = async () => {
-  const drawing = await getDrawingFromDB(lastGameId)
-  console.log(drawing)
+const startDrawing = (drawing, setTimeLeft) => {
+  return new Promise((resolve, reject) => {
+    paper.project.activeLayer.removeChildren()
+    drawing.paper.view.draw()
+    drawing.isActive = true
+  
+    const start = Date.now()
+  
+    const tick = setInterval(async () => {
+      const timeLeft = drawing.duration - ((Date.now() - start) / 1000) | 0
+      setTimeLeft(timeLeft < 0 ? 0 : timeLeft)
+      if (timeLeft <= 0) {
+        clearInterval(tick)
+        drawing.isActive = false
+        resolve(drawing)
+        // const game = await sendDrawingToDB(drawing)
+     }
+    }, 100)
+  })
+}
 
-  paper.project.activeLayer.removeChildren()
-  paper.view.draw()
+export const getGame = async (gameId, userId) => {
+  const config = { 
+    headers: { Authorization: token },
+    params: {
+      userId
+    }
+  }
 
-  const canvas = document.getElementById('paper-canvas')
+  // console.log(config)
+  
+  const res = await axios.get(`${basePath}/${gameId}`, config)
+  return res.data
+}
 
+const startReplay = (replayDrawing, setTimeLeft) => {
+  return new Promise((resolve, reject) => {
+    paper.project.activeLayer.removeChildren()
+    replayDrawing.paper.view.draw()
+    
+    const start = Date.now()
+  
+    const tick = setInterval(async () => {
+      const timeLeft = replayDrawing.duration - ((Date.now() - start) / 1000) | 0
+      setTimeLeft(timeLeft < 0 ? 0 : timeLeft)
+      if (replayDrawing.i >= replayDrawing.curDrawing.length-1) {
+        clearInterval(tick)
+        resolve(replayDrawing)
+     }
+    }, 100)
+  })
+}
+
+const getReplay = (game, canvas, guessInput) => {
   const replayDrawing = {
     i: 0,
-    paths: drawing.drawing,
+    drawings: game.rounds[game.rounds.length - 1],
+    curDrawing: null,
     paper: new paper.Project(canvas),
     lastIsDrawing: false,
-    curPath: null
+    curPath: null,
+    curGuess: null,
+    duration: 10 // TODO
   }
 
   replayDrawing.paper.view.onFrame = event => {
-    if (replayDrawing.i < 0 || replayDrawing.i >= replayDrawing.paths.length - 1) return
 
-    //console.log(game.drawing[i].isDrawing, game.drawing[i-1] ? game.drawing[i-1].point : null)
-    if (replayDrawing.paths[replayDrawing.i].isDrawing && !replayDrawing.lastIsDrawing) {
+    // console.log(replayDrawing.i)
+    if (!replayDrawing.curDrawing) return
+    if (replayDrawing.i < 0 || replayDrawing.i >= replayDrawing.curDrawing.length - 1) return
+
+    // console.log(replayDrawing.curDrawing[replayDrawing.i])
+    if (replayDrawing.curDrawing[replayDrawing.i].isDrawing && !replayDrawing.lastIsDrawing) {
       if (replayDrawing.curPath) replayDrawing.curPath.selected = false
       replayDrawing.curPath = new paper.Path({ 
-        segments: [new paper.Point(replayDrawing.paths[replayDrawing.i].x, replayDrawing.paths[replayDrawing.i].y)],
-        strokeColor: 'red'
+        segments: [new paper.Point(replayDrawing.curDrawing[replayDrawing.i].x, replayDrawing.curDrawing[replayDrawing.i].y)],
+        strokeColor: new paper.Color(replayDrawing.curDrawing[replayDrawing.i].r, replayDrawing.curDrawing[replayDrawing.i].g, replayDrawing.curDrawing[replayDrawing.i].b),
+        strokeWidth: replayDrawing.curDrawing[replayDrawing.i].width
       })
-    } else if (replayDrawing.paths[replayDrawing.i].isDrawing) {
-      const point = new paper.Point(replayDrawing.paths[replayDrawing.i].x, replayDrawing.paths[replayDrawing.i].y)
+    } else if (replayDrawing.curDrawing[replayDrawing.i].isDrawing) {
+      const point = new paper.Point(replayDrawing.curDrawing[replayDrawing.i].x, replayDrawing.curDrawing[replayDrawing.i].y)
       replayDrawing.curPath.lineTo(point)
       replayDrawing.curPath.moveTo(point)
     }
 
-    replayDrawing.lastIsDrawing = replayDrawing.paths[replayDrawing.i].isDrawing
+    replayDrawing.lastIsDrawing = replayDrawing.curDrawing[replayDrawing.i].isDrawing
+    replayDrawing.curGuess.push(guessInput.value) // TODO
     replayDrawing.i++
   }
+
+  replayDrawing.paper.view.onResize = event => {
+    console.log(replayDrawing.paper.view)
+  }
+
+  return replayDrawing
+}
+
+export const startGuessingRound = async (canvas, guessInput, game, setTimeLeft, setGuess) => {
+
+  const replayDrawing = getReplay(game, canvas, guessInput)
+  console.log(replayDrawing.paper.view)
+  const guesses = []
+
+  for (const doodle of replayDrawing.drawings.doodles) {
+    setGuess('')
+    replayDrawing.curDrawing = doodle.drawing
+    replayDrawing.i = 0
+    replayDrawing.curGuess = []
+    const completedReplay = await startReplay(replayDrawing, setTimeLeft)
+    guesses.push(completedReplay.curGuess)
+  }
+
+
 }

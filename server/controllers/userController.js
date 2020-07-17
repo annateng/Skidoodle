@@ -1,22 +1,10 @@
 const { ApplicationError } = require('@util/customErrors')
 const common = require('@util/common')
-const User = require('../models/user')
-const FriendRequest = require('../models/friend-request')
+const User = require('@models/user')
+const FriendRequest = require('@models/friend-request')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
-
-const getDecodedToken = req => {
-  const authorization = req.get('authorization')
-  if (authorization && authorization.toLowerCase().startsWith('bearer ')) {
-    return jwt.decode(authorization.substring(7), common.PRIVATE_KEY)
-  }
-  return null
-}
-
-const checkAuthorization = (req, userID) => {
-  const decodedToken = getDecodedToken(req)
-  if (!decodedToken || !decodedToken.id || decodedToken.id.toString() !== userID) throw new ApplicationError('Not authorized.', 401)
-}
+const { getDecodedToken, checkAuthorization, isFriendsWith } = require('@util/authUtil')
 
 const deleteUser = async (req, res) => {
   checkAuthorization(req, req.params.id)
@@ -29,7 +17,7 @@ const deleteUser = async (req, res) => {
 const getUser = async (req, res) => {
   let requestingUser
 
-  const decodedToken = getDecodeToken(req)
+  const decodedToken = getDecodedToken(req)
 
   if (decodedToken && decodedToken.id) requestingUser = await User.findById(decodedToken.id)
   if (requestingUser && requestingUser._id.toString() === req.params.id) return res.json(requestingUser.toJSON())
@@ -97,9 +85,9 @@ const addFriend = async (req, res) => {
 
   if (checkExisting) throw new ApplicationError('Friend request already pending.', 400)
 
-  const user = await User.findById(req.body.requesterId)
-  if (user.friends.map(id => id.toString()).includes(req.params.id)) throw new ApplicationError('These users are already friends.', 400)
-  if (user._id.toString() === req.params.id) throw new ApplicationError('Can\'t be friends with yourself.', 400)
+  const isFriends = await isFriendsWith(req.params.id, req.body.requesterId)
+  if (isFriends) throw new ApplicationError('These users are already friends.', 400)
+  if (req.body.requesterId === req.params.id) throw new ApplicationError('Can\'t be friends with yourself.', 400)
 
   const newFriendRequest = new FriendRequest({
     requester: req.body.requesterId,
