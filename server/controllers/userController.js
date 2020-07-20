@@ -19,7 +19,7 @@ const getUser = async (req, res) => {
 
   const decodedToken = getDecodedToken(req)
 
-  if (decodedToken && decodedToken.id) requestingUser = await User.findById(decodedToken.id)
+  if (decodedToken && decodedToken.id) requestingUser = await User.findById(decodedToken.id).populate({ path: 'friends', select: 'username'})
   if (requestingUser && requestingUser._id.toString() === req.params.id) return res.json(requestingUser.toJSON())
 
   const user = await User.findById(req.params.id)

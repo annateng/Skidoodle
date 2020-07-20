@@ -15,7 +15,7 @@ const getActive = async (req, res) => {
 
   const activeGames = await Game.find(
       { isActive: true }, 
-      'player1 player2 activePlayer timeOfLastMove currentRound')
+      'player1 player2 activePlayer timeOfLastMove currentRoundNum')
     .or([
       { player1: userID },
       { player2: userID }
@@ -26,7 +26,7 @@ const getActive = async (req, res) => {
   res.json(activeGames.map(ag => ag.toJSON()))
 }
 
-/** in req.body, send { receiverId, requesterId }*/
+/* in req.body, send { receiverId, requesterId } */
 const getNewGame = async (req, res) => {
   const gameData = req.query
   checkAuthorization(req, gameData.requesterId)
@@ -34,15 +34,31 @@ const getNewGame = async (req, res) => {
   const isFriends = await isFriendsWith(gameData.requesterId, gameData.receiverId) 
   if (!isFriends) throw new ApplicationError('Requester is not friends with this user.', 401)
 
+  const newRound = {
+    state: 'DOODLE',
+    doodles: [],
+    guesses: []
+  }
+
   const game = new Game({
     player1: gameData.requesterId,
     player2: gameData.receiverId,
-    rounds: [],
-    scores: [],
+    dateStarted: Date.now(),
+    numRounds: common.NUM_ROUNDS,
+    roundLen: common.ROUND_LEN,
     isActive: true,
+    rounds: [newRound],
+    currentRoundNum: 1,
+    allWords: [],
     activePlayer: gameData.requesterId,
-    currentRound: 0,
-    nextWords: await generateWords()
+    nextWords: await generateWords(),
+    result: {
+      roundScores: [],
+      gameTotals: {
+        numCorrect: 0,
+        totalTimeSpent: 0
+      } 
+    }
   })
 
   const savedGame = await game.save()
@@ -50,9 +66,11 @@ const getNewGame = async (req, res) => {
   res.json(savedGame.toJSON())
 }
 
-/** in req.body, send { receiverId, requesterId, doodles, guessResults { doodleId, guesses, isCorrect, timeSpent } }
- * if its the last round, there will be no doodles, only guessResults
- * in req.params send gameId
+// TODO: const updateGameStatus = 
+
+/* in req.body, send { requesterId, doodles OR guesses }
+ * in query params send { type: 'guess' or 'doodle' } 
+ * in URL params send gameId
  */
 const sendRound = async (req, res) => {
   const gameData = req.body 
@@ -60,75 +78,122 @@ const sendRound = async (req, res) => {
 
   const gameId = req.params.gameId
   const game = await Game.findById(gameId)
+  if (!game) throw new ApplicationError('Game not found.', 404)
   if (!game.isActive) throw new ApplicationError('Game is already over.', 400)
   if (game.activePlayer.toString() !== gameData.requesterId) throw new ApplicationError('User is not the active player.', 400)
 
-  let thisRound
-  const allWords = [...game.allWords]
-  if (gameData.doodles) {
-    thisRound = { doodles: [] }
-    for (const doodle of gameData.doodles) {
+  // most recent round
+  const currentRound = game.rounds.length > 0 ? game.rounds[game.rounds.length - 1] : null
+  // if the last round is complete, throw error
+  if (!currentRound) throw new ApplicationError('Game data error. No current round.', 500)
+  if (currentRound.state != 'GUESS' && currentRound.state != 'DOODLE' && game.rounds.length === game.numRounds) {
+    game.isActive = false
+    game.save()
+    throw new ApplicationError('Game is already over.', 400)
+  }
 
+  const type = req.query.type
+  if (!(type === 'guess' || type === 'doodle')) throw new ApplicationError('Valid type is needed as query parameter: \'guess\' or \'doodle\'', 400)
+
+  if (type === 'doodle') {
+    if (!gameData.doodles) throw new ApplicationError('Send doodles in request body.', 400)
+    // the round state should be DOODLE
+    if (currentRound.state != 'DOODLE') throw new ApplicationError(`Game is not awaiting doodles. Current round state is ${currentRound.state}`, 400)
+    if (currentRound.doodles.length > 0) throw new ApplicationError('Already have doodles for this round.', 500)
+    
+    // save doodles to round
+    for (const doodle of gameData.doodles) {
       const newDoodle = new Doodle({
         game: gameId,
         artist: gameData.requesterId,
-        recipient: gameData.receiverId,
         drawing: doodle.drawing,
-        label: doodle.label,
+        label: doodle.label
       })
-
-      // console.log(newDoodle)
 
       const savedDoodle = await newDoodle.save()
-
-      thisRound.doodles.push(savedDoodle)
-      allWords.push(doodle.label)
+      currentRound.doodles.push(savedDoodle)
     }
-  }
 
-  const newResult = {...game.result}
+    // active player switches after draw
+    game.activePlayer = game.activePlayer.toString() === game.player1.toString() ? game.player2 : game.player1
 
-  if (gameData.guessResults) {
-    for (const guessResult of gameData.guessResults) {
-      // console.log(guessResult)
+    // update game state
+    currentRound.state = 'GUESS'
+  } 
+  
+  else if (type === 'guess') {
+    // game state should be GUESS
+    if (!gameData.guesses) throw new ApplicationError('Send guesses in request body.', 400)
+    if (currentRound.state != 'GUESS') throw new ApplicationError(`Game is not awaiting doodles. Current round state is ${currentRound.state}`, 400)
+    if (currentRound.guesses.length > 0) throw new ApplicationError('Already have guesses for this round.', 500)
 
-      const doodle = await Doodle.findById(guessResult.doodleId)
-      doodle.guesses = guessResult.guesses
-      doodle.isCorrect = guessResult.isCorrect
-      doodle.timeSpent = guessResult.timeSpent
+    const roundScore = {
+      doodles: [],
+      roundTotals: {
+        totalTimeSpent: 0,
+        numCorrect: 0 
+      }
+    }
 
-      newResult.scores.push({
-        isCorrect: guessResult.isCorrect,
-        timeSpent: guessResult.timeSpent
+    // save guesses to round
+    for (const guess of gameData.guesses) {
+      currentRound.guesses.push({
+        ...guess
       })
-      if (guessResult.isCorrect) newResult.totalScore.numCorrect++
-      newResult.totalScore.totalTimeSpent += guessResult.timeSpent 
-      await doodle.save()
+
+      // calculate round result
+      if (guess.isCorrect) {
+        roundScore.roundTotals.numCorrect++
+        game.result.gameTotals.numCorrect++
+      } 
+
+      roundScore.roundTotals.totalTimeSpent += guess.timeSpent
+      game.result.gameTotals.totalTimeSpent += guess.timeSpent
+
+      roundScore.doodles.push({
+        isCorrect: guess.isCorrect,
+        timeSpent: guess.timeSpent
+      })
     }
+
+    // save result to game
+    game.result.roundScores.push(roundScore)
+
+    // update game state
+    currentRound.state = 'OVER'
   }
 
+  // Update game
   game.timeOfLastMove = Date.now()
-  game.rounds = [...game.rounds, thisRound]
-  game.allWords = allWords
-  game.currentRound = game.rounds.length
-  game.nextWords = game.currentRound < game.numRounds ? await generateWords(allWords) : []
-  game.result = newResult
 
-  if (game.currentRound === game.numRounds && !gameData.doodles) game.isActive = false
-  game.activePlayer = game.isActive ? gameData.receiverId : null
+  if (currentRound.state === 'OVER') {
+    if (game.rounds.length < game.numRounds) {
+      game.rounds.push({
+        state: 'DOODLE',
+        doodles: [],
+        guesses: []
+      })
+
+      game.nextWords = await generateWords(game.allWords)
+      game.allWords = [...game.allWords, ...game.nextWords]
+      game.currentRoundNum++
+      
+    } else {
+      // Game over
+      game.isActive = false
+      delete game.activePlayer
+      delete game.nextWords
+      delete game.currentRoundNum
+    }
+  }
 
   const savedGame = await game.save()
+  savedGame.populate({ path: 'player1', select: 'username'}).populate({ path: 'player2', select: 'username'}).execPopulate()
 
-  res.status(201).json({
-    gameId: savedGame._id.toString(),
-    isActive: savedGame.isActive,
-    currentRound: savedGame.currentRound,
-    activePlayer: savedGame.activePlayer,
-    result: savedGame.result
-  })
+  res.status(201).json(savedGame.toJSON())
 }
 
-/** send gameId in params
+/* send gameId in URL params
  * send userId in query params
  */
 const getGame = async (req, res) => {
@@ -140,18 +205,8 @@ const getGame = async (req, res) => {
   if (userId === game.player1.toString()) checkAuthorization(req, game.player1)
   else if (userId === game.player2.toString()) checkAuthorization(req, game.player2)
   else throw new ApplicationError('Not authorized.', 401)
-
-  const gameToSend = game.toJSON()
-
-  if (userId !== game.activePlayer.toString()) delete gameToSend.nextWords
-  delete gameToSend.rounds
-  if (game.isActive && game.rounds.length > 0) {
-    if (!game.rounds[game.rounds.length - 1].completed) {
-      gameToSend.doodlesToGuess = game.rounds[game.rounds.length - 1]
-    }
-  }
   
-  res.json(gameToSend)
+  res.json(game.toJSON())
 }
 
 module.exports = { getActive, sendRound, getNewGame, getGame }

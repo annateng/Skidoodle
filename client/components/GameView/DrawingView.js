@@ -1,26 +1,25 @@
 import React, { useState, useEffect } from 'react'
-import paper from 'paper'
-import { useDispatch } from 'react-redux'
 
-import { startRound } from 'Utilities/services/gameService'
-import { saveDoodles } from 'Utilities/reducers/gameReducer'
+import { startRound, sendDoodles } from 'Utilities/services/gameService'
+import { ROUND_LEN } from 'Utilities/common'
 
-//TODO: figure out sizing
-const DrawingView = ({ wordsToDraw, setGameState }) => {
-  const [timeLeft, setTimeLeft] = useState(10)
+const DrawingView = ({ wordsToDraw, roundLen, gameId, userId, setGame, setGameState }) => {
+  const [timeLeft, setTimeLeft] = useState(ROUND_LEN)
   const [canvas, setCanvas] = useState()
   const [word, setWord] = useState('')
-  const dispatch = useDispatch()
   
   useEffect(() => {
     const thisCanvas = document.getElementById('paper-canvas')
     setCanvas(thisCanvas)
     localStorage.setItem('scribbleColor', 'black')
+    localStorage.setItem('scribbleSize', 2)
   }, [])
 
   const handleStartRound = async () => {
-    const doodles = await startRound(canvas, setTimeLeft, wordsToDraw, setWord)
-    dispatch(saveDoodles(doodles))
+    const doodles = await startRound(canvas, setTimeLeft, wordsToDraw, roundLen, setWord)
+    const newGame = await sendDoodles(doodles, userId, gameId)
+    console.log(newGame) // DEBUG
+    setGame(newGame)
     setGameState('OVER')
   }
 

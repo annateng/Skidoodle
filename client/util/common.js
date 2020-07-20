@@ -11,7 +11,5 @@ export const setAllTokens = authToken => {
   setUserToken(authToken)
 }
 
-export const ROUND_LEN = 10
-
 // Everything from application wide common items is available through here
 export * from '@root/config/common'

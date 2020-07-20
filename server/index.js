@@ -1,8 +1,10 @@
-const common = require('@util/common')
 const express = require('express')
-const routes = require('@util/routes')
 const mongoose = require('mongoose')
+require('express-async-errors')
+
 const errorMiddleware = require('@middleware/errorMiddleware')
+const common = require('@util/common')
+const routes = require('@util/routes')
 
 const mongoUrl = common.MONGODB_URI
 

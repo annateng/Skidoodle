@@ -4,7 +4,7 @@ import { images } from 'Utilities/common'
 const NavBar = ({ user }) => (
   <div className="navbar">
     <img src={images.logo} alt="scribble logo" />
-    {user && <span>Welcome {user.displayName}</span>}
+    {user && <span>Welcome {user.user.displayName}</span>}
   </div>
 )
 

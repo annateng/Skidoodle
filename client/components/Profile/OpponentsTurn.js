@@ -6,7 +6,8 @@ const OpponentsTurn = ({ game, user }) => {
 
   return (
     <div>
-      Opponent: {opponent.username}
+      Opponent: {opponent.username}<br />
+      Current Round: {game.currentRoundNum}<br />
     </div>
   )
 

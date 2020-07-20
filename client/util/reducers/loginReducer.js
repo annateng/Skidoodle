@@ -5,10 +5,7 @@ const loginReducer = (state = {}, action) => {
   switch (action.type) {
     case 'LOGIN': 
       return {
-        username: action.data.user.username,
-        displayName: action.data.user.displayName,
-        id: action.data.user.id,
-        token: action.data.token
+        ...action.data
       }
     case 'LOGOUT':
       return {}
