@@ -8,8 +8,9 @@ const PRIVATE_KEY = process.env.PRIVATE_KEY
 // game variables
 const NUM_ROUNDS = 10
 const ROUND_LEN = 10
+const WORDS_PER_ROUND = 4
 
 module.exports = {
   ...common,
-  PORT, MONGODB_URI, PRIVATE_KEY, NUM_ROUNDS, ROUND_LEN
+  PORT, MONGODB_URI, PRIVATE_KEY, NUM_ROUNDS, ROUND_LEN, WORDS_PER_ROUND
 }

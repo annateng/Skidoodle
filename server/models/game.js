@@ -1,5 +1,18 @@
 const mongoose = require('mongoose')
 
+const roundSchema = new mongoose.Schema({
+  state: String, // GUESS, DOODLE, OVER
+  doodles: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Doodle'
+  }],
+  guesses: [{
+    guesses: [String],
+    isCorrect: Boolean,
+    timeSpent: Number
+  }]
+}, { _id: false })
+
 const gameSchema = new mongoose.Schema({
   player1: {
     type: mongoose.Schema.Types.ObjectId,
@@ -17,18 +30,8 @@ const gameSchema = new mongoose.Schema({
   roundLen: Number,
   timeOfLastMove: Date,
   isActive: Boolean,
-  rounds: [{
-    state: String, // GUESS, DOODLE, OVER
-    doodles: [{
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Doodle'
-    }],
-    guesses: [{
-      guesses: [String],
-      isCorrect: Boolean,
-      timeSpent: Number
-    }],
-  }],
+  currentRound: roundSchema,
+  rounds: [roundSchema],
   currentRoundNum: Number,
   allWords: [String],
   activePlayer: {
@@ -57,7 +60,7 @@ const gameSchema = new mongoose.Schema({
 gameSchema.set('toJSON', {
   transform: (document, returnedObject) => {
       returnedObject.id = returnedObject._id.toString()
-      returnedObject.currentRound = returnedObject.isActive ? returnedObject.rounds[returnedObject.rounds.length - 1] : null
+      // returnedObject.currentRound = returnedObject.isActive ? returnedObject.rounds[returnedObject.rounds.length - 1] : null
       delete returnedObject.rounds
       delete returnedObject.allWords
       delete returnedObject._id

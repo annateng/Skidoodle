@@ -5,8 +5,6 @@ const { generateWords } = require('@util/gameUtil')
 const Doodle = require('@models/doodle')
 const Game = require('@models/game')
 
-const sizeof = require('object-sizeof') // TEST
-
 /** send userId in params */
 const getActive = async (req, res) => {
   checkAuthorization(req, req.params.id)
@@ -48,10 +46,11 @@ const getNewGame = async (req, res) => {
     roundLen: common.ROUND_LEN,
     isActive: true,
     rounds: [newRound],
+    currentRound: newRound,
     currentRoundNum: 1,
     allWords: [],
     activePlayer: gameData.requesterId,
-    nextWords: await generateWords(),
+    nextWords: generateWords(),
     result: {
       roundScores: [],
       gameTotals: {
@@ -65,8 +64,6 @@ const getNewGame = async (req, res) => {
 
   res.json(savedGame.toJSON())
 }
-
-// TODO: const updateGameStatus = 
 
 /* in req.body, send { requesterId, doodles OR guesses }
  * in query params send { type: 'guess' or 'doodle' } 
@@ -91,6 +88,7 @@ const sendRound = async (req, res) => {
     game.save()
     throw new ApplicationError('Game is already over.', 400)
   }
+  game.currentRound = currentRound
 
   const type = req.query.type
   if (!(type === 'guess' || type === 'doodle')) throw new ApplicationError('Valid type is needed as query parameter: \'guess\' or \'doodle\'', 400)
@@ -174,10 +172,9 @@ const sendRound = async (req, res) => {
         guesses: []
       })
 
-      game.nextWords = await generateWords(game.allWords)
+      game.nextWords = generateWords(game.allWords)
       game.allWords = [...game.allWords, ...game.nextWords]
-      game.currentRoundNum++
-      
+      game.currentRound = game.rounds[game.currentRoundNum++]
     } else {
       // Game over
       game.isActive = false
