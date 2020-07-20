@@ -110,7 +110,7 @@ export const getDrawing = roundLen => {
   return drawing
 }
 
-export const startRound = async (canvas, setTimeLeft, wordsToDraw, roundLen, setWord) => {
+export const startRound = async (canvas, setTimeLeft, wordsToDraw, roundLen, setWord, intervalRef, roundRef) => {
   
   paper.setup(canvas)
   const doodles = []
@@ -118,7 +118,8 @@ export const startRound = async (canvas, setTimeLeft, wordsToDraw, roundLen, set
   for (const word of wordsToDraw) {
     const drawing = getDrawing(roundLen)
     setWord(word)
-    const completedDrawing = await startDrawing(drawing, setTimeLeft)
+    const completedDrawing = await startDrawing(drawing, setTimeLeft, intervalRef, roundRef)
+
     doodles.push({
       label: word,
       drawing: completedDrawing.paths
@@ -128,7 +129,7 @@ export const startRound = async (canvas, setTimeLeft, wordsToDraw, roundLen, set
   return doodles
 }
 
-const startDrawing = (drawing, setTimeLeft) => {
+const startDrawing = (drawing, setTimeLeft, intervalRef, roundRef) => {
   return new Promise((resolve, reject) => {
     paper.project.activeLayer.removeChildren()
     paper.view.draw()
@@ -146,7 +147,10 @@ const startDrawing = (drawing, setTimeLeft) => {
         resolve(drawing)
      }
     }, 10)
-  })
+
+    intervalRef.current = tick
+    roundRef.current = () => { reject('Component Unmounted') }
+  }).catch(e => { console.error(e) })
 }
 
 export const getGame = async (gameId, userId) => {
@@ -161,7 +165,7 @@ export const getGame = async (gameId, userId) => {
   return res.data
 }
 
-const startReplay = (replayDrawing, setTimeLeft) => {
+const startReplay = (replayDrawing, setTimeLeft, intervalRef, replayRef) => {
   return new Promise((resolve, reject) => {
     paper.project.activeLayer.removeChildren()
     paper.view.draw()
@@ -177,7 +181,10 @@ const startReplay = (replayDrawing, setTimeLeft) => {
         resolve(replayDrawing)
      }
     }, 10)
-  })
+
+    intervalRef.current = tick
+    replayRef.current = () => { reject('Component Unmounted') }
+  }).catch(e => { console.error(e) })
 }
 
 const getReplay = (guessInput, roundLen, drawing, label) => {
@@ -231,7 +238,7 @@ const getReplay = (guessInput, roundLen, drawing, label) => {
   return replayDrawing
 }
 
-export const startGuessingRound = async (canvas, guessInput, doodlesToGuess, roundLen, setTimeLeft, setGuess) => {
+export const startGuessingRound = async (canvas, guessInput, doodlesToGuess, roundLen, setTimeLeft, setGuess, intervalRef, replayRef) => {
 
   paper.setup(canvas)
   const guesses = []
@@ -240,10 +247,7 @@ export const startGuessingRound = async (canvas, guessInput, doodlesToGuess, rou
     setGuess('')
     const replayDrawing = getReplay(guessInput, roundLen, doodle.drawing, doodle.label)
 
-    const completedReplay = await startReplay(replayDrawing, setTimeLeft).catch(e => {
-      console.error('got here', e) // DEBUG
-      throw new Error(e)
-    })
+    const completedReplay = await startReplay(replayDrawing, setTimeLeft, intervalRef, replayRef)
 
     const guessToPush = {
       doodleId: doodle.id,

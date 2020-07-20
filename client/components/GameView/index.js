@@ -10,12 +10,11 @@ import DrawingView from 'Components/GameView/DrawingView'
 import GuessingView from 'Components/GameView/GuessingView'
 import RoundResults from 'Components/ResultView/RoundResults'
 
-// FRONTEND GAME STATES: SHOW-LAST-RESULT -> GUESS -> SHOW-THIS-RESULT -> DOODLE -> READY-TO-SEND -> OVER ... INACTIVE
+// FRONTEND GAME STATES: SHOW-LAST-RESULT -> GUESS -> SHOW-THIS-RESULT -> DOODLE -> OVER ... INACTIVE
 const GameView = () => {
   const gameId = useParams().gameId
   const user = useSelector(state => state.user)
   const history = useHistory()
-
   const [game, setGame] = useState()
   const [gameState, setGameState] = useState()
 
@@ -65,9 +64,11 @@ const GameView = () => {
         </div>
       )
     case 'GUESS': 
-      return ( <GuessingView doodlesToGuess={game.currentRound.doodles} roundLen={game.roundLen} gameId={game.id} userId={user.user.id} setGame={setGame} setGameState={setGameState}/> )
+      return ( <GuessingView doodlesToGuess={game.currentRound.doodles} roundLen={game.roundLen} gameId={game.id} 
+        userId={user.user.id} setGame={setGame} setGameState={setGameState} /> )
     case 'DOODLE':
-      return ( <DrawingView wordsToDraw={game.nextWords} roundLen={game.roundLen} gameId={game.id} userId={user.user.id} setGame={setGame} setGameState={setGameState}/> )
+      return ( <DrawingView wordsToDraw={game.nextWords} roundLen={game.roundLen} gameId={game.id} userId={user.user.id} 
+        setGame={setGame} setGameState={setGameState} /> )
     case 'OVER':
       return ( 
         <div>
