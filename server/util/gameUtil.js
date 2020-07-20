@@ -17,4 +17,4 @@ const generateWords = wordsSoFar => {
   return wordsToReturn
 }
 
-module.exports = { generateWords, calculateResult }
+module.exports = { generateWords }

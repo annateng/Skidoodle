@@ -2,6 +2,7 @@ import React from 'react'
 import { Route, Switch, Redirect } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 
+import HomePage from 'Components/HomePage'
 import Login from 'Components/Login'
 import GameView from 'Components/GameView'
 import Profile from 'Components/Profile'
@@ -16,7 +17,8 @@ const Router = () => {
   return (
     <div className="content">
       <Switch>
-        <Route exact path="/login" component={Login} />
+        <Route exact path="/" component={HomePage} />
+        <Route path="/login" component={Login} />
         <Route path="/game/:gameId" component={GameView} />
         <Route path="/profile" component={Profile} />
       </Switch>

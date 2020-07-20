@@ -1,4 +1,4 @@
-$mainColor: whitesmoke;
+$mainColor: #ebf2f0;
 
 body {
   font-family: Inter,-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol;
@@ -16,6 +16,15 @@ canvas[resize] {
   border-radius: 5px; 
 }
 
+#homepage-div {
+  background-color: $mainColor;
+}
+
+#homepage-logo {
+  width: 100%;
+  height: 100%;
+}
+
 .navbar {
   height: 5em;
   background-color: $mainColor;
@@ -29,6 +38,7 @@ canvas[resize] {
   min-height: calc(100vh - 10em);
   display: flex;
   flex-direction: column;
+  background-color: $mainColor;
 }
 
 .footer {
