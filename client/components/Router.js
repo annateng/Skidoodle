@@ -1,6 +1,7 @@
 import React from 'react'
 import { Route, Switch, Redirect } from 'react-router-dom'
 import { useSelector } from 'react-redux'
+import { Layout } from 'antd'
 
 import HomePage from 'Components/HomePage'
 import Login from 'Components/Login'
@@ -14,15 +15,17 @@ import Profile from 'Components/Profile'
 const Router = () => {
   const user = useSelector(state => state.user)
 
+  const { Content } = Layout
+
   return (
-    <div className="content">
+    <Content className='content' style={{ padding: '0 50px' }}>
       <Switch>
-        <Route exact path="/" component={HomePage} />
-        <Route path="/login" component={Login} />
-        <Route path="/game/:gameId" component={GameView} />
-        <Route path="/profile" component={Profile} />
+        <Route exact path='/' component={HomePage} />
+        <Route path='/login' component={Login} />
+        <Route path='/game/:gameId' component={GameView} />
+        <Route path='/profile' component={Profile} />
       </Switch>
-    </div>
+    </Content>
   )
 }
 

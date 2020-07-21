@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { useHistory } from 'react-router-dom'
+import { Button } from 'antd'
 
 import { setAllTokens } from 'Utilities/common'
 import { getGame } from 'Utilities/services/gameService'
@@ -20,6 +21,8 @@ const Profile = () => {
   if (user) setAllTokens(user.token)
 
   useEffect(() => {
+    if (!user || ! user.user) return
+
     handleGetActiveGames()
     handleGetFriends()
   }, [user])
@@ -40,6 +43,12 @@ const Profile = () => {
     const newGame = await getNewGame(user.user.id, opponentId)
     // console.log(newGame)
     history.push(`/game/${newGame.id}`)
+  }
+
+  if (!user || !user.user) {
+    return (
+      <Button type='primary' size='large' onClick={() => history.push('/profile')}>Log In</Button>
+    )
   }
 
   return (

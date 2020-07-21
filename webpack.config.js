@@ -54,6 +54,30 @@ module.exports = (env, argv) => {
           ],
         },
         {
+          // Load LESS files
+          test: /\.less$/,
+          use: [{
+            loader: 'style-loader',
+          }, {
+            loader: 'css-loader', // translates CSS into CommonJS
+          }, {
+            loader: 'less-loader', // compiles Less to CSS
+            options: {
+              lessOptions: {
+                modifyVars: {
+                  'primary-color': '#274c57',
+                  'border-radius-base': '5px',
+                  'font-size-base': '24px',
+                  'layout-header-background': '#274c57',
+                  'layout-body-background': '#ebf2f0',
+                  'font-family': 'Scope One, serif'
+                },
+                javascriptEnabled: true,
+              }
+            }
+          }]
+        },
+        {
           // Load other files
           test: /\.(png|jpg|gif|svg|eot|ttf|woff|woff2)$/,
           use: ['file-loader'],

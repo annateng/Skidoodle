@@ -1,7 +1,8 @@
 import React, { useState } from 'react'
-import { loginUser } from 'Utilities/reducers/loginReducer'
-import { useSelector, useDispatch } from 'react-redux'
+import { loginUser, logout } from 'Utilities/reducers/loginReducer'
+import { useDispatch, useSelector } from 'react-redux'
 import { useHistory } from 'react-router-dom'
+import { Form, Input, Button, Typography, Space } from 'antd'
 
 // TODO: handle bad login
 const LoginPage = () => {
@@ -9,29 +10,54 @@ const LoginPage = () => {
   const [password, setPassword] = useState('')
 
   const dispatch = useDispatch()
-  // const user = useSelector(state => state.user)
+  const user = useSelector(state => state.user)
   const history = useHistory()
 
-  const handleLogin = async event => {
-    event.preventDefault()
+  const handleLogin = async (values) => {
     dispatch(loginUser({
-      username, 
-      password 
+      username: values.username, 
+      password: values.password 
     }))
     history.push('/profile')
   }
 
+  if (user && user.user) {
+    return (
+      <div id='login-form-div'>
+        <Typography.Title level={2}>You are already logged in as {user.user.username} </Typography.Title>
+        <Space>
+          <Button type='primary' size='large' onClick={() => dispatch(logout())}>Log Out</Button>
+          <Button type='primary' size='large' onClick={() => history.push('/profile')}>Go To My Profile</Button>
+        </Space>
+      </div>
+    )
+  }
+
+  // ant.design styling
+  const layout = {
+    labelCol: { span: 8 },
+    wrapperCol: { span: 16 },
+  };
+  const tailLayout = {
+    wrapperCol: { offset: 8, span: 16 }
+  }
+
   return (
-    <div> 
-      <form onSubmit={handleLogin}>
-        <div>
-          username <input type='text' value={username} onChange={event => setUsername(event.target.value)}></input>
-        </div>
-        <div>
-          password <input type='text' value={password} onChange={event => setPassword(event.target.value)}></input>
-        </div>
-        <button type='submit'>Log In</button>
-      </form>    
+    <div id='login-form-div'>
+      <Typography.Title>Log In</Typography.Title> 
+      <Form {...layout} onFinish={handleLogin} onFinishFailed={() => console.error('Required form fields missing.')}>
+        <Form.Item label='Username' name='username'
+          rules={[{ required: true, message: 'Username required' }]}>
+          <Input />
+        </Form.Item>
+        <Form.Item label='Password' name='password'
+          rules={[{ required: true, message: 'Password required' }]}>
+          <Input.Password />
+        </Form.Item>
+        <Form.Item {...tailLayout}>
+          <Button type='primary' htmlType='submit' size='large'>Log In</Button>
+        </Form.Item>
+      </Form>    
     </div>
   )
 }

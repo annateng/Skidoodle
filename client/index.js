@@ -4,7 +4,7 @@ import { BrowserRouter } from 'react-router-dom'
 import { Provider } from 'react-redux'
 import { PersistGate } from 'redux-persist/integration/react'
 
-import 'Assets/custom.scss'
+import 'Assets/styles.less'
 import App from 'Components/App'
 import ErrorBoundary from 'Components/ErrorBoundary'
 

@@ -26,4 +26,10 @@ export const loginUser = userData => {
   } 
 }
 
+export const logout = () => {
+  return {
+    type: 'LOGOUT'
+  }
+}
+
 export default loginReducer 

@@ -21,6 +21,7 @@
     "@babel/preset-env": "^7.8.3",
     "@babel/preset-react": "^7.8.3",
     "@babel/register": "^7.8.3",
+    "antd": "^4.4.3",
     "axios": "^0.19.2",
     "babel-eslint": "^10.0.3",
     "babel-loader": "^8.0.6",
@@ -29,6 +30,7 @@
     "cross-env": "^7.0.0",
     "css-loader": "^3.4.2",
     "dotenv": "^8.2.0",
+    "emotion-theming": "^10.0.27",
     "eslint": "^6.8.0",
     "eslint-config-airbnb": "^18.0.1",
     "eslint-plugin-import": "^2.20.0",
@@ -59,6 +61,7 @@
     "webpack-cli": "^3.3.10"
   },
   "devDependencies": {
+    "less-loader": "^6.2.0",
     "mongoose": "^5.9.22",
     "nodemon": "^2.0.2",
     "redux-devtools-extension": "^2.13.8",
