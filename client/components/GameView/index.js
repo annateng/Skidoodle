@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { useParams, Redirect, useHistory } from 'react-router-dom'
+import { Layout, Divider, Typography, Button, Space } from 'antd'
 
 import { getGame, getGameState } from 'Utilities/services/gameService'
 import { setActiveGame, setLastGamePlayed } from 'Utilities/reducers/gameReducer'
@@ -45,41 +46,86 @@ const GameView = () => {
 
   if (!user) return ( <Redirect to="/login " /> ) // TODO: show a page saying you're not logged in
   if (!game || !gameState) return ( <div>loading...</div> )
+
+  const beginRoundButton = () => (
+    <Button onClick={handleBeginRound} id='begin-round-button'>Begin Round</Button>
+  )
   
-  switch (gameState) {
-    case 'INACTIVE': 
-      return ( <div>GAME IS OVER</div> ) // TODO
-    case 'SHOW-LAST-RESULT': 
-      return ( 
-        <div>
-          <RoundResults roundResults={game.lastRoundResults} />
-          <button onClick={handleBeginRound}>Begin Round</button>
-        </div>
-      )
-    case 'SHOW-THIS-RESULT': 
-      return ( 
-        <div>
-          <RoundResults roundResults={game.lastRoundResults} />
-          <button onClick={handleBeginRound}>Begin Round</button>
-        </div>
-      )
-    case 'GUESS': 
-      return ( <GuessingView doodlesToGuess={game.currentRound.doodles} roundLen={game.roundLen} gameId={game.id} 
-        userId={user.user.id} setGame={setGame} setGameState={setGameState} /> )
-    case 'DOODLE':
-      return ( <DrawingView wordsToDraw={game.nextWords} roundLen={game.roundLen} gameId={game.id} userId={user.user.id} 
-        setGame={setGame} setGameState={setGameState} /> )
-    case 'OVER':
-      return ( 
-        <div>
-          ROUND OVER
-          <button onClick={() => history.push('/profile')}>Back to My Games</button>
-        </div> 
-      ) // TODO
-    // This shouldn't render unless gameState is an error
-    default:
-      return ( <div>error</div> )
+  const getGameBody = () => {
+    switch (gameState) {
+      case 'INACTIVE': 
+        return ( <div>GAME IS OVER</div> ) // TODO
+      case 'SHOW-LAST-RESULT':
+        const lastRoundNum = game.currentRoundNum - 1
+        if (!game.result || !game.result.roundScores || game.result.roundScores.length < lastRoundNum - 1) {
+          console.error('previous round results not available')
+          return (<div>previous round results not available</div>)
+        }
+
+        return ( 
+          <div>
+            <Divider orientation='left'>Round {lastRoundNum} Results</Divider>
+            <RoundResults roundResults={game.result.roundScores[lastRoundNum - 1]} gameResults={game.result.gameTotals} />
+            {beginRoundButton()}
+          </div>
+        )
+      case 'SHOW-THIS-RESULT':
+        if (!game.result || !game.result.roundScores || game.result.roundScores.length < Math.max(game.currentRoundNum - 1, 0)) {
+          console.error('this round results not available')
+          return (<div>this round results not available</div>)
+        }
+
+        // Before the first round: no scores to show
+        if (game.result.roundScores.length === 0 && game.currentRoundNum === 1) {
+          return (
+            <Space direction='vertical' align='center'>
+              <Typography.Title level={2}>Round 1</Typography.Title>
+              <Typography.Paragraph>
+                <ul>
+                  <li>
+                    You will have {game.roundLen} seconds to draw each word
+                  </li>
+                  <li>
+                    There are {game.nextWords.length} words per round
+                  </li>
+                </ul>
+              </Typography.Paragraph>
+              {beginRoundButton()}
+            </Space>
+          )
+        }
+
+        return ( 
+          <div>
+            <Divider orientation='left'>Round {game.currentRoundNum} Results</Divider>
+            <RoundResults roundResults={game.result.roundScores[game.currentRoundNum - 1]} gameResults={game.result.gameTotals} />
+            {beginRoundButton()}
+          </div>
+        )
+      case 'GUESS': 
+        return ( <GuessingView doodlesToGuess={game.currentRound.doodles} roundLen={game.roundLen} gameId={game.id} 
+          userId={user.user.id} setGame={setGame} setGameState={setGameState} /> )
+      case 'DOODLE':
+        return ( <DrawingView wordsToDraw={game.nextWords} roundLen={game.roundLen} gameId={game.id} userId={user.user.id} 
+          setGame={setGame} setGameState={setGameState} /> )
+      case 'OVER':
+        return ( 
+          <div>
+            ROUND OVER
+            <button onClick={() => history.push('/profile')}>Back to My Games</button>
+          </div> 
+        ) // TODO
+      // This shouldn't render unless gameState is an error
+      default:
+        return ( <div>error</div> )
+    }
   }
+
+  return (
+    <Layout id="game-layout" style={{ padding: '24px 0' }}>
+      {getGameBody()}
+    </Layout>
+  )
 }
 
 export default GameView

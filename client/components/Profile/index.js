@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { useHistory } from 'react-router-dom'
-import { Button } from 'antd'
+import { Button, Row, Col, Divider, Layout, Typography } from 'antd';
 
 import { setAllTokens } from 'Utilities/common'
 import { getGame } from 'Utilities/services/gameService'
@@ -52,23 +52,24 @@ const Profile = () => {
   }
 
   return (
-    <div>
-      <div>
-        <div>FRIENDS</div>
+    <Layout id="profile-layout" style={{ padding: '24px 0' }}>
+      <Divider orientation='left'>Friends</Divider>
+        <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
         {userData && userData.friends.map(friend => 
-            <Friend key={friend.id} friend={friend} handleNewGame={handleNewGame} />)}
-      </div><br />
-      <div>
-        <div>YOUR TURN</div>
-        {activeGames && activeGames.filter(ag => ag.activePlayer === user.user.id).map(ag => 
-          <YourTurn key={ag.id} game={ag} user={user.user} getGame={getGame} />)}
-      </div><br />
-      <div>
-        <div>WAITING ON OPPONENT</div>
-        {activeGames && activeGames.filter(ag => ag.activePlayer !== user.user.id).map(ag => 
-          <OpponentsTurn key={ag.id} game={ag} user={user.user} />)}
-      </div>
-    </div>
+              <Friend className="friend-icon" key={friend.id} friend={friend} handleNewGame={handleNewGame} />)}
+        </Row>
+      <Divider orientation='left'>Active Games</Divider>
+      <p style={{ fontWeight: 'bold' }}>Your Turn</p>
+        <Row gutter={[{ xs: 8, sm: 16, md: 24, lg: 32 }, 32]}>
+          {activeGames && activeGames.filter(ag => ag.activePlayer === user.user.id).map(ag => 
+            <YourTurn key={ag.id} game={ag} user={user.user} getGame={getGame} />)}
+          </Row>
+      <p style={{ fontWeight: 'bold' }}>Waiting On Opponent</p>
+        <Row gutter={[{ xs: 8, sm: 16, md: 24, lg: 32 }, 32]}>
+          {activeGames && activeGames.filter(ag => ag.activePlayer !== user.user.id).map(ag => 
+            <OpponentsTurn key={ag.id} game={ag} user={user.user} />)}
+        </Row>
+    </Layout>
   )
 }
 

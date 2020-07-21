@@ -67,10 +67,14 @@ module.exports = (env, argv) => {
                 modifyVars: {
                   'primary-color': '#274c57',
                   'border-radius-base': '5px',
-                  'font-size-base': '24px',
+                  'font-size-base': '20px',
+                  'font-size-sm': '16px',
                   'layout-header-background': '#274c57',
-                  'layout-body-background': '#ebf2f0',
-                  'font-family': 'Scope One, serif'
+                  'layout-body-background': '#f2edeb',
+                  'font-family': 'Scope One, serif',
+                  'btn-font-size-sm': '@font-size-sm',
+                  'border-color-split': '#d1d1d1',
+                  'border-color-base': '#d1d1d1',
                 },
                 javascriptEnabled: true,
               }
