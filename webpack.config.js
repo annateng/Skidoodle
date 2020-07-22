@@ -36,22 +36,9 @@ module.exports = (env, argv) => {
             loader: 'babel-loader',
           },
         },
-        { // Load SCSS & SASS files
-          test: /\.s[ac]ss$/i,
-          use: [
-            // Creates `style` nodes from JS strings
-            'style-loader',
-            // Translates CSS into CommonJS
-            'css-loader',
-            // Compiles Sass to CSS
-            {
-              loader: 'sass-loader',
-              options: {
-                // Prefer `dart-sass`
-                implementation: sass,
-              },
-            },
-          ],
+        { // CSS files
+          test: /\.css$/i,
+          use: ['style-loader', 'css-loader'],
         },
         {
           // Load LESS files
@@ -65,12 +52,13 @@ module.exports = (env, argv) => {
             options: {
               lessOptions: {
                 modifyVars: {
-                  'primary-color': '#274c57',
+                  'primary-color': '#87a897',
                   'border-radius-base': '5px',
                   'font-size-base': '20px',
                   'font-size-sm': '16px',
-                  'layout-header-background': '#274c57',
+                  'layout-header-background': '#87a897',
                   'layout-body-background': '#f2edeb',
+                  'layout-header-height': '120px',
                   'font-family': 'Nanum Gothic Coding, monospace',
                   'btn-font-size-sm': '@font-size-sm',
                   'border-color-split': '#d1d1d1',

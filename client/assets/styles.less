@@ -1,7 +1,7 @@
 @import '~antd/dist/antd.less';
 
 @mainColor: #f2edeb;
-@highlightColor: #FFA38F;
+@highlightColor: #b3374c;
 @buttonColor: #274c57;
 @borderColor: #d1d1d1;
 
@@ -15,12 +15,16 @@
 }
 
 #header-logo {
-  width: 200px;
-  float: left;
+  width: 400px;
+  display: block;
+  margin: auto;
+  margin-top: 0px;
 }
 
 #header-user-info {
-  float: right;
+  position: absolute;
+  bottom: 15px;
+  right: 50px;
 }
 
 img {
@@ -30,9 +34,10 @@ img {
 
 #login-form-div {
   padding: 24px;
-  margin: 36px;
-  border: 2px solid @buttonColor;
-  border-radius: 5px;
+  margin-top: 36px;
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 600px;
 }
 
 #profile-friends-sider {
@@ -53,12 +58,13 @@ img {
 
 #begin-round-button {
   width: 300px;
-  height: 150px;
+  height: 115px;
   background-color: @highlightColor;
   font-size: 40px;
   margin-left: auto;
   margin-right: auto;
   margin-top: 50px;
+  color: whitesmoke;
 }
 
 #countdown-timer {
@@ -122,4 +128,16 @@ canvas[resize] {
   height: 100%;
 }
 
+.rodal-header {
+  font-size: 100px;
+  font-weight: bold;
+  text-align: center;
+  color: @highlightColor;
+}
+
+.rodal-body {
+  font-size: 60px;
+  font-weight: bold;
+  text-align: center;
+}
 

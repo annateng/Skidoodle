@@ -5,6 +5,8 @@ import { Provider } from 'react-redux'
 import { PersistGate } from 'redux-persist/integration/react'
 
 import 'Assets/styles.less'
+import 'rodal/lib/rodal.css'
+
 import App from 'Components/App'
 import ErrorBoundary from 'Components/ErrorBoundary'
 

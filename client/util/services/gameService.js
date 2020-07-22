@@ -110,7 +110,7 @@ export const getDrawing = roundLen => {
   return drawing
 }
 
-export const startRound = async (canvas, setTimeLeft, wordsToDraw, roundLen, setWord, intervalRef, roundRef) => {
+export const startRound = async (canvas, setTimeLeft, wordsToDraw, roundLen, setWord, intervalRef, roundRef, startRodal) => {
   
   paper.setup(canvas)
   const doodles = []
@@ -118,6 +118,7 @@ export const startRound = async (canvas, setTimeLeft, wordsToDraw, roundLen, set
   for (const word of wordsToDraw) {
     const drawing = getDrawing(roundLen)
     setWord(word)
+    await startRodal()
     const completedDrawing = await startDrawing(drawing, setTimeLeft, intervalRef, roundRef)
 
     doodles.push({

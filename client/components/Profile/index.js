@@ -47,7 +47,10 @@ const Profile = () => {
 
   if (!user || !user.user) {
     return (
-      <Button type='primary' size='large' onClick={() => history.push('/profile')}>Log In</Button>
+      <div>
+        <Typography.Title level={4}>Log in to see your profile</Typography.Title>
+        <Button type='primary' size='large' onClick={() => history.push('/login')}>Log In</Button>
+      </div>
     )
   }
 

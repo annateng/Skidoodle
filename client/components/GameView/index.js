@@ -47,8 +47,8 @@ const GameView = () => {
   if (!user) return ( <Redirect to="/login " /> ) // TODO: show a page saying you're not logged in
   if (!game || !gameState) return ( <div>loading...</div> )
 
-  const beginRoundButton = () => (
-    <Button onClick={handleBeginRound} id='begin-round-button'>Begin Round</Button>
+  const beginRoundButton = buttonText => (
+    <Button onClick={handleBeginRound} id='begin-round-button'>{buttonText}</Button>
   )
   
   const getGameBody = () => {
@@ -79,7 +79,7 @@ const GameView = () => {
         if (game.result.roundScores.length === 0 && game.currentRoundNum === 1) {
           return (
             <Space direction='vertical' align='center'>
-              <Typography.Title level={2}>Round 1</Typography.Title>
+              <Typography.Title level={2}>New Game</Typography.Title>
               <Typography.Paragraph>
                 <ul>
                   <li>
@@ -90,7 +90,7 @@ const GameView = () => {
                   </li>
                 </ul>
               </Typography.Paragraph>
-              {beginRoundButton()}
+              {beginRoundButton('Ready?')}
             </Space>
           )
         }

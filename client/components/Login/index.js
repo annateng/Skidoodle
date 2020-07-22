@@ -33,19 +33,10 @@ const LoginPage = () => {
     )
   }
 
-  // ant.design styling
-  const layout = {
-    labelCol: { span: 8 },
-    wrapperCol: { span: 16 },
-  };
-  const tailLayout = {
-    wrapperCol: { offset: 8, span: 16 }
-  }
-
   return (
     <div id='login-form-div'>
       <Typography.Title>Log In</Typography.Title> 
-      <Form {...layout} onFinish={handleLogin} onFinishFailed={() => console.error('Required form fields missing.')}>
+      <Form layout='vertical' onFinish={handleLogin} onFinishFailed={() => console.error('Required form fields missing.')}>
         <Form.Item label='Username' name='username'
           rules={[{ required: true, message: 'Username required' }]}>
           <Input />
@@ -54,7 +45,7 @@ const LoginPage = () => {
           rules={[{ required: true, message: 'Password required' }]}>
           <Input.Password />
         </Form.Item>
-        <Form.Item {...tailLayout}>
+        <Form.Item>
           <Button type='primary' htmlType='submit' size='large'>Log In</Button>
         </Form.Item>
       </Form>    

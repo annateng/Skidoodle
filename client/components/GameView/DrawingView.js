@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { Typography, Progress, Row, Col, Button, Card } from 'antd'
+import Rodal from 'rodal'
 
 import { startRound, sendDoodles } from 'Utilities/services/gameService'
 
@@ -9,27 +10,64 @@ const colors = ['black', 'darkred', 'crimson', 'deeppink', 'pink', 'coral', 'ora
 const sizes = [2, 4, 8, 14, 22, 30]
 
 const DrawingView = ({ wordsToDraw, roundLen, gameId, userId, setGame, setGameState }) => {
+  // console.log('render') //DEBUG
   const [timeLeft, setTimeLeft] = useState(roundLen)
   const [canvas, setCanvas] = useState()
-  const [word, setWord] = useState('')
+  const [word, setWord] = useState()
+  const [rodalVisible, setRodalVisible] = useState(false)
+  const [rodalHeader, setRodalHeader] = useState()
   const intervalRef = useRef()
   const roundRef = useRef()
+  const modalIntervalRef = useRef()
+  const modalRef = useRef()
   
   useEffect(() => {
-    const thisCanvas = document.getElementById('paper-canvas')
-    setCanvas(thisCanvas)
-    localStorage.setItem('scribbleColor', 'black')
-    localStorage.setItem('scribbleSize', 2)
+    if (canvas) {
+      handleStartRound()
+    } else {
+      const thisCanvas = document.getElementById('paper-canvas')
+      setCanvas(thisCanvas)
+      localStorage.setItem('scribbleColor', 'black')
+      localStorage.setItem('scribbleSize', 2)
+    }
 
+    // clean up intervals and unresolved promises
     return () => {
       clearInterval(intervalRef.current)
       if (roundRef.current) roundRef.current()
+      clearInterval(modalIntervalRef.current)
+      if (modalRef.current) modalRef.current()
     }
-  }, [])
+  
+  }, [canvas])
+
+  const startRodal = () => {
+    return new Promise((resolve, reject) => {
+      let countDown = 3
+      setRodalVisible(true)
+      setRodalHeader(countDown)
+
+      const rodalTick = setInterval(() => {
+        countDown--
+        if (countDown > 0) setRodalHeader(countDown)
+        else {
+          setRodalHeader('GO!')
+          clearInterval(rodalTick)
+          setTimeout(() => {
+            setRodalVisible(false)
+            resolve()
+          }, 200)
+        }
+      }, 1000)
+
+      modalIntervalRef.current = rodalTick
+      modalRef.current = () => reject('Modal: Component Unmounted')
+    })
+  }
 
   const handleStartRound = async () => {
     try {
-      const doodles = await startRound(canvas, setTimeLeft, wordsToDraw, roundLen, setWord, intervalRef, roundRef)
+      const doodles = await startRound(canvas, setTimeLeft, wordsToDraw, roundLen, setWord, intervalRef, roundRef, startRodal)
       const newGame = await sendDoodles(doodles, userId, gameId)
       console.log(newGame) // DEBUG
       setGame(newGame)
@@ -78,8 +116,12 @@ const DrawingView = ({ wordsToDraw, roundLen, gameId, userId, setGame, setGameSt
         <Col span={19}>
           <canvas id="paper-canvas" resize="true"></canvas>
         </Col>
-      <button onClick={handleStartRound}>Start Round</button>
       </Row>
+      <Rodal visible={rodalVisible} onClose={() => setRodalVisible(false)} showCloseButton={false}
+        width={600} height={400} enterAnimation='zoom' closeMaskOnClick={false}>
+        <div className='rodal-header'>{rodalHeader}</div>
+        <div className='rodal-body'>Draw: {word}</div>
+      </Rodal>
     </div>
   )
 }

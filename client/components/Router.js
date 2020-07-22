@@ -18,14 +18,14 @@ const Router = () => {
   const { Content } = Layout
 
   return (
-    <Content className='content' style={{ padding: '0 50px' }}>
+    <div className='content' style={{ padding: '0 50px' }}>
       <Switch>
         <Route exact path='/' component={HomePage} />
         <Route path='/login' component={Login} />
         <Route path='/game/:gameId' component={GameView} />
         <Route path='/profile' component={Profile} />
       </Switch>
-    </Content>
+    </div>
   )
 }
 
