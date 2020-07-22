@@ -5,8 +5,11 @@
 @buttonColor: #274c57;
 @borderColor: #d1d1d1;
 
+@char-w: 1ch;
+@gap: 0.3*@char-w;
+
 #root {
-  font-family: 'Scope One', serif;
+  font-family: 'Nanum Gothic Coding', monospace;
   height: 100%;
   background-color: @mainColor;
 }
@@ -59,11 +62,45 @@ img {
 }
 
 #countdown-timer {
-  color: @highlightColor;
+  color: crimson;
+  text-align: center;
 }
 
 #word-to-draw {
   text-align: center;
+}
+
+.borderless-input {
+  height: 100px;
+  width: 100%;
+  padding: 0;
+  font-size: 80px;
+  border: none;
+  letter-spacing: 0.3ch;
+  position: absolute;
+  top: 0;
+  left: 30px;
+  background: transparent;
+  z-index: 1;
+}
+
+.borderless-input:focus {
+  outline: none;
+}
+
+#guess-input-wrapper {
+  background-color: white;
+  font-size: 80px;
+  letter-spacing: 0.3ch;
+  height: 120px;
+  position: relative;
+}
+
+#underline-div {
+  position: absolute;
+  bottom: -10x;
+  left: 30px;
+  background: transparent;
 }
 
 canvas[resize] {
@@ -71,6 +108,9 @@ canvas[resize] {
   height: 100%;
   border: 2px solid @borderColor;
   border-radius: 5px; 
+  background-color: whitesmoke;
+  max-width: 960px;
+  max-height: 480px;
 }
 
 #homepage-div {

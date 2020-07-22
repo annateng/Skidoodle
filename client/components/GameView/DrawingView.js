@@ -51,7 +51,7 @@ const DrawingView = ({ wordsToDraw, roundLen, gameId, userId, setGame, setGameSt
     <div>
       <Typography.Title id='countdown-timer'>Time Left: {timeLeft}s</Typography.Title>
       <Progress percent={timeLeft/roundLen*100} showInfo={false} />
-      <Typography.Title id='word-to-draw'>{word}</Typography.Title>
+      <Typography.Title id='word-to-draw'>{word || " "}</Typography.Title>
       
       <Row gutter={26}>
         <Col span={5}>
@@ -76,7 +76,7 @@ const DrawingView = ({ wordsToDraw, roundLen, gameId, userId, setGame, setGameSt
           </Row>
         </Col>
         <Col span={19}>
-        <canvas id="paper-canvas" resize="true"></canvas>
+          <canvas id="paper-canvas" resize="true"></canvas>
         </Col>
       <button onClick={handleStartRound}>Start Round</button>
       </Row>

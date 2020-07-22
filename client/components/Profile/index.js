@@ -61,12 +61,12 @@ const Profile = () => {
       <Divider orientation='left'>Active Games</Divider>
       <p style={{ fontWeight: 'bold' }}>Your Turn</p>
         <Row gutter={[{ xs: 8, sm: 16, md: 24, lg: 32 }, 32]}>
-          {activeGames && activeGames.filter(ag => ag.activePlayer === user.user.id).map(ag => 
+          {activeGames && activeGames.filter(ag => ag.activePlayer === user.user.id).sort((a,b) => a.timeOfLastMove - b.timeOfLastMove).map(ag => 
             <YourTurn key={ag.id} game={ag} user={user.user} getGame={getGame} />)}
           </Row>
       <p style={{ fontWeight: 'bold' }}>Waiting On Opponent</p>
         <Row gutter={[{ xs: 8, sm: 16, md: 24, lg: 32 }, 32]}>
-          {activeGames && activeGames.filter(ag => ag.activePlayer !== user.user.id).map(ag => 
+          {activeGames && activeGames.filter(ag => ag.activePlayer !== user.user.id).sort((a,b) => a.timeOfLastMove - b.timeOfLastMove).map(ag => 
             <OpponentsTurn key={ag.id} game={ag} user={user.user} />)}
         </Row>
     </Layout>

@@ -88,7 +88,6 @@ const sendRound = async (req, res) => {
     game.save()
     throw new ApplicationError('Game is already over.', 400)
   }
-  game.currentRound = currentRound
 
   const type = req.query.type
   if (!(type === 'guess' || type === 'doodle')) throw new ApplicationError('Valid type is needed as query parameter: \'guess\' or \'doodle\'', 400)
@@ -182,6 +181,8 @@ const sendRound = async (req, res) => {
       delete game.nextWords
       delete game.currentRoundNum
     }
+  } else {
+    game.currentRound = currentRound
   }
 
   const savedGame = await game.save()
@@ -197,7 +198,7 @@ const getGame = async (req, res) => {
   const userId = req.query.userId
   if (!userId) throw new ApplicationError('Not authorized. Include userId as query param.', 401)
   
-  const game = await Game.findById(req.params.gameId).populate('rounds.doodles')
+  const game = await Game.findById(req.params.gameId).populate('currentRound.doodles')
 
   if (userId === game.player1.toString()) checkAuthorization(req, game.player1)
   else if (userId === game.player2.toString()) checkAuthorization(req, game.player2)

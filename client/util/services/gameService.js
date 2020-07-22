@@ -226,9 +226,9 @@ const getReplay = (guessInput, roundLen, drawing, label) => {
 
     replayDrawing.lastIsDrawing = point.isDrawing
 
-    const guessInputVal = guessInput.value
+    const guessInputVal = guessInput.textContent
     replayDrawing.guess.push(guessInputVal)
-    if (guessInputVal === replayDrawing.label) {
+    if (guessInputVal.toLowerCase() === replayDrawing.label.toLowerCase()) {
       replayDrawing.guessedCorrectly = true
       replayDrawing.correctGuessTime = Date.now()
       replayDrawing.isActive = false
@@ -238,13 +238,14 @@ const getReplay = (guessInput, roundLen, drawing, label) => {
   return replayDrawing
 }
 
-export const startGuessingRound = async (canvas, guessInput, doodlesToGuess, roundLen, setTimeLeft, setGuess, intervalRef, replayRef) => {
+export const startGuessingRound = async (canvas, guessInput, doodlesToGuess, roundLen, setTimeLeft, setGuess, setLabel, intervalRef, replayRef) => {
 
   paper.setup(canvas)
   const guesses = []
 
   for (const doodle of doodlesToGuess) {
     setGuess('')
+    setLabel(doodle.label)
     const replayDrawing = getReplay(guessInput, roundLen, doodle.drawing, doodle.label)
 
     const completedReplay = await startReplay(replayDrawing, setTimeLeft, intervalRef, replayRef)

@@ -1,13 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { useDispatch } from 'react-redux'
 import { startGuessingRound, sendGuesses } from 'Utilities/services/gameService'
-import { ROUND_LEN } from 'Utilities/common'
+import { Typography, Progress, Space } from 'antd'
 
 const GuessingView = ({ doodlesToGuess, roundLen, gameId, userId, setGame, setGameState }) => {
-  const [timeLeft, setTimeLeft] = useState(ROUND_LEN)
+  const [timeLeft, setTimeLeft] = useState(roundLen)
   const [canvas, setCanvas] = useState()
   const [guessInput, setGuessInput] = useState()
   const [guess, setGuess] = useState('')
+  const [label, setLabel] = useState('')
   const intervalRef = useRef()
   const replayRef = useRef()
   
@@ -22,9 +22,16 @@ const GuessingView = ({ doodlesToGuess, roundLen, gameId, userId, setGame, setGa
     }
   }, [])
 
+  const handleSetLabel = label => {
+    const disp = label.replace(/[a-z]/gi, '_')
+    console.log(disp) // DEBUG
+
+    setLabel(disp)
+  }
+
   const handleStartGuessing = async () => {
     try {
-      const guesses = await startGuessingRound(canvas, guessInput, doodlesToGuess, roundLen, setTimeLeft, handleSetGuess, intervalRef, replayRef)
+      const guesses = await startGuessingRound(canvas, guessInput, doodlesToGuess, roundLen, setTimeLeft, handleSetGuess, handleSetLabel, intervalRef, replayRef)
       const newGame = await sendGuesses(guesses, userId, gameId)
       console.log(newGame) // DEBUG
       setGame(newGame)
@@ -34,19 +41,28 @@ const GuessingView = ({ doodlesToGuess, roundLen, gameId, userId, setGame, setGa
     }
   }
 
-  const handleSetGuess = (guessVal) => {
-    setGuess(guessVal)
+  const handleSetGuess = guessVal => {
+    if (!label) setGuess(guessVal)
+    else setGuess(guessVal.substring(0, label.length))
   }
 
   return (
-    <div>
-      <input id='guess-input' type='text' value={guess} onChange={event => handleSetGuess(event.target.value)} autoComplete='off' />
+    <Space direction='vertical'>
+      <Typography.Title id='countdown-timer'>Time Left: {timeLeft}s</Typography.Title>
+      <Progress percent={timeLeft/roundLen*100} showInfo={false} />
+      <div>
+        <Typography.Text>Guess</Typography.Text>
+        <div id='guess-input-wrapper'>
+          <input className='borderless-input' id='guess-input' type='text' value={guess} onChange={event => handleSetGuess(event.target.value)} autoComplete='off' spellCheck='false' />
+          <div id='underline-div'>{label}</div>
+        </div>
+      </div>
       <div id="canvas-div">
         <canvas id="paper-canvas" resize="true"></canvas>
       </div>
       <button onClick={handleStartGuessing}>Start Round</button>
       <div>{timeLeft}</div>
-    </div>
+    </Space>
   )
 }
 

@@ -71,7 +71,7 @@ module.exports = (env, argv) => {
                   'font-size-sm': '16px',
                   'layout-header-background': '#274c57',
                   'layout-body-background': '#f2edeb',
-                  'font-family': 'Scope One, serif',
+                  'font-family': 'Nanum Gothic Coding, monospace',
                   'btn-font-size-sm': '@font-size-sm',
                   'border-color-split': '#d1d1d1',
                   'border-color-base': '#d1d1d1',
