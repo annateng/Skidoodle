@@ -9,7 +9,7 @@ const roundSchema = new mongoose.Schema({
   guesses: [{
     guesses: [String],
     isCorrect: Boolean,
-    timeSpent: Number
+    timeSpent: Number,
   }]
 }, { _id: false })
 
@@ -43,7 +43,8 @@ const gameSchema = new mongoose.Schema({
     roundScores: [{
       doodles: [{
         isCorrect: Boolean,
-        timeSpent: Number
+        timeSpent: Number,
+        label: String
       }],
       roundTotals: {
         numCorrect: Number,

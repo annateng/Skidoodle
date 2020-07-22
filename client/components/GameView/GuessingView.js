@@ -38,7 +38,6 @@ const GuessingView = ({ doodlesToGuess, roundLen, gameId, userId, setGame, setGa
 
   const handleSetLabel = label => {
     const disp = label.replace(/[a-z]/gi, '_')
-    console.log(disp) // DEBUG
 
     setLabel(disp)
   }
@@ -52,7 +51,6 @@ const GuessingView = ({ doodlesToGuess, roundLen, gameId, userId, setGame, setGa
       const guesses = await startGuessingRound(canvas, guessInput, doodlesToGuess, roundLen, setTimeLeft, handleSetGuess, 
         handleSetLabel, intervalRef, replayRef, setDoodleNum, handleStartRodal, setLastResult)
       const newGame = await sendGuesses(guesses, userId, gameId)
-      console.log(newGame) // DEBUG
       setGame(newGame)
       setGameState('SHOW-THIS-RESULT')
     } catch (e) {
@@ -84,7 +82,7 @@ const GuessingView = ({ doodlesToGuess, roundLen, gameId, userId, setGame, setGa
         <div className='rodal-header'>{rodalHeader}</div>
         <div className='rodal-body'>
           {lastResult && <div style={{ fontSize: '1.5em', color: 'gold' }}>{lastResult}</div>}
-          <div>Doodle #{doodleNum}</div>
+          <div>Doodle {doodleNum} of {doodlesToGuess.length}</div>
         </div>
       </Rodal>
     </Space>

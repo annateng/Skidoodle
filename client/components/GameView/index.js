@@ -86,11 +86,12 @@ const GameView = () => {
           )
         }
 
+        
         return ( 
           <Space direction='vertical' align='center'>
-            <Divider orientation='left'>Round {lastRoundNum} Results</Divider>
+             <Typography.Title level={3}>Round {lastRoundNum} Results</Typography.Title>
             <RoundResults roundResults={game.result.roundScores[lastRoundNum - 1]} gameResults={game.result.gameTotals} />
-            <Typography.Title level={2}>Ready for round {game.currentRoundNum}?</Typography.Title>
+            <Typography.Title level={3}>Ready for round {game.currentRoundNum}?</Typography.Title>
             {beginRoundButton('Start Guessing')}
           </Space>
         )
@@ -115,7 +116,7 @@ const GameView = () => {
                   </li>
                 </ul>
               </Typography.Paragraph>
-              <Typography.Title level={2}>Ready?</Typography.Title>
+              <Typography.Title level={3}>Ready?</Typography.Title>
               {beginRoundButton('Let\'s Doodle')}
             </Space>
           )
@@ -123,9 +124,9 @@ const GameView = () => {
 
         return ( 
           <Space direction='vertical' align='center'>
-            <Divider orientation='left'>Round {game.currentRoundNum - 1} Results</Divider>
-            <RoundResults roundResults={game.result.roundScores[game.currentRoundNum - 1]} gameResults={game.result.gameTotals} />
-            <Typography.Title level={2}>Ready for round {game.currentRoundNum}?</Typography.Title>
+            <Typography.Title level={3}>Round {game.currentRoundNum - 1} Results</Typography.Title>
+            <RoundResults roundResults={game.result.roundScores[game.currentRoundNum - 2]} gameResults={game.result.gameTotals} />
+            <Typography.Title level={3}>Ready for round {game.currentRoundNum}?</Typography.Title>
             {beginRoundButton('Let\'s Doodle')}
           </Space>
         )

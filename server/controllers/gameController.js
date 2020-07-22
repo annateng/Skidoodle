@@ -134,6 +134,7 @@ const sendRound = async (req, res) => {
 
     // save guesses to round
     for (const guess of gameData.guesses) {
+      
       currentRound.guesses.push({
         ...guess
       })
@@ -147,9 +148,11 @@ const sendRound = async (req, res) => {
       roundScore.roundTotals.totalTimeSpent += guess.timeSpent
       game.result.gameTotals.totalTimeSpent += guess.timeSpent
 
+      console.log(guess.label)
       roundScore.doodles.push({
         isCorrect: guess.isCorrect,
-        timeSpent: guess.timeSpent
+        timeSpent: guess.timeSpent,
+        label: guess.label
       })
     }
 

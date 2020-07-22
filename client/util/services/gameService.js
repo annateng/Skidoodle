@@ -73,7 +73,6 @@ export const getDrawing = roundLen => {
       strokeColor: isEraser === 'true' ? 'whitesmoke' : localStorage.getItem('scribbleColor'),
       strokeWidth: isEraser === 'true'? 20 : localStorage.getItem('scribbleSize'),
     })
-    console.log(isEraser, isEraser==='true')
 
     drawing.isDrawing = true
   }
@@ -265,7 +264,8 @@ export const startGuessingRound = async (canvas, guessInput, doodlesToGuess, rou
       guesses: completedReplay.guess,
       isCorrect: completedReplay.guessedCorrectly,
       // max time spent is the round length. time is represented in milliseconds.
-      timeSpent: completedReplay.correctGuessTime ? Math.min(completedReplay.correctGuessTime - completedReplay.startTime, roundLen * 1000) : roundLen
+      timeSpent: completedReplay.correctGuessTime ? Math.min(completedReplay.correctGuessTime - completedReplay.startTime, roundLen * 1000) : roundLen * 1000,
+      label: completedReplay.label
     }
 
     guesses.push(guessToPush)
