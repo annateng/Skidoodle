@@ -61,12 +61,20 @@ const gameSchema = new mongoose.Schema({
 gameSchema.set('toJSON', {
   transform: (document, returnedObject) => {
       returnedObject.id = returnedObject._id.toString()
-      // returnedObject.currentRound = returnedObject.isActive ? returnedObject.rounds[returnedObject.rounds.length - 1] : null
       delete returnedObject.rounds
       delete returnedObject.allWords
       delete returnedObject._id
       delete returnedObject.__v
       if (!returnedObject.currentRound || returnedObject.currentRound.state != 'DOODLE') delete returnedObject.nextWords
+      
+      // return active/inactive players instead of player1/player2
+      if (returnedObject.activePlayer) {
+        const activePlayerIdStr = returnedObject.activePlayer.id ? returnedObject.activePlayer.id.toString() : returnedObject.activePlayer.toString()
+        const p1IdStr = returnedObject.player1.id ? returnedObject.player1.id.toString() : returnedObject.player1.toString()
+        returnedObject.inactivePlayer = activePlayerIdStr === p1IdStr ? returnedObject.player2 : returnedObject.player1
+        delete returnedObject.player1
+        delete returnedObject.player2
+      }
   }
 })
 

@@ -1,10 +1,8 @@
 import React from 'react'
 import { Table } from 'antd'
 
-const RoundResults = ({roundResults, gameTotals}) => {
+const RoundResults = ({ roundResults }) => {
   
-  console.log(roundResults) // DEBUG
-
   const datasource = roundResults.doodles.map((doodle, index) => ({
     key: index,
     label: doodle.label,
@@ -12,9 +10,7 @@ const RoundResults = ({roundResults, gameTotals}) => {
     timeSpent: (doodle.timeSpent / 1000).toFixed(2) + 's'
   }))
 
-  console.log(datasource)
-
-  const columns=
+  const columns =
   [
     { title: 'Doodle #', dataIndex: 'key', key: 'key' },
     { title: 'Word', dataIndex: 'label', key: 'label'},
@@ -25,8 +21,16 @@ const RoundResults = ({roundResults, gameTotals}) => {
     { title: 'Time', dataIndex: 'timeSpent', key: 'timeSpent' }
   ]
 
+  const footer = () => (
+    <div>
+      <b>Total correct: </b> <span style={{ color: 'limegreen' }} >{roundResults.roundTotals.numCorrect}&nbsp;&nbsp;&nbsp;&nbsp;</span>
+      <b>Total guess time: </b> <span style={{ color: 'limegreen' }}> {(roundResults.roundTotals.totalTimeSpent / 1000).toFixed(2) +'s'}</span>
+    </div>
+  )
+
   return (
-    <Table dataSource={datasource} columns={columns} tableLayout='fixed' pagination={false} />
+    <Table dataSource={datasource} columns={columns} tableLayout='fixed' 
+      pagination={false} footer={footer} style={{ marginBottom: '15px' }} />
   )
 }
 

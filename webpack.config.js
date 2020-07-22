@@ -63,6 +63,7 @@ module.exports = (env, argv) => {
                   'btn-font-size-sm': '@font-size-sm',
                   'border-color-split': '#d1d1d1',
                   'border-color-base': '#d1d1d1',
+                  'error-color': '#b3374c',
                 },
                 javascriptEnabled: true,
               }

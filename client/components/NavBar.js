@@ -16,12 +16,15 @@ const NavBar = ({ user }) => {
       case 'logout': 
         dispatch(logout())
         history.push('/')
+      case 'profile':
+        history.push('/profile')
     }
   }
 
   const menu = (
     <Menu onClick={handleMenuClick} style={{ padding: '10px' }}>
       <span style={{ fontSize: '16px' }}>Logged in as {user && user.user && user.user.username}</span>
+      <Menu.Item key="profile" style={{ fontSize: '16px' }}>Profile</Menu.Item>
       <Menu.Item key="logout" style={{ fontSize: '16px' }}>Log Out</Menu.Item>
     </Menu>
   )

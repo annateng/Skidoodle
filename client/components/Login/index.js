@@ -25,8 +25,8 @@ const LoginPage = () => {
     return (
       <div id='login-form-div'>
         <Typography.Title level={2}>You are already logged in as {user.user.username} </Typography.Title>
-        <Space>
-          <Button type='primary' size='large' onClick={() => dispatch(logout())}>Log Out</Button>
+        <Space direction='vertical'>
+          <Button type='danger' size='large' onClick={() => dispatch(logout())}>Log Out</Button>
           <Button type='primary' size='large' onClick={() => history.push('/profile')}>Go To My Profile</Button>
         </Space>
       </div>

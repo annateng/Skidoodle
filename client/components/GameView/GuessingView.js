@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { startGuessingRound, sendGuesses, startRodal } from 'Utilities/services/gameService'
-import { Typography, Progress, Space } from 'antd'
+import { Typography, Progress } from 'antd'
 import Rodal from 'rodal'
 
 const GuessingView = ({ doodlesToGuess, roundLen, gameId, userId, setGame, setGameState }) => {
@@ -52,7 +52,10 @@ const GuessingView = ({ doodlesToGuess, roundLen, gameId, userId, setGame, setGa
         handleSetLabel, intervalRef, replayRef, setDoodleNum, handleStartRodal, setLastResult)
       const newGame = await sendGuesses(guesses, userId, gameId)
       setGame(newGame)
-      setGameState('SHOW-THIS-RESULT')
+
+      if (newGame.isActive) setGameState('SHOW-THIS-RESULT')
+      else setGameState('INACTIVE')
+      
     } catch (e) {
       console.error('Error in handleStartGuessing', e)
     }
@@ -64,7 +67,7 @@ const GuessingView = ({ doodlesToGuess, roundLen, gameId, userId, setGame, setGa
   }
 
   return (
-    <Space direction='vertical'>
+    <div>
       <Typography.Title id='countdown-timer'>Time Left: {timeLeft}s</Typography.Title>
       <Progress id='guess-progress' percent={timeLeft/roundLen*100} showInfo={false} />
       <div>
@@ -85,7 +88,7 @@ const GuessingView = ({ doodlesToGuess, roundLen, gameId, userId, setGame, setGa
           <div>Doodle {doodleNum} of {doodlesToGuess.length}</div>
         </div>
       </Rodal>
-    </Space>
+    </div>
   )
 }
 

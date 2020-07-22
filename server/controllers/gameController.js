@@ -148,7 +148,6 @@ const sendRound = async (req, res) => {
       roundScore.roundTotals.totalTimeSpent += guess.timeSpent
       game.result.gameTotals.totalTimeSpent += guess.timeSpent
 
-      console.log(guess.label)
       roundScore.doodles.push({
         isCorrect: guess.isCorrect,
         timeSpent: guess.timeSpent,
@@ -167,7 +166,9 @@ const sendRound = async (req, res) => {
   game.timeOfLastMove = Date.now()
 
   if (currentRound.state === 'OVER') {
+    console.log('got at least here', game.rounds.length, game.numRounds)
     if (game.rounds.length < game.numRounds) {
+      // create next round
       game.rounds.push({
         state: 'DOODLE',
         doodles: [],
@@ -180,16 +181,21 @@ const sendRound = async (req, res) => {
     } else {
       // Game over
       game.isActive = false
-      delete game.activePlayer
-      delete game.nextWords
-      delete game.currentRoundNum
+      game.activePlayer = null
+      game.nextWords = null
+      game.currentRoundNum = null
+      console.log('got here', game)
     }
   } else {
     game.currentRound = currentRound
   }
 
   const savedGame = await game.save()
-  savedGame.populate({ path: 'player1', select: 'username'}).populate({ path: 'player2', select: 'username'}).execPopulate()
+  await savedGame
+    .populate({ path: 'player1', select: 'username'})
+    .populate({ path: 'player2', select: 'username'})
+    .populate({ path: 'activePlayer', select: 'username'})
+    .execPopulate()
 
   res.status(201).json(savedGame.toJSON())
 }
@@ -201,10 +207,14 @@ const getGame = async (req, res) => {
   const userId = req.query.userId
   if (!userId) throw new ApplicationError('Not authorized. Include userId as query param.', 401)
   
-  const game = await Game.findById(req.params.gameId).populate('currentRound.doodles')
+  const game = await Game.findById(req.params.gameId)
+    .populate('currentRound.doodles')
+    .populate({ path: 'player1', select: 'username'})
+    .populate({ path: 'player2', select: 'username'})
+    .populate({ path: 'activePlayer', select: 'username'})
 
-  if (userId === game.player1.toString()) checkAuthorization(req, game.player1)
-  else if (userId === game.player2.toString()) checkAuthorization(req, game.player2)
+  if (userId === game.player1._id.toString()) checkAuthorization(req, game.player1._id)
+  else if (userId === game.player2._id.toString()) checkAuthorization(req, game.player2._id)
   else throw new ApplicationError('Not authorized.', 401)
   
   res.json(game.toJSON())
