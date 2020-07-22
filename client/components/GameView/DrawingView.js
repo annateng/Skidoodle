@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { Typography, Progress, Row, Col, Button, Card } from 'antd'
+import { Typography, Progress, Row, Col, Card } from 'antd'
 import Rodal from 'rodal'
 
-import { startRound, sendDoodles } from 'Utilities/services/gameService'
+import { startRound, sendDoodles, startRodal } from 'Utilities/services/gameService'
 
 const colors = ['black', 'darkred', 'crimson', 'deeppink', 'pink', 'coral', 'orange', 'gold', 'limegreen', 'darkgreen', 
   'lightseagreen', 'paleturquoise', 'cadetblue', 'cornflowerblue', 'mediumblue', 'mediumpurple', 'indigo', 'dimgray']
@@ -42,33 +42,14 @@ const DrawingView = ({ wordsToDraw, roundLen, gameId, userId, setGame, setGameSt
   
   }, [canvas])
 
-  const startRodal = () => {
-    return new Promise((resolve, reject) => {
-      let countDown = 3
-      setRodalVisible(true)
-      setRodalHeader(countDown)
-
-      const rodalTick = setInterval(() => {
-        countDown--
-        if (countDown > 0) setRodalHeader(countDown)
-        else {
-          setRodalHeader('GO!')
-          clearInterval(rodalTick)
-          setTimeout(() => {
-            setRodalVisible(false)
-            resolve()
-          }, 200)
-        }
-      }, 1000)
-
-      modalIntervalRef.current = rodalTick
-      modalRef.current = () => reject('Modal: Component Unmounted')
-    })
+  const handleStartRodal = async () => {
+    await startRodal(setRodalVisible, setRodalHeader, modalIntervalRef, modalRef)
   }
 
   const handleStartRound = async () => {
     try {
-      const doodles = await startRound(canvas, setTimeLeft, wordsToDraw, roundLen, setWord, intervalRef, roundRef, startRodal)
+      const doodles = await startRound(canvas, setTimeLeft, wordsToDraw, roundLen, setWord, intervalRef, 
+        roundRef, handleStartRodal)
       const newGame = await sendDoodles(doodles, userId, gameId)
       console.log(newGame) // DEBUG
       setGame(newGame)

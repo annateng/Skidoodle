@@ -9,7 +9,7 @@ import { getActiveGames, getUserData } from 'Utilities/services/userService'
 import { getNewGame } from 'Utilities/services/gameService'
 
 import YourTurn from 'Components/Profile/YourTurn'
-import OpponentsTurn from 'Components/Profile/OpponentsTurn'
+import OthersTurn from 'Components/Profile/OthersTurn'
 import Friend from 'Components/Profile/Friend'
 
 const Profile = () => {
@@ -67,10 +67,10 @@ const Profile = () => {
           {activeGames && activeGames.filter(ag => ag.activePlayer === user.user.id).sort((a,b) => a.timeOfLastMove - b.timeOfLastMove).map(ag => 
             <YourTurn key={ag.id} game={ag} user={user.user} getGame={getGame} />)}
           </Row>
-      <p style={{ fontWeight: 'bold' }}>Waiting On Opponent</p>
+      <p style={{ fontWeight: 'bold' }}>Waiting On Partner</p>
         <Row gutter={[{ xs: 8, sm: 16, md: 24, lg: 32 }, 32]}>
           {activeGames && activeGames.filter(ag => ag.activePlayer !== user.user.id).sort((a,b) => a.timeOfLastMove - b.timeOfLastMove).map(ag => 
-            <OpponentsTurn key={ag.id} game={ag} user={user.user} />)}
+            <OthersTurn key={ag.id} game={ag} user={user.user} />)}
         </Row>
     </Layout>
   )

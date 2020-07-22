@@ -5,8 +5,7 @@
 @buttonColor: #274c57;
 @borderColor: #d1d1d1;
 
-@char-w: 1ch;
-@gap: 0.3*@char-w;
+@canvasMaxWidth: 960px;
 
 #root {
   font-family: 'Nanum Gothic Coding', monospace;
@@ -58,18 +57,17 @@ img {
 
 #begin-round-button {
   width: 300px;
-  height: 115px;
-  background-color: @highlightColor;
-  font-size: 40px;
+  height: 85px;
+  font-size: 36px;
   margin-left: auto;
   margin-right: auto;
   margin-top: 50px;
-  color: whitesmoke;
 }
 
 #countdown-timer {
   color: crimson;
   text-align: center;
+  max-width: @canvasMaxWidth;
 }
 
 #word-to-draw {
@@ -87,6 +85,7 @@ img {
   top: 0;
   left: 30px;
   background: transparent;
+  max-width: @canvasMaxWidth;
   z-index: 1;
 }
 
@@ -95,11 +94,12 @@ img {
 }
 
 #guess-input-wrapper {
-  background-color: white;
+  background-color: whitesmoke;
   font-size: 80px;
   letter-spacing: 0.3ch;
   height: 120px;
   position: relative;
+  max-width: @canvasMaxWidth;
 }
 
 #underline-div {
@@ -109,13 +109,17 @@ img {
   background: transparent;
 }
 
+#guess-progress {
+  max-width: @canvasMaxWidth;
+}
+
 canvas[resize] {
   width: 100%;
   height: 100%;
   border: 2px solid @borderColor;
   border-radius: 5px; 
   background-color: whitesmoke;
-  max-width: 960px;
+  max-width: @canvasMaxWidth;
   max-height: 480px;
 }
 
@@ -141,3 +145,8 @@ canvas[resize] {
   text-align: center;
 }
 
+.rodal-body {
+  font-size: 45px;
+  font-weight: bold;
+  text-align: center;
+}

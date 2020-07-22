@@ -44,14 +44,15 @@ const GameView = () => {
 
   if (user) setAllTokens(user.token)
 
-  if (!user) return ( <Redirect to="/login " /> ) // TODO: show a page saying you're not logged in
-  if (!game || !gameState) return ( <div>loading...</div> )
+  if (!user) return ( <Redirect to="/login " /> )
 
   const beginRoundButton = buttonText => (
-    <Button onClick={handleBeginRound} id='begin-round-button'>{buttonText}</Button>
+    <Button type='primary' onClick={handleBeginRound} id='begin-round-button'>{buttonText}</Button>
   )
   
   const getGameBody = () => {
+    if (!game || !gameState) return ( <div>loading...</div> )
+
     switch (gameState) {
       case 'INACTIVE': 
         return ( <div>GAME IS OVER</div> ) // TODO
@@ -62,12 +63,36 @@ const GameView = () => {
           return (<div>previous round results not available</div>)
         }
 
+        // During first round: no scores to show
+        if (game.result.roundScores.length === 0 && game.currentRoundNum === 1) {
+          return (
+            <Space direction='vertical' align='center'>
+              <Typography.Title level={2}>Guessing Round</Typography.Title>
+              <Typography.Paragraph>
+                <ul>
+                  <li>
+                    You will have {game.roundLen} seconds to guess what your partner has drawn
+                  </li>
+                  <li>
+                    There are {game.currentRound.doodles.length} words to guess
+                  </li>
+                  <li>
+                    Try to guess as many as you can, as fast as possible for a better score!
+                  </li>
+                </ul>
+              </Typography.Paragraph>
+              {beginRoundButton('Start Guessing')}
+            </Space>
+          )
+        }
+
         return ( 
-          <div>
+          <Space direction='vertical' align='center'>
             <Divider orientation='left'>Round {lastRoundNum} Results</Divider>
             <RoundResults roundResults={game.result.roundScores[lastRoundNum - 1]} gameResults={game.result.gameTotals} />
-            {beginRoundButton()}
-          </div>
+            <Typography.Title level={2}>Ready for round {game.currentRoundNum}?</Typography.Title>
+            {beginRoundButton('Start Guessing')}
+          </Space>
         )
       case 'SHOW-THIS-RESULT':
         if (!game.result || !game.result.roundScores || game.result.roundScores.length < Math.max(game.currentRoundNum - 1, 0)) {
@@ -90,17 +115,19 @@ const GameView = () => {
                   </li>
                 </ul>
               </Typography.Paragraph>
-              {beginRoundButton('Ready?')}
+              <Typography.Title level={2}>Ready?</Typography.Title>
+              {beginRoundButton('Let\'s Doodle')}
             </Space>
           )
         }
 
         return ( 
-          <div>
-            <Divider orientation='left'>Round {game.currentRoundNum} Results</Divider>
+          <Space direction='vertical' align='center'>
+            <Divider orientation='left'>Round {game.currentRoundNum - 1} Results</Divider>
             <RoundResults roundResults={game.result.roundScores[game.currentRoundNum - 1]} gameResults={game.result.gameTotals} />
-            {beginRoundButton()}
-          </div>
+            <Typography.Title level={2}>Ready for round {game.currentRoundNum}?</Typography.Title>
+            {beginRoundButton('Let\'s Doodle')}
+          </Space>
         )
       case 'GUESS': 
         return ( <GuessingView doodlesToGuess={game.currentRound.doodles} roundLen={game.roundLen} gameId={game.id} 

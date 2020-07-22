@@ -120,6 +120,7 @@ export const startRound = async (canvas, setTimeLeft, wordsToDraw, roundLen, set
   for (const word of wordsToDraw) {
     const drawing = getDrawing(roundLen)
     setWord(word)
+    setTimeLeft(roundLen)
     await startRodal()
     const completedDrawing = await startDrawing(drawing, setTimeLeft, intervalRef, roundRef)
 
@@ -229,7 +230,7 @@ const getReplay = (guessInput, roundLen, drawing, label) => {
 
     replayDrawing.lastIsDrawing = point.isDrawing
 
-    const guessInputVal = guessInput.textContent
+    const guessInputVal = guessInput.value
     replayDrawing.guess.push(guessInputVal)
     if (guessInputVal.toLowerCase() === replayDrawing.label.toLowerCase()) {
       replayDrawing.guessedCorrectly = true
@@ -241,16 +242,22 @@ const getReplay = (guessInput, roundLen, drawing, label) => {
   return replayDrawing
 }
 
-export const startGuessingRound = async (canvas, guessInput, doodlesToGuess, roundLen, setTimeLeft, setGuess, setLabel, intervalRef, replayRef) => {
+export const startGuessingRound = async (canvas, guessInput, doodlesToGuess, roundLen, setTimeLeft, setGuess, 
+  setLabel, intervalRef, replayRef, setDoodleNum, startRodal, setLastResult) => {
 
   paper.setup(canvas)
   const guesses = []
 
+  let doodleNum = 1
   for (const doodle of doodlesToGuess) {
     setGuess('')
     setLabel(doodle.label)
+    setDoodleNum(doodleNum++)
+    setTimeLeft(roundLen)
     const replayDrawing = getReplay(guessInput, roundLen, doodle.drawing, doodle.label)
 
+    await startRodal()
+    guessInput.focus()
     const completedReplay = await startReplay(replayDrawing, setTimeLeft, intervalRef, replayRef)
 
     const guessToPush = {
@@ -262,7 +269,33 @@ export const startGuessingRound = async (canvas, guessInput, doodlesToGuess, rou
     }
 
     guesses.push(guessToPush)
+
+    setLastResult(completedReplay.guessedCorrectly ? 'Correct!' : 'Out of Time')
   }
 
   return guesses
+}
+
+export const startRodal = (setRodalVisible, setRodalHeader, modalIntervalRef, modalRef) => {
+  return new Promise((resolve, reject) => {
+    let countDown = 3
+    setRodalVisible(true)
+    setRodalHeader(countDown)
+
+    const rodalTick = setInterval(() => {
+      countDown--
+      if (countDown > 0) setRodalHeader(countDown)
+      else {
+        setRodalHeader('GO!')
+        clearInterval(rodalTick)
+        setTimeout(() => {
+          setRodalVisible(false)
+          resolve()
+        }, 200)
+      }
+    }, 1000)
+
+    modalIntervalRef.current = rodalTick
+    modalRef.current = () => reject('Modal: Component Unmounted')
+  })
 }
