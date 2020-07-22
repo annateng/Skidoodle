@@ -67,11 +67,13 @@ export const getDrawing = roundLen => {
 
     if (drawing.curPath) drawing.curPath.selected = false
     
+    const isEraser = localStorage.getItem('scribbleEraser')
     drawing.curPath = new paper.Path({
       segments: [event.point],
-      strokeColor: localStorage.getItem('scribbleColor') || 'black',
-      strokeWidth: localStorage.getItem('scribbleSize') || 2
+      strokeColor: isEraser === 'true' ? 'whitesmoke' : localStorage.getItem('scribbleColor'),
+      strokeWidth: isEraser === 'true'? 20 : localStorage.getItem('scribbleSize'),
     })
+    console.log(isEraser, isEraser==='true')
 
     drawing.isDrawing = true
   }

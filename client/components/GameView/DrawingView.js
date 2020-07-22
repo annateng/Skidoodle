@@ -29,6 +29,7 @@ const DrawingView = ({ wordsToDraw, roundLen, gameId, userId, setGame, setGameSt
       setCanvas(thisCanvas)
       localStorage.setItem('scribbleColor', 'black')
       localStorage.setItem('scribbleSize', 2)
+      localStorage.setItem('scribbleEraser', false)
     }
 
     // clean up intervals and unresolved promises
@@ -78,11 +79,17 @@ const DrawingView = ({ wordsToDraw, roundLen, gameId, userId, setGame, setGameSt
   }
 
   const handleSetColor = color => {
+    localStorage.setItem('scribbleEraser', false)
     localStorage.setItem('scribbleColor', color)
   }
 
   const handleSetSize = size => {
+    localStorage.setItem('scribbleEraser', false)
     localStorage.setItem('scribbleSize', size)
+  }
+
+  const handleSetEraser = () => {
+    localStorage.setItem('scribbleEraser', true)
   }
 
   return (
@@ -98,10 +105,15 @@ const DrawingView = ({ wordsToDraw, roundLen, gameId, userId, setGame, setGameSt
             { colors.map(color => 
               <Col span={6} key={color}>
                 <div onClick={() => handleSetColor(color)}>
-                  <Card hoverable='true' style={{ backgroundColor: color }} >
-                  </Card>
+                  <Card hoverable='true' style={{ backgroundColor: color }} ></Card>
                 </div>
-              </Col>) }
+              </Col>) 
+            }
+            <Col span={12} key={'eraser'}>
+              <div onClick={handleSetEraser}>
+                <Card hoverable='true' style={{ backgroundColor: 'whitesmoke', maxHeight: '50px', padding: '0px' }} bodyStyle={{ padding: '10px' }}>Eraser</Card>
+              </div>
+            </Col>
           </Row>
           <Typography.Text>Size</Typography.Text>
           <Row gutter={[4, 8]}>
