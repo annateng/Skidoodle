@@ -5,6 +5,7 @@ const games = require('@controllers/gameController')
 
 const router = Router()
 
+router.get('/users/search', users.findUsers)
 router.post('/users/:id/friend-requests/:frId', users.respondToFriendRequest)
 router.get('/users/:id/friend-requests', users.getFriendRequests)
 router.post('/users/:id/friend-requests', users.addFriend)

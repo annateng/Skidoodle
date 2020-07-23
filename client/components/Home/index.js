@@ -31,9 +31,11 @@ const Home = () => {
 
   if (!user || !user.user) {
     return (
-      <div>
+      <div className='main-layout' >
+        <div className='vertical-center-div'>
         <Typography.Title level={4}>Log in to see your profile</Typography.Title>
         <Button type='primary' size='large' onClick={() => history.push('/login')}>Log In</Button>
+        </div>
       </div>
     )
   }
@@ -133,6 +135,9 @@ const Home = () => {
             .map(ag => <ActiveGameCard key={ag.id} game={ag} user={user.user} getGame={getGame} />)}
           </Row>
       <Divider orientation='left'>Friends</Divider>
+        <div style={{ marginBottom: '15px' }}>
+          <Button onClick={() => history.push('/add-friends')}>Find New Friends</Button>
+        </div>
         <Row gutter={rowGutter}>
         {userData && userData.friends.map(friend => 
             <Friend key={friend.id} friend={friend} handleNewGame={handleNewGame} />)}

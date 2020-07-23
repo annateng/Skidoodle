@@ -1,7 +1,5 @@
 import React from 'react'
-import { Route, Switch, Redirect } from 'react-router-dom'
-import { useSelector } from 'react-redux'
-import { Layout } from 'antd'
+import { Route, Switch } from 'react-router-dom'
 
 import FrontPage from 'Components/FrontPage'
 import Login from 'Components/Login'
@@ -9,6 +7,7 @@ import GameView from 'Components/GameView'
 // import Profile from 'Components/Profile'
 import Home from 'Components/Home'
 import Signup from 'Components/Signup'
+import AddFriends from 'Components/AddFriends'
 
 const Router = () => {
 
@@ -20,6 +19,7 @@ const Router = () => {
         <Route path='/game/:gameId' component={GameView} />
         <Route path='/home' component={Home} />
         <Route path='/signup' component={Signup} />
+        <Route path='/add-friends' component={AddFriends} />
       </Switch>
     </div>
   )

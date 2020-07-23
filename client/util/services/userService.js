@@ -63,3 +63,12 @@ export const signUpUser = async userData => {
     throw new Error(`status ${e.response.status}: ${e.response.data.error}`)
   }
 }
+
+export const searchForUsers = async (userId, queryString) => {
+  const config = {
+    params: { search: queryString, requesterId: userId }
+  }
+
+  const res = await axios.get(`${basePath}/search`, config)
+  return res.data
+}

@@ -66,7 +66,8 @@ const Login = () => {
           <Input.Password />
         </Form.Item>
         <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-          <Button type='primary' htmlType='submit' size='large'>Log In</Button>
+          <Button type='primary' htmlType='submit' size='large' style={{ marginRight: '20px' }}>Log In</Button>
+          <Button size='large' onClick={() => history.push('/signup')}>Sign Up</Button>
         </Form.Item>
       </Form>    
     </div>

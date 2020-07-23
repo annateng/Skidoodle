@@ -7,6 +7,27 @@ const GameRequest = require('@models/game-request')
 const Game = require('@models/game')
 const { getDecodedToken, checkAuthorization, isFriendsWith } = require('@util/authUtil')
 
+/** send search string, requesterId in query params */
+const findUsers = async (req, res) => {
+  const str = req.query.search
+  if (!str || str.length < 1) return res.json([])
+
+  const requesterId = req.query.requesterId
+  const requestingUser = await User.findById(requesterId)
+
+  const regex = new RegExp(`.*${str}.*`, 'i')
+  const filteredUsers = await User.find({ username: regex }, 'username')
+  
+  res.json(
+    filteredUsers.map(fu => 
+      ({
+        username: fu.username,
+        id: fu._id.toString(),
+        isFriends: requestingUser && requestingUser.friends ? requestingUser.friends.map(f => f.toString()).includes(fu._id.toString()) : false
+      })
+    )
+  )
+}
 
 const deleteUser = async (req, res) => {
   checkAuthorization(req, req.params.id)
@@ -223,5 +244,5 @@ const respondToFriendRequest = async (req, res) => {
 module.exports = {
   deleteUser, getUser, addFriend, updateUser, createUser, addFriend, 
   getFriendRequests, deleteFriendRequest, respondToFriendRequest,
-  getNotifications, respondToGameRequest
+  getNotifications, respondToGameRequest, findUsers
 }
