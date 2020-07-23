@@ -54,17 +54,21 @@ const Home = () => {
     const notificationsFromDB = await getNotifications(user.user.id)
     console.log(notificationsFromDB)
 
-    const formattedNotifications = notificationsFromDB.friendRequests.map(fr => ({
+    const formattedNotifications = notificationsFromDB.friendRequests
+    .map(fr => ({
       id: fr.id,
       type: 'friendRequest',
       requester: fr.requester.username,
       dateRequested: fr.dateRequested
-    })).concat(notificationsFromDB.gameRequests.map(gr => ({
+    })).concat(
+      notificationsFromDB.gameRequests
+      .map(gr => ({
       id: gr.id,
       type: 'gameRequest',
       requester: gr.requester.username,
       dateRequested: gr.dateRequested
     })))
+    .sort((a,b) => a.dateRequested - b.dateRequested)
 
     setNotifications(formattedNotifications)
   }
@@ -83,7 +87,9 @@ const Home = () => {
   }
 
   const handleRejectGame = async gameRequestId => {
-
+    const acceptedGame = await rejectGameRequest(user.user.id, gameRequestId)
+    handleGetActiveGames()
+    handleGetNotifications()
   }
 
   const handleAcceptFriend = async friendRequestId => {
@@ -116,8 +122,11 @@ const Home = () => {
     <div className="main-layout" >
       <Typography.Title level={2} style={{ marginBottom: '0' }}>Welcome {user.user.username} </Typography.Title>
       {notifications && notifications.length > 0 && <Divider orientation='left'><b style={{ color: 'dodgerblue' }}>Notifications</b></Divider>}
-      {notifications && notifications.map(n => <NotificationCard key={n.id} notification={n} handleAcceptGame={handleAcceptGame} 
-        handleRejectGame={handleRejectGame} handleAcceptFriend={handleAcceptFriend} handleRejectFriend={handleRejectFriend}/>)}
+      {notifications && 
+        <Row gutter={rowGutter}>
+          {notifications.map(n => <NotificationCard key={n.id} notification={n} handleAcceptGame={handleAcceptGame} 
+          handleRejectGame={handleRejectGame} handleAcceptFriend={handleAcceptFriend} handleRejectFriend={handleRejectFriend}/>)}
+        </Row>}
       <Divider orientation='left'>Active Games</Divider>
         <Row gutter={rowGutter}>
           {activeGames && activeGames.sort(sortByActivePlayerThenDate)

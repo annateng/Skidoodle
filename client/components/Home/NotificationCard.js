@@ -1,16 +1,22 @@
 import React from 'react'
 import { Col, Button, Card } from 'antd'
 
+import { monthNames } from 'Utilities/common'
+
 const NotificationCard = ({ notification, handleAcceptGame, handleAcceptFriend, handleRejectGame, handleRejectFriend }) => {
 
   const notificationBody = (notification) => {
+    // console.log(notification)
     if (!notification) return null
+
+    const date = new Date(notification.dateRequested)
 
     switch (notification.type) {
       case 'friendRequest':
         return (
           <div>
-            <div>New friend request from {notification.requester}!</div>
+            <div style={{ fontSize: '1.1em' }}>New friend request from {notification.requester}!</div>
+            <div>Sent on {monthNames[date.getMonth()].substring(0,3)} {date.getDate()}</div>
             <div>
               <Button type='primary' size='small' style={{ marginRight: '10px' }} onClick={() => null}>Accept</Button>
               <Button type='danger' size='small' onClick={() => null}>Reject</Button>
@@ -21,7 +27,8 @@ const NotificationCard = ({ notification, handleAcceptGame, handleAcceptFriend, 
       case 'gameRequest':
         return (
           <div>
-            <div>New game request from {notification.requester}!</div>
+            <div style={{ fontSize: '1.1em' }}>New game request from {notification.requester}!</div>
+            <div>Sent on {monthNames[date.getMonth()].substring(0,3)} {date.getDate()}</div>
             <div>
               <Button type='primary' size='small' style={{ marginRight: '10px' }} onClick={() => handleAcceptGame(notification.id)}>Accept</Button>
               <Button type='danger' size='small' onClick={() => handleRejectGame(notification.id)}>Reject</Button>
@@ -31,10 +38,15 @@ const NotificationCard = ({ notification, handleAcceptGame, handleAcceptFriend, 
     }
   }
 
+  const cardStyle = {
+    border: notification.type === 'friendRequest' ? '2px solid mediumaquamarine' : '2px solid #c2b2d6',
+    backgroundColor: notification.type === 'friendRequest' ? '#cfffef' : '#f1e6ff'
+  }
+
   // TODO: handleSeeProfile
   return (
     <Col xs={12} sm={8} lg={6} >
-      <Card className='notification-card' bordered='true' bodyStyle={{ padding: '10px' }}>
+      <Card className='home-card' bordered='true' bodyStyle={{ padding: '10px' }} style={cardStyle}>
         {notificationBody(notification)}
       </Card>
     </Col>

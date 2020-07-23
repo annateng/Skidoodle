@@ -16,15 +16,15 @@ const RoundResults = ({ roundResults, roundNum, artist, guesser }) => {
     { title: 'Word', dataIndex: 'label', key: 'label'},
     { title: 'Guess', dataIndex: 'isCorrect', key: 'isCorrect',
         render: guess => guess ? 
-          <span style={{ color: 'limegreen' }}>Correct</span>
-          : <span style={{ color: 'crimson' }}>Timed Out</span> },
+          <span style={{ color: 'darkgreen' }}>Correct</span>
+          : <span style={{ color: 'tomato' }}>Timed Out</span> },
     { title: 'Time', dataIndex: 'timeSpent', key: 'timeSpent' }
   ]
 
   const footer = () => (
     <div>
-      <b>Total correct: </b> <span style={{ color: 'limegreen' }} >{roundResults.roundTotals.numCorrect}&nbsp;&nbsp;&nbsp;&nbsp;</span>
-      <b>Total guess time: </b> <span style={{ color: 'limegreen' }}> {(roundResults.roundTotals.totalTimeSpent / 1000).toFixed(2) +'s'}</span>
+      <b>Total correct: </b> <span style={{ color: 'darkgreen' }} >{roundResults.roundTotals.numCorrect}&nbsp;&nbsp;&nbsp;&nbsp;</span>
+      <b>Total guess time: </b> <span style={{ color: 'darkgreen' }}> {(roundResults.roundTotals.totalTimeSpent / 1000).toFixed(2) +'s'}</span>
     </div>
   )
 

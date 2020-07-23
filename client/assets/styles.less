@@ -1,7 +1,7 @@
 @import '~antd/dist/antd.less';
 
 @mainColor: #f2edeb;
-@highlightColor: #b3374c;
+@highlightColor: #FF6347;
 @borderColor: #d1d1d1;
 @shadow-color: rgba(0, 0, 0, 0.15);
 
@@ -70,7 +70,7 @@ img {
 }
 
 #countdown-timer {
-  color: crimson;
+  color: @highlightColor;
   text-align: center;
   max-width: @canvasMaxWidth;
 }
@@ -179,12 +179,7 @@ canvas[resize] {
   position: relative;
 }
 
-.active-game-card {
+.home-card {
   font-size: 16px;
-  border: 1px solid @borderColor;
-}
-
-.friend-card {
-  background-color: whitesmoke;
   border: 1px solid @borderColor;
 }

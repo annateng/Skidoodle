@@ -20,8 +20,8 @@ const GameResults = ({ result }) => {
 
   const footer = () => (
     <div>
-      <b style={{ color: 'dodgerblue' }}>Total correct: </b> <span style={{ color: 'limegreen' }} >{ result.gameTotals.numCorrect }&nbsp;&nbsp;&nbsp;&nbsp;</span>
-      <b style={{ color: 'dodgerblue' }}>Total guess time: </b> <span style={{ color: 'limegreen' }}> { (result.gameTotals.totalTimeSpent / 1000).toFixed(2) +'s' }</span>
+      <b style={{ color: 'dodgerblue' }}>Total correct: </b> <span style={{ color: 'darkgreen' }} >{ result.gameTotals.numCorrect }&nbsp;&nbsp;&nbsp;&nbsp;</span>
+      <b style={{ color: 'dodgerblue' }}>Total guess time: </b> <span style={{ color: 'darkgreen' }}> { (result.gameTotals.totalTimeSpent / 1000).toFixed(2) +'s' }</span>
     </div>
   )
 
@@ -41,8 +41,8 @@ const GameResults = ({ result }) => {
       { title: 'Word', dataIndex: 'label', key: 'label'},
       { title: 'Guess', dataIndex: 'isCorrect', key: 'isCorrect',
           render: guess => guess ? 
-            <span style={{ color: 'limegreen' }}>Correct</span>
-            : <span style={{ color: 'crimson' }}>Timed Out</span> },
+            <span style={{ color: 'darkgreen' }}>Correct</span>
+            : <span style={{ color: 'tomato' }}>Timed Out</span> },
       { title: 'Time', dataIndex: 'timeSpent', key: 'timeSpent' }
     ]
   
