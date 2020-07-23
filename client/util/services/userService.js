@@ -54,3 +54,12 @@ export const rejectGameRequest = async (userId, gameRequestId) => {
   const res = await axios.post(`${basePath}/${userId}/game-requests/${gameRequestId}`, null, config)
   return res.data
 }
+
+export const signUpUser = async userData => {
+  try {
+    const res = await axios.post(`${basePath}`, userData)
+    return res.data
+  } catch (e) {
+    throw new Error(`status ${e.response.status}: ${e.response.data.error}`)
+  }
+}

@@ -114,9 +114,15 @@ const createUser = async (req, res) => {
     dateJoined: userData.date
   })
 
-  const savedUser = await user.save()
-
-  res.json(savedUser.toJSON())
+  try {
+    const savedUser = await user.save()
+    res.json(savedUser.toJSON())
+  } catch (e) {
+    if (e.name === 'ValidationError') {
+      if (e.errors.email) throw new ApplicationError('Email already exists.', 400) 
+      if (e.errors.username) throw new ApplicationError('Username already exists.', 400) 
+    }
+  }
 }
 
 /** Send in request body requesterID */

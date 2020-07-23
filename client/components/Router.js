@@ -8,6 +8,7 @@ import Login from 'Components/Login'
 import GameView from 'Components/GameView'
 // import Profile from 'Components/Profile'
 import Home from 'Components/Home'
+import Signup from 'Components/Signup'
 
 const Router = () => {
 
@@ -18,6 +19,7 @@ const Router = () => {
         <Route path='/login' component={Login} />
         <Route path='/game/:gameId' component={GameView} />
         <Route path='/home' component={Home} />
+        <Route path='/signup' component={Signup} />
       </Switch>
     </div>
   )

@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useHistory } from 'react-router-dom'
 import { Form, Input, Button, Typography, Space, Alert } from 'antd'
 
-const LoginPage = () => {
+const Login = () => {
   const dispatch = useDispatch()
   const user = useSelector(state => state.user)
   const history = useHistory()
@@ -44,7 +44,7 @@ const LoginPage = () => {
     if (!errorMessage) setAlertMessage('Error while logging in.')
     else if (errorMessage.includes('Invalid username.')) setAlertMessage('Username not found.')
     else if (errorMessage.includes('Incorrect password.')) setAlertMessage('Invalid password.')
-    else setAlertMessage('Error while logging in.')
+    else setAlertMessage(errorMessage)
 
     alertRef.current = setTimeout(() => setAlertMessage(null), 5000)
   }
@@ -56,7 +56,7 @@ const LoginPage = () => {
     <div className='main-layout' id='login-form-div'>
       <Alert message={alertMessage} type="error" showIcon style={displayStyle} />
       <Typography.Title>Log In</Typography.Title> 
-      <Form layout='vertical' onFinish={handleLogin} onFinishFailed={() => console.error('Required form fields missing.')}>
+      <Form onFinish={handleLogin} onFinishFailed={() => console.error('Required form fields missing.')}>
         <Form.Item label='Username' name='username'
           rules={[{ required: true, message: 'Username required' }]}>
           <Input />
@@ -65,7 +65,7 @@ const LoginPage = () => {
           rules={[{ required: true, message: 'Password required' }]}>
           <Input.Password />
         </Form.Item>
-        <Form.Item>
+        <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
           <Button type='primary' htmlType='submit' size='large'>Log In</Button>
         </Form.Item>
       </Form>    
@@ -73,4 +73,4 @@ const LoginPage = () => {
   )
 }
 
-export default LoginPage
+export default Login
