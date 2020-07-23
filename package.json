@@ -27,6 +27,7 @@
     "babel-loader": "^8.0.6",
     "bcrypt": "^5.0.0",
     "chokidar": "^3.3.1",
+    "cloc": "^2.5.1",
     "cross-env": "^7.0.0",
     "css-loader": "^3.4.2",
     "dotenv": "^8.2.0",

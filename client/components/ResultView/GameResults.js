@@ -20,13 +20,12 @@ const GameResults = ({ result }) => {
 
   const footer = () => (
     <div>
-      <b>Total correct: </b> <span style={{ color: 'limegreen' }} >{ result.gameTotals.numCorrect }&nbsp;&nbsp;&nbsp;&nbsp;</span>
-      <b>Total guess time: </b> <span style={{ color: 'limegreen' }}> { (result.gameTotals.totalTimeSpent / 1000).toFixed(2) +'s' }</span>
+      <b style={{ color: 'dodgerblue' }}>Total correct: </b> <span style={{ color: 'limegreen' }} >{ result.gameTotals.numCorrect }&nbsp;&nbsp;&nbsp;&nbsp;</span>
+      <b style={{ color: 'dodgerblue' }}>Total guess time: </b> <span style={{ color: 'limegreen' }}> { (result.gameTotals.totalTimeSpent / 1000).toFixed(2) +'s' }</span>
     </div>
   )
 
   const expandedRowRender = round => {
-    console.log('got here')
     const roundNum = round.key
 
     const roundDatasource = result.roundScores[roundNum].doodles.map((doodle, index) => ({

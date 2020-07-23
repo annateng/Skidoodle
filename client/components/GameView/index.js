@@ -1,18 +1,18 @@
 import React, { useState, useEffect } from 'react'
-import { useSelector, useDispatch } from 'react-redux'
+import { useSelector } from 'react-redux'
 import { useParams, Redirect, useHistory } from 'react-router-dom'
-import { Layout, Typography, Button } from 'antd'
+import { Typography, Button } from 'antd'
 
-import { getGame, getGameState } from 'Utilities/services/gameService'
-import { setActiveGame, setLastGamePlayed } from 'Utilities/reducers/gameReducer'
-import { setAllTokens } from 'Utilities/common'
+import { getGame } from 'Utilities/services/gameService'
+import { acceptGameRequest, rejectGameRequest } from 'Utilities/services/userService'
+import { setAllTokens, GameState, ServerGameStatus, ServerRoundState } from 'Utilities/common'
 
 import DrawingView from 'Components/GameView/DrawingView'
 import GuessingView from 'Components/GameView/GuessingView'
 import GameResults from 'Components/ResultView/GameResults'
 import RoundResults from 'Components/ResultView/RoundResults'
 
-// FRONTEND GAME STATES: SHOW-LAST-RESULT -> GUESS -> SHOW-THIS-RESULT -> DOODLE -> OVER ... INACTIVE-GAME, INACTIVE-PLAYER
+// FRONTEND GAME STATES: SHOW-LAST-RESULT -> GUESS -> SHOW-THIS-RESULT -> DOODLE -> OVER ... INACTIVE-GAME, INACTIVE-PLAYER, PENDING
 const GameView = () => {
   const gameId = useParams().gameId
   const user = useSelector(state => state.user)
@@ -28,12 +28,21 @@ const GameView = () => {
       console.log(gameData)
       setGame(gameData)
 
-      if (!gameData.isActive) setGameState('INACTIVE-GAME')
+      if (gameData.status === ServerGameStatus.inactive) setGameState(GameState.inactiveGame)
+      // if game status is PENDING and you are NOT the requester, set state pending
+      else if (gameData.status === ServerGameStatus.pending) {
+        if (user.user.id !== gameData.player1.id) setGameState(GameState.pending)
+        else {
+          // if its before the first turn (sending the game request), set state to pre-doodle
+          if (gameData.currentRound && gameData.currentRound.state === ServerRoundState.doodle && gameData.currentRoundNum === 1) setGameState(GameState.showThisResult)
+          else setGameState(GameState.pending)
+        }
+      } 
       // if it's not your turn, just display results
-      else if (gameData.activePlayer.id !== user.user.id) setGameState('INACTIVE-PLAYER')
-      else if (gameData.currentRound.state === 'GUESS') setGameState('SHOW-LAST-RESULT')
-      else if (gameData.currentRound.state === 'DOODLE') setGameState('SHOW-THIS-RESULT')
-      else if (gameData.currentRound.state === 'OVER') setGameState('OVER')
+      else if (gameData.activePlayer.id !== user.user.id) setGameState(GameState.inactivePlayer)
+      else if (gameData.currentRound.state === ServerRoundState.guess) setGameState(GameState.showLastResult)
+      else if (gameData.currentRound.state === ServerRoundState.doodle) setGameState(GameState.showThisResult)
+      else if (gameData.currentRound.state === ServerRoundState.over) setGameState(GameState.over)
       else console.error('Error with game state obtained with gameService.getGame', gameData.currentRound.state)
     }
 
@@ -51,14 +60,25 @@ const GameView = () => {
   )
 
   // Button to return home if game/round is inactive
-  const backHomeButton = <Button type='primary' onClick={() => history.push('/profile')}>Back to My Games</Button>
+  const backHomeButton = <Button onClick={() => history.push('/home')}>Back to My Games</Button>
+
+  const handleAcceptRequest = async gameRequestId => {
+    const acceptedGame = await acceptGameRequest(user.user.id, gameRequestId)
+    setGame(acceptedGame)
+    setGameState(GameState.guess)
+  }
+
+  const handleRejectRequest = async gameRequestId => {
+    await rejectGameRequest(user.user.id, gameRequestId)
+    history.push('/home')
+  }
   
   const getGameBody = () => {
     if (!game || !gameState) return ( <div>loading...</div> )
 
     switch (gameState) {
 
-      case 'INACTIVE-GAME': 
+      case GameState.inactiveGame: 
         return ( 
           <div className='vertical-center-div'>
             <Typography.Title>Game finished!</Typography.Title>
@@ -67,17 +87,39 @@ const GameView = () => {
           </div> 
         )
 
-      case 'INACTIVE-PLAYER':
+      case GameState.inactivePlayer:
         return (
           <div className='vertical-center-div'>
             <Typography.Title level={2}>It's {game.activePlayer.username}'s turn</Typography.Title>
-            <Typography.Title level={4}>Round {game.currentRoundNum} of {game.numRounds} </Typography.Title>
+            <Typography.Title level={4}>Game results so far: Round {game.currentRoundNum-1} of {game.numRounds} </Typography.Title>
             <GameResults result={game.result} />
             {backHomeButton}
           </div>
         )
 
-      case 'SHOW-LAST-RESULT':
+      case GameState.pending:
+        
+        if (game.player1.id === user.user.id) {
+          return (
+            <div className='vertical-center-div'>
+              <Typography.Title level={4}>Game request to {game.activePlayer.username} sent</Typography.Title>
+              {backHomeButton}
+            </div>
+          )
+        } else {
+          return (
+            <div className='vertical-center-div'>
+              <Typography.Title level={4}>Accept game request from {game.player1.username}?</Typography.Title>
+              <div>
+                <Button type='primary' style={{ marginBottom: '20px', marginRight: '20px' }} onClick={() => handleAcceptRequest(game.gameRequestId)}>Accept request</Button>
+                <Button type='danger' style={{ marginBottom: '20px' }} onClick={() => handleRejectRequest(game.gameRequestId)}>Reject request</Button>
+              </div>
+              {backHomeButton}
+            </div>
+          )
+        }
+
+      case GameState.showLastResult:
         if (!game.result || !game.result.roundScores || game.result.roundScores.length < game.currentRoundNum - 2) {
           console.error('previous round results not available')
           return (<div>previous round results not available</div>)
@@ -87,7 +129,8 @@ const GameView = () => {
         if (game.result.roundScores.length === 0 && game.currentRoundNum === 1) {
           return (
             <div className='vertical-center-div'>
-              <Typography.Title level={2}>Guessing Round</Typography.Title>
+              <Typography.Title level={2}>New Game with {game.inactivePlayer.username} </Typography.Title>
+              <Typography.Title level={3}>Guessing Round</Typography.Title>
               <Typography.Paragraph>
                 <ul>
                   <li>
@@ -116,7 +159,7 @@ const GameView = () => {
           </div>
         )
 
-      case 'SHOW-THIS-RESULT':
+      case GameState.showThisResult:
         if (!game.result || !game.result.roundScores || game.result.roundScores.length < Math.max(game.currentRoundNum - 1, 0)) {
           console.error('this round results not available')
           return (<div>this round results not available</div>)
@@ -126,7 +169,7 @@ const GameView = () => {
         if (game.result.roundScores.length === 0 && game.currentRoundNum === 1) {
           return (
             <div className='vertical-center-div'>
-              <Typography.Title level={2}>New Game</Typography.Title>
+              <Typography.Title level={2}>New Game with {game.inactivePlayer.username}</Typography.Title>
               <Typography.Paragraph>
                 <ul>
                   <li>
@@ -156,19 +199,19 @@ const GameView = () => {
           </div>
         )
 
-      case 'GUESS': 
+      case GameState.guess: 
         return ( <GuessingView doodlesToGuess={game.currentRound.doodles} roundLen={game.roundLen} gameId={game.id} 
           userId={user.user.id} setGame={setGame} setGameState={setGameState} /> )
 
-      case 'DOODLE':
+      case GameState.doodle:
         return ( <DrawingView wordsToDraw={game.nextWords} roundLen={game.roundLen} gameId={game.id} userId={user.user.id} 
           setGame={setGame} setGameState={setGameState} /> )
 
-      case 'OVER':
+      case GameState.over:
         return ( 
           <div className='vertical-center-div'>
             <Typography.Title level={3}>Finished!</Typography.Title>
-            <Button type='primary' onClick={() => history.push('/profile')}>Back to My Games</Button>
+            {backHomeButton}
           </div> 
         )
       // This shouldn't render unless gameState is an error
@@ -178,9 +221,11 @@ const GameView = () => {
   }
 
   return (
-    <Layout id="game-layout">
-      {getGameBody()}
-    </Layout>
+    <div className='main-layout vertical-center-div'>
+      <div id='game-body-div'>
+        {getGameBody()}
+      </div>
+    </div>
   )
 }
 

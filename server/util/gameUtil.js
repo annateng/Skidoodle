@@ -17,4 +17,28 @@ const generateWords = wordsSoFar => {
   return wordsToReturn
 }
 
-module.exports = { generateWords }
+/** send new game request */
+const createGameRequest = async (req, requesterId, receiverId, gameId) => {
+  const checkExisting = await GameRequest.findOne({ 
+    game: gameId,
+    isActive: true
+  })
+
+  if (checkExisting) throw new ApplicationError('Game request already pending.', 400)
+
+  const isFriends = await isFriendsWith(req.params.id, req.body.requesterId)
+  if (!isFriends) throw new ApplicationError('Unauthorized request, users are not friends.', 400)
+
+  const newGameRequest = new GameRequest({
+    requester: req.body.requesterId,
+    receiver: req.params.id,
+    isActive: true,
+    game: req.body.gameId
+  })
+
+  await newGameRequest.save()
+
+  res.status(201).send()
+}
+
+module.exports = { generateWords, createGameRequest }

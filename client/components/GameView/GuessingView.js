@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { startGuessingRound, sendGuesses, startRodal } from 'Utilities/services/gameService'
 import { Typography, Progress } from 'antd'
 import Rodal from 'rodal'
+
+import { startGuessingRound, sendGuesses, startRodal } from 'Utilities/services/gameService'
+import { GameState, ServerGameStatus } from 'Utilities/common'
 
 const GuessingView = ({ doodlesToGuess, roundLen, gameId, userId, setGame, setGameState }) => {
   const [timeLeft, setTimeLeft] = useState(roundLen)
@@ -53,8 +55,8 @@ const GuessingView = ({ doodlesToGuess, roundLen, gameId, userId, setGame, setGa
       const newGame = await sendGuesses(guesses, userId, gameId)
       setGame(newGame)
 
-      if (newGame.isActive) setGameState('SHOW-THIS-RESULT')
-      else setGameState('INACTIVE')
+      if (newGame.status === ServerGameStatus.active) setGameState(GameState.showThisResult)
+      else setGameState(GameState.inactiveGame)
       
     } catch (e) {
       console.error('Error in handleStartGuessing', e)
@@ -69,7 +71,7 @@ const GuessingView = ({ doodlesToGuess, roundLen, gameId, userId, setGame, setGa
   return (
     <div>
       <Typography.Title id='countdown-timer'>Time Left: {timeLeft}s</Typography.Title>
-      <Progress id='guess-progress' percent={timeLeft/roundLen*100} showInfo={false} />
+      <Progress className='game-progress' percent={timeLeft/roundLen*100} showInfo={false} />
       <div>
         <Typography.Text>Guess</Typography.Text>
         <div id='guess-input-wrapper'>

@@ -3,27 +3,21 @@ import { Route, Switch, Redirect } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import { Layout } from 'antd'
 
-import HomePage from 'Components/HomePage'
+import FrontPage from 'Components/FrontPage'
 import Login from 'Components/Login'
 import GameView from 'Components/GameView'
-import Profile from 'Components/Profile'
+// import Profile from 'Components/Profile'
+import Home from 'Components/Home'
 
-
-        // <Route exact path="/" render={
-        //   () => user.username ? <Redirect to="/draw" /> : <Login />
-        // } />
 const Router = () => {
-  const user = useSelector(state => state.user)
-
-  const { Content } = Layout
 
   return (
     <div className='content' style={{ padding: '0 50px' }}>
       <Switch>
-        <Route exact path='/' component={HomePage} />
+        <Route exact path='/' component={FrontPage} />
         <Route path='/login' component={Login} />
         <Route path='/game/:gameId' component={GameView} />
-        <Route path='/profile' component={Profile} />
+        <Route path='/home' component={Home} />
       </Switch>
     </div>
   )

@@ -14,7 +14,6 @@ const getDecodedToken = req => {
 
 const checkAuthorization = (req, userID) => {
   const decodedToken = getDecodedToken(req)
-  // console.log(decodedToken)
   if (!userID || !decodedToken || !decodedToken.id || decodedToken.id.toString() !== userID.toString()) throw new ApplicationError('Not authorized.', 401)
 }
 

@@ -1,10 +1,12 @@
+const bcrypt = require('bcrypt')
+
 const { ApplicationError } = require('@util/customErrors')
-const common = require('@util/common')
 const User = require('@models/user')
 const FriendRequest = require('@models/friend-request')
-const bcrypt = require('bcrypt')
-const jwt = require('jsonwebtoken')
+const GameRequest = require('@models/game-request')
+const Game = require('@models/game')
 const { getDecodedToken, checkAuthorization, isFriendsWith } = require('@util/authUtil')
+
 
 const deleteUser = async (req, res) => {
   checkAuthorization(req, req.params.id)
@@ -13,7 +15,6 @@ const deleteUser = async (req, res) => {
   res.status(204).end()
 }
 
-// TODO: update for games/stats
 const getUser = async (req, res) => {
   let requestingUser
 
@@ -29,6 +30,53 @@ const getUser = async (req, res) => {
 
   // friends: return a little more data
   res.json({ username: user.username, displayName: user.displayName })
+}
+
+/* Get friend requests and game requests */
+const getNotifications = async (req, res) => {
+  checkAuthorization(req, req.params.id)
+
+  const friendRequests = await FriendRequest
+    .find({ receiver: req.params.id, isActive: true })
+    .populate({ path: 'requester', select: 'username' })
+  const gameRequests = await GameRequest
+    .find({ receiver: req.params.id, isActive: true })
+    .populate({ path: 'requester', select: 'username' })
+
+  res.json({
+    friendRequests: friendRequests.map(fr => fr.toJSON()),
+    gameRequests: gameRequests.map(gr => gr.toJSON())
+  })
+}
+
+/** send userId, gameRequestId in url params 
+ * send action = 'accept' or 'reject' in query params 
+*/
+const respondToGameRequest = async (req, res) => {
+  checkAuthorization(req, req.params.id)
+  
+  const gr = await GameRequest.findById(req.params.grId)
+  const game = await Game.findById(gr.game)
+
+  if (req.query.action === 'accept') {
+    game.status = 'ACTIVE'
+    gr.isActive = false
+    
+    const savedGame = await game.save()
+    await gr.save()
+
+    return res.json(savedGame.toJSON())
+
+  } else if (req.query.action === 'reject') {
+    gr.isActive = false
+    await gr.save()
+    game.status = 'INACTIVE'
+    await game.save()
+
+    return res.status(204).send()
+  }
+
+  throw new ApplicationError('Send query param action = \'accept\' or \'reject\'', 400)
 }
 
 /**
@@ -127,58 +175,47 @@ const getFriendRequests = async (req, res) => {
   res.json(friendRequests.map(fr => fr.toJSON()))
 }
 
-/** send requesterId in body */
-const acceptFriendRequest = async (req, res) => {
+/** send userId, friendRequestId in url params 
+ * send action = 'reject' or 'accept' in query params
+*/
+const respondToFriendRequest = async (req, res) => {
   checkAuthorization(req, req.params.id)
   
-  const friendRequest = await FriendRequest.findOne({
-    receiver: req.params.id,
-    requester: req.body.requesterId,
-    isActive: true
-  })
-
+  const friendRequest = await FriendRequest.findById(req.params.frId)
   if (!friendRequest) throw new ApplicationError('Friend request not found.', 400)
   
-  const receiver = await User.findById(req.params.id)
-  const requester = await User.findById(req.body.requesterId)
+  if (req.query.action === 'accept') {
+    const receiver = await User.findById(req.params.id)
+    const requester = await User.findById(req.body.requesterId)
 
-  receiver.friends = [...receiver.friends, requester._id]
-  requester.friends = [...requester.friends, receiver._id]
+    receiver.friends = [...receiver.friends, requester._id]
+    requester.friends = [...requester.friends, receiver._id]
 
-  updatedReceiver = await receiver.save()
-  updatedRequester = await requester.save()
+    updatedReceiver = await receiver.save()
+    updatedRequester = await requester.save()
 
-  friendRequest.isActive = false
-  await friendRequest.save()
+    friendRequest.isActive = false
+    await friendRequest.save()
 
-  const confirmRes = {
-    receiverIsFriendsWithRequester: updatedReceiver.friends.includes(requester._id),
-    requesterIsFriendsWithReceiver: updatedRequester.friends.includes(receiver._id)
+    const confirmRes = {
+      receiverIsFriendsWithRequester: updatedReceiver.friends.includes(requester._id),
+      requesterIsFriendsWithReceiver: updatedRequester.friends.includes(receiver._id)
+    }
+
+    return res.json(confirmRes)
+
+  } else if (req.query.action === 'reject') {
+    friendRequest.isActive = false
+    await friendRequest.save()
+  
+    return res.status(204).send()
   }
 
-  res.json(confirmRes)
+  throw new ApplicationError('Send query param action = \'accept\' or \'reject\'', 400)
 }
-
-/** send requesterId in body */
-const rejectFriendRequest = async (req, res) => {
-  checkAuthorization(req, req.params.id)
-  
-  const friendRequest = await FriendRequest.findOne({
-    receiver: req.params.id,
-    requester: req.body.requesterId,
-    isActive: true
-  })
-
-  if (!friendRequest) throw new ApplicationError('Friend request not found.', 400)
-
-  friendRequest.isActive = false
-  await friendRequest.save()
-
-  res.status(204).send()
-}
-
 
 module.exports = {
   deleteUser, getUser, addFriend, updateUser, createUser, addFriend, 
-  getFriendRequests, deleteFriendRequest, acceptFriendRequest, rejectFriendRequest
+  getFriendRequests, deleteFriendRequest, respondToFriendRequest,
+  getNotifications, respondToGameRequest
 }

@@ -2,21 +2,31 @@
 
 @mainColor: #f2edeb;
 @highlightColor: #b3374c;
-@buttonColor: #274c57;
 @borderColor: #d1d1d1;
 @shadow-color: rgba(0, 0, 0, 0.15);
 
 @canvasMaxWidth: 960px;
 
-#root {
+body {
   font-family: 'Nanum Gothic Coding', monospace;
   height: 100%;
+  background-color: @mainColor;
+}
+
+.content {
+  padding: 10px;
+  min-height: 100vh - 10em;
+  display: flex;
+  flex-direction: column;
   background-color: @mainColor;
 }
 
 #navbar {
   box-shadow: 0 8px 6px -2px @shadow-color;
   margin-bottom: 15px;
+  position: fixed;
+  z-index: 2;
+  width: 100%;
 }
 
 #header-logo {
@@ -35,17 +45,10 @@ img {
 }
 
 #login-form-div {
-  padding: 24px;
-  margin-top: 36px;
+  padding-top: 80px;
   margin-left: auto;
   margin-right: auto;
   max-width: 600px;
-}
-
-#profile-friends-sider {
-  padding: 24px;
-  border-radius: 2px;
-  height: 100%;
 }
 
 .dot {
@@ -111,8 +114,8 @@ img {
   background: transparent;
 }
 
-#guess-progress {
-  max-width: @canvasMaxWidth;
+.game-progress {
+  max-width: 100%;
 }
 
 canvas[resize] {
@@ -122,7 +125,9 @@ canvas[resize] {
   border-radius: 5px; 
   background-color: whitesmoke;
   max-width: @canvasMaxWidth;
-  max-height: 480px;
+  max-height: @canvasMaxWidth / 2;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 #homepage-div {
@@ -159,6 +164,27 @@ canvas[resize] {
   flex-direction: column;
 }
 
-#game-layout {
-  padding: 24px 0;
+.main-layout {
+  padding: 70px 24px 24px;
+  display: flex;
+  flex: auto;
+  flex-direction: column;
+  min-height: 0;
+  background: @mainColor;
+  box-sizing: border-box;
+}
+
+#game-body-div {
+  max-width: @canvasMaxWidth * 1.5;
+  position: relative;
+}
+
+.active-game-card {
+  font-size: 16px;
+  border: 1px solid @borderColor;
+}
+
+.friend-card {
+  background-color: whitesmoke;
+  border: 1px solid @borderColor;
 }

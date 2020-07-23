@@ -8,7 +8,7 @@ const PRIVATE_KEY = process.env.PRIVATE_KEY
 // game variables
 const NUM_ROUNDS = common.inProduction ? 10 : 2
 const ROUND_LEN = common.inProduction ? 20 : 2
-const WORDS_PER_ROUND = common.inProduction ? 3 : 3
+const WORDS_PER_ROUND = common.inProduction ? 3 : 2
 
 module.exports = {
   ...common,

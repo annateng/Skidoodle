@@ -12,5 +12,17 @@ export const setAllTokens = authToken => {
   setUserToken(authToken)
 }
 
+// Frontend game states enum
+export const GameState = Object.freeze({
+  showLastResult: 'SHOW-LAST-RESULT',
+  guess: 'GUESS',
+  showThisResult: 'SHOW-THIS-RESULT',
+  doodle: 'DOODLE',
+  over: 'OVER',
+  inactiveGame: 'INACTIVE-GAME',
+  inactivePlayer: 'INACTIVE-PLAYER',
+  pending: 'PENDING'
+})
+
 // Everything from application wide common items is available through here
 export * from '@root/config/common'

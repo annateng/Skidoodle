@@ -4,9 +4,7 @@ import { Button, Layout, Space } from 'antd'
 
 import { images } from 'Utilities/common'
 
-// const { Header, Footer, Sider, Content } = Layout
-
-const HomePage = () => {
+const FrontPage = () => {
   const history = useHistory()
 
   // TODO: SIGN UP
@@ -21,4 +19,4 @@ const HomePage = () => {
   )
 }
 
-export default HomePage
+export default FrontPage

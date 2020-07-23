@@ -52,17 +52,17 @@ module.exports = (env, argv) => {
             options: {
               lessOptions: {
                 modifyVars: {
-                  'primary-color': '#87a897',
+                  'primary-color': '#8aab60',
                   'border-radius-base': '3px',
                   'font-size-base': '20px',
                   'font-size-sm': '16px',
-                  'layout-header-background': '#87a897',
+                  'layout-header-background': '#FAFAD2',
                   'layout-body-background': '#f2edeb',
                   'font-family': 'Nanum Gothic Coding, monospace',
                   'btn-font-size-sm': '@font-size-sm',
                   'border-color-split': '#d1d1d1',
                   'border-color-base': '#d1d1d1',
-                  'error-color': '#b3374c',
+                  'error-color': '#FF6347',
                 },
                 javascriptEnabled: true,
               }

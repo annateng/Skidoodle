@@ -3,6 +3,7 @@ import { Typography, Progress, Row, Col, Card } from 'antd'
 import Rodal from 'rodal'
 
 import { startRound, sendDoodles, startRodal } from 'Utilities/services/gameService'
+import { GameState, ServerGameStatus } from 'Utilities/common'
 
 const colors = ['black', 'darkred', 'crimson', 'deeppink', 'pink', 'coral', 'orange', 'gold', 'limegreen', 'darkgreen', 
   'lightseagreen', 'paleturquoise', 'cadetblue', 'cornflowerblue', 'mediumblue', 'mediumpurple', 'indigo', 'dimgray']
@@ -52,31 +53,33 @@ const DrawingView = ({ wordsToDraw, roundLen, gameId, userId, setGame, setGameSt
         roundRef, handleStartRodal)
       const newGame = await sendDoodles(doodles, userId, gameId)
       console.log(newGame) // DEBUG
+
+      if (newGame.status === ServerGameStatus.pending) {
+        setGameState(GameState.pending)
+      } else {
+        setGameState(GameState.over)
+      }
+
       setGame(newGame)
-      setGameState('OVER')
+      
     } catch (e) {
       console.error('Error in handleStartRound', e)
     }
   }
 
   const handleSetColor = color => {
-    localStorage.setItem('scribbleEraser', false)
+    console.log('got here', color)
     localStorage.setItem('scribbleColor', color)
   }
 
   const handleSetSize = size => {
-    localStorage.setItem('scribbleEraser', false)
     localStorage.setItem('scribbleSize', size)
-  }
-
-  const handleSetEraser = () => {
-    localStorage.setItem('scribbleEraser', true)
   }
 
   return (
     <div className='vertical-center-div'>
       <Typography.Title id='countdown-timer'>Time Left: {timeLeft}s</Typography.Title>
-      <Progress percent={timeLeft/roundLen*100} showInfo={false} />
+      <Progress className='game-progress' percent={timeLeft/roundLen*100} showInfo={false} />
       <Typography.Title id='word-to-draw'>{word || " "}</Typography.Title>
       
       <Row gutter={26}>
@@ -91,7 +94,7 @@ const DrawingView = ({ wordsToDraw, roundLen, gameId, userId, setGame, setGameSt
               </Col>) 
             }
             <Col span={12} key={'eraser'}>
-              <div onClick={handleSetEraser}>
+              <div id='ubitch' onClick={() => handleSetColor('whitesmoke')}>
                 <Card hoverable='true' style={{ backgroundColor: 'whitesmoke', maxHeight: '50px', padding: '0px' }} bodyStyle={{ padding: '10px' }}>Eraser</Card>
               </div>
             </Col>
@@ -106,7 +109,7 @@ const DrawingView = ({ wordsToDraw, roundLen, gameId, userId, setGame, setGameSt
               </Col>) }
           </Row>
         </Col>
-        <Col span={19}>
+        <Col span={19} style={{ display: 'flex', alignContent: 'center'}}>
           <canvas id="paper-canvas" resize="true"></canvas>
         </Col>
       </Row>

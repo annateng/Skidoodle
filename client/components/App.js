@@ -11,7 +11,7 @@ const App = () => {
   const user = useSelector(state => state.user)
 
   return (
-    <div>
+    <div style={{ maxHeight: '100%' }}>
       {location.pathname !== '/' && <NavBar user={user}/>}
       <Router />
       {location.pathname !== '/' && <Footer />}

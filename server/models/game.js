@@ -29,7 +29,7 @@ const gameSchema = new mongoose.Schema({
   numRounds: Number,
   roundLen: Number,
   timeOfLastMove: Date,
-  isActive: Boolean,
+  status: 'String', // PENDING, ACTIVE, INACTIVE
   currentRound: roundSchema,
   rounds: [roundSchema],
   currentRoundNum: Number,
@@ -72,7 +72,6 @@ gameSchema.set('toJSON', {
         const activePlayerIdStr = returnedObject.activePlayer.id ? returnedObject.activePlayer.id.toString() : returnedObject.activePlayer.toString()
         const p1IdStr = returnedObject.player1.id ? returnedObject.player1.id.toString() : returnedObject.player1.toString()
         returnedObject.inactivePlayer = activePlayerIdStr === p1IdStr ? returnedObject.player2 : returnedObject.player1
-        delete returnedObject.player1
         delete returnedObject.player2
       }
   }
