@@ -91,7 +91,7 @@ const GameView = () => {
         return (
           <div className='vertical-center-div'>
             <Typography.Title level={2}>It's {game.activePlayer.username}'s turn</Typography.Title>
-            <Typography.Title level={4}>Game results so far: Round {game.currentRoundNum-1} of {game.numRounds} </Typography.Title>
+            {game.currentRoundNum > 1 && <Typography.Title level={4}>Game results so far: Round {game.currentRoundNum-1} of {game.numRounds} </Typography.Title>}
             <GameResults result={game.result} />
             {backHomeButton}
           </div>
@@ -222,9 +222,7 @@ const GameView = () => {
 
   return (
     <div className='main-layout vertical-center-div'>
-      <div id='game-body-div'>
-        {getGameBody()}
-      </div>
+      {getGameBody()}
     </div>
   )
 }

@@ -112,7 +112,9 @@ export const getDrawing = roundLen => {
 
 export const startRound = async (canvas, setTimeLeft, wordsToDraw, roundLen, setWord, intervalRef, roundRef, startRodal) => {
   
+  console.log('start before', canvas)
   paper.setup(canvas)
+  console.log('start after', canvas)
   const doodles = []
 
   for (const word of wordsToDraw) {
@@ -243,7 +245,9 @@ const getReplay = (guessInput, roundLen, drawing, label) => {
 export const startGuessingRound = async (canvas, guessInput, doodlesToGuess, roundLen, setTimeLeft, setGuess, 
   setLabel, intervalRef, replayRef, setDoodleNum, startRodal, setLastResult) => {
 
+  console.log('guess before', canvas)
   paper.setup(canvas)
+  console.log('guess after', canvas)
   const guesses = []
 
   let doodleNum = 1

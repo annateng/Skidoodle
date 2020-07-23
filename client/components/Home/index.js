@@ -102,15 +102,15 @@ const Home = () => {
 
   // sorting callback - sort by status first (players turn > others turn > pending), then sort games within each category by date
   const sortByActivePlayerThenDate = (a, b) => {
-    const isPendingA = a.status === ServerGameStatus.pending
-    const isPendingB = b.status === ServerGameStatus.pending
-    if (isPendingA && !isPendingB) return 1
-    if (!isPendingA && isPendingB) return -1
-
     const isActiveA = user.user.id === a.activePlayer.id
     const isActiveB = user.user.id === b.activePlayer.id
     if (isActiveA && !isActiveB) return -1
     if (!isActiveA && isActiveB) return 1
+    
+    const isPendingA = a.status === ServerGameStatus.pending
+    const isPendingB = b.status === ServerGameStatus.pending
+    if (isPendingA && !isPendingB) return 1
+    if (!isPendingA && isPendingB) return -1
 
     return a.timeOfLastMove - b.timeOfLastMove
   }

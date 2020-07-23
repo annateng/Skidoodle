@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { Typography, Progress } from 'antd'
+import { Typography, Progress, Row } from 'antd'
 import Rodal from 'rodal'
 
 import { startGuessingRound, sendGuesses, startRodal } from 'Utilities/services/gameService'
@@ -69,19 +69,15 @@ const GuessingView = ({ doodlesToGuess, roundLen, gameId, userId, setGame, setGa
   }
 
   return (
-    <div>
+    <div className='vertical-center-div' style={{ width: '1960px' }}>
       <Typography.Title id='countdown-timer'>Time Left: {timeLeft}s</Typography.Title>
-      <Progress className='game-progress' percent={timeLeft/roundLen*100} showInfo={false} />
-      <div>
-        <Typography.Text>Guess</Typography.Text>
-        <div id='guess-input-wrapper'>
-          <input className='borderless-input' id='guess-input' type='text' value={guess} onChange={event => handleSetGuess(event.target.value)} autoComplete='off' spellCheck='false' />
-          <div id='underline-div'>{label}</div>
-        </div>
+      <Progress className='guess-progress' percent={timeLeft/roundLen*100} showInfo={false} />
+      <Typography.Text>Guess</Typography.Text>
+      <div id='guess-input-wrapper'>
+        <input className='borderless-input' id='guess-input' type='text' value={guess} onChange={event => handleSetGuess(event.target.value)} autoComplete='off' spellCheck='false' />
+        <div id='underline-div'>{label}</div>
       </div>
-      <div id="canvas-div">
-        <canvas id="paper-canvas" resize="true"></canvas>
-      </div>
+      <canvas id="paper-canvas" resize="true"></canvas>
       <Rodal visible={rodalVisible} onClose={() => setRodalVisible(false)} showCloseButton={false}
         width={600} height={400} enterAnimation='zoom' closeMaskOnClick={false}>
         <div className='rodal-header'>{rodalHeader}</div>

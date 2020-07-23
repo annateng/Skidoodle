@@ -79,7 +79,7 @@ const DrawingView = ({ wordsToDraw, roundLen, gameId, userId, setGame, setGameSt
   return (
     <div className='vertical-center-div'>
       <Typography.Title id='countdown-timer'>Time Left: {timeLeft}s</Typography.Title>
-      <Progress className='game-progress' percent={timeLeft/roundLen*100} showInfo={false} />
+      <Progress className='draw-progress' percent={timeLeft/roundLen*100} showInfo={false} />
       <Typography.Title id='word-to-draw'>{word || " "}</Typography.Title>
       
       <Row gutter={26}>

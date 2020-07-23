@@ -100,11 +100,12 @@ img {
 
 #guess-input-wrapper {
   background-color: whitesmoke;
-  font-size: 80px;
-  letter-spacing: 0.3ch;
   height: 120px;
   position: relative;
   max-width: @canvasMaxWidth;
+  width: 100%;
+  display: flex;
+  margin-bottom: 15px;
 }
 
 #underline-div {
@@ -112,10 +113,16 @@ img {
   bottom: -10x;
   left: 30px;
   background: transparent;
+  font-size: 80px;
+  letter-spacing: 0.3ch;
 }
 
-.game-progress {
+.draw-progress {
   max-width: 100%;
+}
+
+.guess-progress {
+  max-width: @canvasMaxWidth;
 }
 
 canvas[resize] {

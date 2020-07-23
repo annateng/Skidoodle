@@ -14,16 +14,18 @@ const ActiveGameCard = ({ game, user }) => {
     history.push(`/game/${game.id}`)
   }
 
-  const isPending = game.status === ServerGameStatus.pending
+  let cardType
+  if (user.id === game.activePlayer.id) cardType = 'usersTurn'
+  else if (game.status === ServerGameStatus.pending) cardType = 'pending'
+  else cardType = 'othersTurn'
 
-  const isUsersTurn = user.id === game.activePlayer.id
-  const partner = isUsersTurn ? game.inactivePlayer.username : game.activePlayer.username
+  const partner = cardType === 'usersTurn' ? game.inactivePlayer.username : game.activePlayer.username
   const date = game.timeOfLastMove ? new Date(game.timeOfLastMove) : null
-  const state = isUsersTurn ? game.currentRound.state.toLowerCase() : null
+  const state = cardType === 'usersTurn' ? game.currentRound.state.toLowerCase() : null
 
   const cardStyle = {
-    border: isUsersTurn ? '2px solid limegreen' : null,
-    backgroundColor: isPending ? '#ffe8e8' : isUsersTurn ? 'palegoldenrod' : 'whitesmoke'
+    border: cardType === 'usersTurn' ? '2px solid limegreen' : null,
+    backgroundColor: cardType === 'pending' ? '#ffe8e8' : cardType === 'usersTurn' ? 'palegoldenrod' : 'whitesmoke'
   }
 
   const textStyle = {
@@ -31,16 +33,16 @@ const ActiveGameCard = ({ game, user }) => {
   }
 
   let cardHeader
-  if (isPending) {
+  if (cardType === 'pending') {
     cardHeader = <b>Game request pending</b>
-  } else if (isUsersTurn) {
+  } else if (cardType === 'usersTurn') {
     cardHeader = <b>Your turn to <b style={textStyle}>{game.currentRound.state.toLowerCase()}</b></b>
   } else {
     cardHeader = <b>It's {partner}'s turn</b>
   }
 
   let cardBody
-  if (isPending) cardBody = <div>Waiting for <b>{partner}</b> to accept</div>
+  if (cardType === 'pending') cardBody = <div>Waiting for <b>{partner}</b> to accept</div>
   else cardBody = <div>Game with <b>{partner}</b></div>
 
   return (
