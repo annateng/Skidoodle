@@ -4,6 +4,7 @@
 @highlightColor: #b3374c;
 @buttonColor: #274c57;
 @borderColor: #d1d1d1;
+@shadow-color: rgba(0, 0, 0, 0.15);
 
 @canvasMaxWidth: 960px;
 
@@ -13,17 +14,19 @@
   background-color: @mainColor;
 }
 
+#navbar {
+  box-shadow: 0 8px 6px -2px @shadow-color;
+  margin-bottom: 15px;
+}
+
 #header-logo {
-  width: 400px;
-  display: block;
-  margin: auto;
-  margin-top: 0px;
+  height: 60px;
+  float: left;
 }
 
 #header-user-info {
-  position: absolute;
-  bottom: 15px;
-  right: 50px;
+  margin-top: 20px;
+  float: right;
 }
 
 img {
@@ -127,8 +130,8 @@ canvas[resize] {
 }
 
 #homepage-logo {
-  width: 100%;
-  height: 100%;
+  width: 80%;
+  margin: auto;
 }
 
 .rodal-header {

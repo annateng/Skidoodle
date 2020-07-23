@@ -15,14 +15,18 @@ const loginReducer = (state = {}, action) => {
 
 export const loginUser = userData => {
   return async dispatch => {
-    const loggedInUser = await login(userData)
-    setAllTokens(loggedInUser.token)
-    dispatch({
-      type: 'LOGIN',
-      data: {
-        ...loggedInUser
-      }
-    })
+    try {
+      const loggedInUser = await login(userData)
+      setAllTokens(loggedInUser.token)
+      dispatch({
+        type: 'LOGIN',
+        data: {
+          ...loggedInUser
+        }
+      })
+    } catch (e) {
+      throw new Error(e.message)
+    }
   } 
 }
 

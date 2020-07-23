@@ -22,7 +22,11 @@ const login = async (req, res) => {
 
     res.status(200).json({
         token,
-        user: user.toJSON()
+        user: {
+          id: user._id.toString(),
+          username: user.username,
+          displayName: user.displayName
+        }
     })
 }
 

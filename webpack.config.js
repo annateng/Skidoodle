@@ -1,6 +1,5 @@
 const path = require('path')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
-const sass = require('sass')
 const webpack = require('webpack')
 
 module.exports = (env, argv) => {
@@ -48,17 +47,17 @@ module.exports = (env, argv) => {
           }, {
             loader: 'css-loader', // translates CSS into CommonJS
           }, {
+            // Less loader is for modifying ant.design default theme 
             loader: 'less-loader', // compiles Less to CSS
             options: {
               lessOptions: {
                 modifyVars: {
                   'primary-color': '#87a897',
-                  'border-radius-base': '5px',
+                  'border-radius-base': '3px',
                   'font-size-base': '20px',
                   'font-size-sm': '16px',
                   'layout-header-background': '#87a897',
                   'layout-body-background': '#f2edeb',
-                  'layout-header-height': '120px',
                   'font-family': 'Nanum Gothic Coding, monospace',
                   'btn-font-size-sm': '@font-size-sm',
                   'border-color-split': '#d1d1d1',
@@ -89,5 +88,8 @@ module.exports = (env, argv) => {
       }),
       ...additionalPlugins,
     ],
+    output: {
+      publicPath: '/'
+    }
   }
 }

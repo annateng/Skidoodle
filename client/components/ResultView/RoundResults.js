@@ -1,8 +1,8 @@
 import React from 'react'
-import { Table } from 'antd'
+import { Table, Typography } from 'antd'
 
-const RoundResults = ({ roundResults }) => {
-  
+const RoundResults = ({ roundResults, roundNum, artist, guesser }) => {
+
   const datasource = roundResults.doodles.map((doodle, index) => ({
     key: index,
     label: doodle.label,
@@ -29,8 +29,15 @@ const RoundResults = ({ roundResults }) => {
   )
 
   return (
-    <Table dataSource={datasource} columns={columns} tableLayout='fixed' 
+    <div>
+      <Typography.Title level={3}>Round {roundNum} Results</Typography.Title>
+        <div style={{ width: '100%' }}>
+          <Typography.Text style={{ align: 'left' }}><b>artist:</b> {artist}&nbsp;&nbsp;&nbsp;&nbsp;
+            <b>guesser:</b> {guesser}</Typography.Text><br />
+        </div>
+      <Table dataSource={datasource} columns={columns} tableLayout='fixed' 
       pagination={false} footer={footer} style={{ marginBottom: '15px' }} />
+    </div>
   )
 }
 

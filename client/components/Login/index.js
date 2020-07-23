@@ -1,26 +1,20 @@
-import React, { useState } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import { loginUser, logout } from 'Utilities/reducers/loginReducer'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory } from 'react-router-dom'
-import { Form, Input, Button, Typography, Space } from 'antd'
+import { Form, Input, Button, Typography, Space, Alert } from 'antd'
 
-// TODO: handle bad login
 const LoginPage = () => {
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
-
   const dispatch = useDispatch()
   const user = useSelector(state => state.user)
   const history = useHistory()
+  const [alertMessage, setAlertMessage] = useState()
+  const alertRef = useRef()
 
-  const handleLogin = async (values) => {
-    dispatch(loginUser({
-      username: values.username, 
-      password: values.password 
-    }))
-    history.push('/profile')
-  }
+  // Clean up alert settimeouts if component unmounts
+  useEffect(() => () => clearTimeout(alertRef.current), [])
 
+  // If a user is already logged in, don't display login form
   if (user && user.user) {
     return (
       <div id='login-form-div'>
@@ -33,8 +27,34 @@ const LoginPage = () => {
     )
   }
 
+  const handleLogin = async (values) => {
+    try {
+      await dispatch(loginUser({
+        username: values.username, 
+        password: values.password 
+      }))
+      history.push('/profile')
+    } catch (e) {
+      console.warn(e.message)
+      handleSetAlert(e.message)
+    }
+  }
+
+  const handleSetAlert = errorMessage => {
+    if (!errorMessage) setAlertMessage('Error while logging in.')
+    else if (errorMessage.includes('Invalid username.')) setAlertMessage('Invalid username.')
+    else if (errorMessage.includes('Incorrect password.')) setAlertMessage('Incorrect password.')
+    else setAlertMessage('Error while logging in.')
+
+    alertRef.current = setTimeout(() => setAlertMessage(null), 5000)
+  }
+
+  // Set alert invisible unless unsuccessful login
+  const displayStyle = alertMessage ? null : { display: 'none' }
+
   return (
     <div id='login-form-div'>
+      <Alert message={alertMessage} type="error" showIcon style={displayStyle} />
       <Typography.Title>Log In</Typography.Title> 
       <Form layout='vertical' onFinish={handleLogin} onFinishFailed={() => console.error('Required form fields missing.')}>
         <Form.Item label='Username' name='username'

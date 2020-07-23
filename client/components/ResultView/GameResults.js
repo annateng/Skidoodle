@@ -2,7 +2,8 @@ import React from 'react'
 import { Table } from 'antd'
 
 const GameResults = ({ result }) => {
-  console.log(result)
+  // if there's no results to display, return nothing
+  if (!result || result.roundScores.length < 1) return null
   
   const datasource = result.roundScores.map((roundScore, index) => ({
     key: index,

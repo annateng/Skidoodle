@@ -217,7 +217,13 @@ const getGame = async (req, res) => {
   else if (userId === game.player2._id.toString()) checkAuthorization(req, game.player2._id)
   else throw new ApplicationError('Not authorized.', 401)
   
-  res.json(game.toJSON())
+  const gameJson = game.toJSON()
+
+  if (userId !== game.activePlayer._id.toString()) {
+    delete gameJson.currentRound
+  }
+  
+  res.json(gameJson)
 }
 
 module.exports = { getActive, sendRound, getNewGame, getGame }

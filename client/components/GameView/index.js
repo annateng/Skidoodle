@@ -12,7 +12,7 @@ import GuessingView from 'Components/GameView/GuessingView'
 import GameResults from 'Components/ResultView/GameResults'
 import RoundResults from 'Components/ResultView/RoundResults'
 
-// FRONTEND GAME STATES: SHOW-LAST-RESULT -> GUESS -> SHOW-THIS-RESULT -> DOODLE -> OVER ... INACTIVE, LOADING
+// FRONTEND GAME STATES: SHOW-LAST-RESULT -> GUESS -> SHOW-THIS-RESULT -> DOODLE -> OVER ... INACTIVE-GAME, INACTIVE-PLAYER
 const GameView = () => {
   const gameId = useParams().gameId
   const user = useSelector(state => state.user)
@@ -28,7 +28,9 @@ const GameView = () => {
       console.log(gameData)
       setGame(gameData)
 
-      if (!gameData.isActive) setGameState('INACTIVE')
+      if (!gameData.isActive) setGameState('INACTIVE-GAME')
+      // if it's not your turn, just display results
+      else if (gameData.activePlayer.id !== user.user.id) setGameState('INACTIVE-PLAYER')
       else if (gameData.currentRound.state === 'GUESS') setGameState('SHOW-LAST-RESULT')
       else if (gameData.currentRound.state === 'DOODLE') setGameState('SHOW-THIS-RESULT')
       else if (gameData.currentRound.state === 'OVER') setGameState('OVER')
@@ -39,35 +41,44 @@ const GameView = () => {
 
   }, [])
 
-  const handleBeginRound = () => {
-    setGameState(game.currentRound.state)
-  }
-
+  // set auth tokens for Services
   if (user) setAllTokens(user.token)
+  else return ( <Redirect to="/login " /> )
 
-  if (!user) return ( <Redirect to="/login " /> )
-
+  // Button to begin round
   const beginRoundButton = buttonText => (
-    <Button type='primary' onClick={handleBeginRound} id='begin-round-button'>{buttonText}</Button>
+    <Button type='primary' onClick={() => setGameState(game.currentRound.state)} id='begin-round-button'>{buttonText}</Button>
   )
+
+  // Button to return home if game/round is inactive
+  const backHomeButton = <Button type='primary' onClick={() => history.push('/profile')}>Back to My Games</Button>
   
   const getGameBody = () => {
     if (!game || !gameState) return ( <div>loading...</div> )
 
     switch (gameState) {
 
-      case 'INACTIVE': 
+      case 'INACTIVE-GAME': 
         return ( 
           <div className='vertical-center-div'>
             <Typography.Title>Game finished!</Typography.Title>
             <GameResults result={game.result} />
-            <Button type='primary' onClick={() => history.push('/profile')}>Back to My Games</Button>
+            {backHomeButton}
           </div> 
         )
 
+      case 'INACTIVE-PLAYER':
+        return (
+          <div className='vertical-center-div'>
+            <Typography.Title level={2}>It's {game.activePlayer.username}'s turn</Typography.Title>
+            <Typography.Title level={4}>Round {game.currentRoundNum} of {game.numRounds} </Typography.Title>
+            <GameResults result={game.result} />
+            {backHomeButton}
+          </div>
+        )
+
       case 'SHOW-LAST-RESULT':
-        const lastRoundNum = game.currentRoundNum - 1
-        if (!game.result || !game.result.roundScores || game.result.roundScores.length < lastRoundNum - 1) {
+        if (!game.result || !game.result.roundScores || game.result.roundScores.length < game.currentRoundNum - 2) {
           console.error('previous round results not available')
           return (<div>previous round results not available</div>)
         }
@@ -98,12 +109,8 @@ const GameView = () => {
         // Regular round results
         return ( 
           <div className='vertical-center-div'>
-            <Typography.Title level={3}>Round {lastRoundNum} Results</Typography.Title>
-             <div style={{ width: '100%' }}>
-              <Typography.Text style={{ align: 'left' }}><b>artist:</b> {game.activePlayer.username}&nbsp;&nbsp;&nbsp;&nbsp;
-                <b>guesser:</b> {game.inactivePlayer.username}</Typography.Text><br />
-            </div>
-            <RoundResults roundResults={game.result.roundScores[lastRoundNum - 1]} gameResults={game.result.gameTotals} />
+            <RoundResults roundResults={game.result.roundScores[game.currentRoundNum - 2]} roundNum={game.currentRoundNum - 1} 
+              artist={game.activePlayer.username} guesser={game.inactivePlayer.username} />
             <Typography.Title level={3}>Ready for round {game.currentRoundNum}?</Typography.Title>
             {beginRoundButton('Start Guessing')}
           </div>
@@ -140,17 +147,10 @@ const GameView = () => {
         }
 
         // Regular round results
-        console.log('game', game)
-        console.log('game.inactivePlayer.username', game.inactivePlayer.username)
-        console.log('game.activePlayer.username', game.activePlayer.username)
         return (
           <div className='vertical-center-div'>
-            <Typography.Title level={3}>Round {game.currentRoundNum - 1} Results</Typography.Title>
-            <div style={{ width: '100%' }}>
-            <Typography.Text style={{ align: 'left' }}><b>artist:</b> {game.inactivePlayer.username}&nbsp;&nbsp;&nbsp;&nbsp;
-                <b>guesser:</b> {game.activePlayer.username}</Typography.Text><br />
-            </div>
-            <RoundResults roundResults={game.result.roundScores[game.currentRoundNum - 2]} gameResults={game.result.gameTotals} />
+            <RoundResults roundResults={game.result.roundScores[game.currentRoundNum - 2]} roundNum={game.currentRoundNum - 1}
+              guesser={game.activePlayer.username} artist={game.inactivePlayer.username} />
             <Typography.Title level={3}>Ready for round {game.currentRoundNum}?</Typography.Title>
             {beginRoundButton('Let\'s Doodle')}
           </div>
