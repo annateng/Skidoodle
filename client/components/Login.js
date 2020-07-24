@@ -46,6 +46,7 @@ const Login = () => {
     else if (errorMessage.includes('Incorrect password.')) setAlertMessage('Invalid password.')
     else setAlertMessage(errorMessage)
 
+    if (alertRef.current) clearTimeout(alertRef.current)
     alertRef.current = setTimeout(() => setAlertMessage(null), 5000)
   }
 

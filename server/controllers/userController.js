@@ -16,16 +16,35 @@ const findUsers = async (req, res) => {
   const requestingUser = await User.findById(requesterId)
 
   const regex = new RegExp(`.*${str}.*`, 'i')
-  const filteredUsers = await User.find({ username: regex }, 'username')
+  const users = await User.find({ username: regex }, 'username')
+  const filteredUsers = users.filter(u => u._id.toString() !== requesterId) // exclude self
+
+  // incomingFrStr: string ids of users who have requested USER as a friend, pending
+  const incomingFr = await FriendRequest.find({ receiver: requesterId, isActive: true })
+  const incomingFrStr = incomingFr.map(fr => fr.requester.toString())
+  // outgoingFrStr: string ids of users who USER has requested as a friend, pending
+  const outgoingFr = await FriendRequest.find({ requester: requesterId, isActive: true })
+  const outgoingFrStr = outgoingFr.map(fr => fr.receiver.toString())
   
   res.json(
-    filteredUsers.map(fu => 
-      ({
+    filteredUsers.map(fu => { 
+      const fuIdStr = fu._id.toString()
+
+      const frStatus = incomingFrStr.includes(fuIdStr) ? 'incoming' : outgoingFrStr.includes(fuIdStr) ? 'outgoing' : null
+      console.log(frStatus)
+      console.log(outgoingFr.map(fr => fr._id.toString()))
+      const frId = frStatus === 'incoming' ? incomingFr.find(fr => fr.requester.toString() === fuIdStr)._id.toString() :
+                    frStatus === 'outgoing' ? outgoingFr.find(fr => fr.receiver.toString() === fuIdStr)._id.toString() :
+                    null
+
+      return {
         username: fu.username,
-        id: fu._id.toString(),
-        isFriends: requestingUser && requestingUser.friends ? requestingUser.friends.map(f => f.toString()).includes(fu._id.toString()) : false
-      })
-    )
+        id: fuIdStr,
+        isFriends: requestingUser && requestingUser.friends ? requestingUser.friends.map(f => f.toString()).includes(fuIdStr) : false,
+        frStatus,
+        frId
+      }
+    })
   )
 }
 
@@ -146,26 +165,26 @@ const createUser = async (req, res) => {
   }
 }
 
-/** Send in request body requesterID */
+/** Send in requesterID in query parays*/
 const addFriend = async (req, res) => {
-  checkAuthorization(req, req.body.requesterId)
+  checkAuthorization(req, req.query.requesterId)
 
   const checkExisting = await FriendRequest.findOne({
     $or: [
-      { requester: req.body.requesterId, receiver: req.params.id },
-      { receiver: req.body.requesterId, requester: req.params.id }
+      { requester: req.query.requesterId, receiver: req.params.id },
+      { receiver: req.query.requesterId, requester: req.params.id }
     ],
     isActive: true
   })
 
   if (checkExisting) throw new ApplicationError('Friend request already pending.', 400)
 
-  const isFriends = await isFriendsWith(req.params.id, req.body.requesterId)
+  const isFriends = await isFriendsWith(req.params.id, req.query.requesterId)
   if (isFriends) throw new ApplicationError('These users are already friends.', 400)
-  if (req.body.requesterId === req.params.id) throw new ApplicationError('Can\'t be friends with yourself.', 400)
+  if (req.query.requesterId === req.params.id) throw new ApplicationError('Can\'t be friends with yourself.', 400)
 
   const newFriendRequest = new FriendRequest({
-    requester: req.body.requesterId,
+    requester: req.query.requesterId,
     receiver: req.params.id,
     isActive: true
   })
@@ -210,10 +229,14 @@ const respondToFriendRequest = async (req, res) => {
   
   const friendRequest = await FriendRequest.findById(req.params.frId)
   if (!friendRequest) throw new ApplicationError('Friend request not found.', 400)
+  if (friendRequest.receiver.toString() !== req.params.id) throw new ApplicationError('User is not friend request reeiver.', 400)
   
   if (req.query.action === 'accept') {
     const receiver = await User.findById(req.params.id)
-    const requester = await User.findById(req.body.requesterId)
+    const requester = await User.findById(friendRequest.requester)
+
+    if (receiver.friends.map(id => id.toString()).includes(requester.id.toString())) throw new ApplicationError('Already Friends.', 400)
+    if (receiver.friends.map(id => id.toString()).includes(requester.id.toString())) throw new ApplicationError('Already Friends.', 400)
 
     receiver.friends = [...receiver.friends, requester._id]
     requester.friends = [...requester.friends, receiver._id]

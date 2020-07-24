@@ -15,11 +15,11 @@ const NotificationCard = ({ notification, handleAcceptGame, handleAcceptFriend, 
       case 'friendRequest':
         return (
           <div>
-            <div style={{ fontSize: '1.1em' }}>New friend request from {notification.requester}!</div>
+            <div style={{ fontSize: '1.1em' }}>New friend request from <br/><b>{notification.requester}!</b></div>
             <div>Sent on {monthNames[date.getMonth()].substring(0,3)} {date.getDate()}</div>
             <div>
-              <Button type='primary' size='small' style={{ marginRight: '10px' }} onClick={() => null}>Accept</Button>
-              <Button type='danger' size='small' onClick={() => null}>Reject</Button>
+              <Button type='primary' size='small' style={{ marginRight: '10px' }} onClick={() => handleAcceptFriend(notification.id)}>Accept</Button>
+              <Button type='danger' size='small' onClick={() => handleRejectFriend(notification.id)}>Reject</Button>
             </div>
             <div><Button size='small' onClick={() => null}>View Profile</Button></div>
           </div>
@@ -27,7 +27,7 @@ const NotificationCard = ({ notification, handleAcceptGame, handleAcceptFriend, 
       case 'gameRequest':
         return (
           <div>
-            <div style={{ fontSize: '1.1em' }}>New game request from {notification.requester}!</div>
+            <div style={{ fontSize: '1.1em' }}>New game request from <b>{notification.requester}!</b></div>
             <div>Sent on {monthNames[date.getMonth()].substring(0,3)} {date.getDate()}</div>
             <div>
               <Button type='primary' size='small' style={{ marginRight: '10px' }} onClick={() => handleAcceptGame(notification.id)}>Accept</Button>

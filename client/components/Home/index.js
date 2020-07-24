@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { useSelector } from 'react-redux'
 import { useHistory } from 'react-router-dom'
-import { Button, Row, Divider, Typography } from 'antd';
+import { Button, Row, Divider, Typography, Alert } from 'antd';
 
 import { setAllTokens, ServerGameStatus } from 'Utilities/common'
 import { getGame } from 'Utilities/services/gameService'
-import { getActiveGames, getUserData, getNotifications, acceptGameRequest, rejectGameRequest } from 'Utilities/services/userService'
+import { getActiveGames, getUserData, getNotifications, acceptGameRequest, rejectGameRequest, acceptFriendRequest, rejectFriendRequest } from 'Utilities/services/userService'
 import { getNewGame } from 'Utilities/services/gameService'
 
 import ActiveGameCard from 'Components/Home/ActiveGameCard'
@@ -17,6 +17,8 @@ const Home = () => {
   const [activeGames, setActiveGames] = useState()
   const [userData, setUserData] = useState()
   const [notifications, setNotifications] = useState()
+  const [alertMessage, setAlertMessage] = useState()
+  const alertRef = useRef()
   const history = useHistory()
 
   if (user) setAllTokens(user.token)
@@ -95,14 +97,22 @@ const Home = () => {
   }
 
   const handleAcceptFriend = async friendRequestId => {
-
+    await acceptFriendRequest(user.user.id, friendRequestId)
+    handleSetAlert('Friend request rejected')
+    // re-render
+    handleGetFriends()
+    handleGetNotifications()
   }
 
   const handleRejectFriend = async friendRequestId => {
-
+    await rejectFriendRequest(user.user.id, friendRequestId)
+    handleSetAlert('Friend request rejected')
+    // re-render
+    handleGetFriends()
+    handleGetNotifications()
   }
 
-  // sorting callback - sort by status first (players turn > others turn > pending), then sort games within each category by date
+  // sorting function for active games sort by status first (players turn > others turn > pending), then sort games within each category by date
   const sortByActivePlayerThenDate = (a, b) => {
     const isActiveA = user.user.id === a.activePlayer.id
     const isActiveB = user.user.id === b.activePlayer.id
@@ -117,13 +127,23 @@ const Home = () => {
     return a.timeOfLastMove - b.timeOfLastMove
   }
 
+  // handlers for alert message, 5sec - successfully request friend, accept friend request, reject request
+  const handleSetAlert = alertMessage => {
+    setAlertMessage(alertMessage)
+    if (alertRef.current) clearTimeout(alertRef.current)
+    alertRef.current = setTimeout(() => setAlertMessage(null), 5000)
+  }
+  const displayStyle = alertMessage ? null : { display: 'none' }
+  
+
   // antd row gutter settings
   const rowGutter = [{ xs: 8, sm: 8, md: 16 },{ xs: 8, sm: 8, md: 16 }]
 
   return (
     <div className="main-layout" >
+      <Alert message={alertMessage} type="success" showIcon style={displayStyle} />
       <Typography.Title level={2} style={{ marginBottom: '0' }}>Welcome {user.user.username} </Typography.Title>
-      {notifications && notifications.length > 0 && <Divider orientation='left'><b style={{ color: 'dodgerblue' }}>Notifications</b></Divider>}
+      {notifications && notifications.length > 0 && <Divider orientation='left'><b>Notifications</b></Divider>}
       {notifications && 
         <Row gutter={rowGutter}>
           {notifications.map(n => <NotificationCard key={n.id} notification={n} handleAcceptGame={handleAcceptGame} 

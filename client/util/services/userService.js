@@ -72,3 +72,33 @@ export const searchForUsers = async (userId, queryString) => {
   const res = await axios.get(`${basePath}/search`, config)
   return res.data
 }
+
+export const addFriend = async (requesterId, receiverId) => {
+  const config = {
+    headers: { Authorization: token },
+    params: { requesterId }
+  }
+
+  const res = await axios.post(`${basePath}/${receiverId}/friend-requests`, null, config)
+  return res.data
+}
+
+export const acceptFriendRequest = async (userId, frId) => {
+  const config = {
+    headers: { Authorization: token },
+    params: { action: 'accept' }
+  }
+
+  const res = await axios.post(`${basePath}/${userId}/friend-requests/${frId}`, null, config)
+  return res.data
+}
+
+export const rejectFriendRequest = async (userId, frId) => {
+  const config = {
+    headers: { Authorization: token },
+    params: { action: 'reject' }
+  }
+
+  const res = await axios.post(`${basePath}/${userId}/friend-requests/${frId}`, null, config)
+  return res.data
+}
