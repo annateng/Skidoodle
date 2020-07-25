@@ -25,7 +25,7 @@ const ActiveGameCard = ({ game, user }) => {
 
   const cardStyle = {
     border: cardType === 'usersTurn' ? '2px solid limegreen' : null,
-    backgroundColor: cardType === 'pending' ? '#ffe8e8' : cardType === 'usersTurn' ? 'palegoldenrod' : 'whitesmoke'
+    backgroundColor: cardType === 'pending' ? '#ffe8e8' : cardType === 'usersTurn' ? 'whitesmoke' : 'whitesmoke'
   }
 
   const textStyle = {

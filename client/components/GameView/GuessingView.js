@@ -70,9 +70,10 @@ const GuessingView = ({ doodlesToGuess, roundLen, gameId, userId, setGame, setGa
 
   return (
     <div className='vertical-center-div' style={{ width: '1960px' }}>
-      <Typography.Title id='countdown-timer'>Time Left: {timeLeft}s</Typography.Title>
-      <Progress className='guess-progress' percent={timeLeft/roundLen*100} showInfo={false} />
-      <Typography.Text>Guess</Typography.Text>
+      <b style={{ fontSize: '20px' }}>Time Left:</b>
+      <Typography.Title id='countdown-timer'>{timeLeft}s</Typography.Title>
+      <Progress className='guess-progress' percent={timeLeft/roundLen*100} showInfo={false} strokeColor='dodgerblue'/>
+      <b>Guess:</b>
       <div id='guess-input-wrapper'>
         <input className='borderless-input' id='guess-input' type='text' value={guess} onChange={event => handleSetGuess(event.target.value)} autoComplete='off' spellCheck='false' />
         <div id='underline-div'>{label}</div>

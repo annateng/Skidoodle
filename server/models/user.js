@@ -21,6 +21,22 @@ const userSchema = new mongoose.Schema({
     friends: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
+    }],
+    highScores: [{
+      game: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Game'
+      },
+      partner: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+      },
+      partnerUsername: String,
+      timeStamp: Date,
+      score: {
+        numCorrect: Number,
+        totalTimeSpent: Number,
+      }
     }]
 })
 

@@ -27,7 +27,7 @@ const NotificationCard = ({ notification, handleAcceptGame, handleAcceptFriend, 
       case 'gameRequest':
         return (
           <div>
-            <div style={{ fontSize: '1.1em' }}>New game request from <b>{notification.requester}!</b></div>
+            <div style={{ fontSize: '1.1em' }}>New game request from <br/><b>{notification.requester}!</b></div>
             <div>Sent on {monthNames[date.getMonth()].substring(0,3)} {date.getDate()}</div>
             <div>
               <Button type='primary' size='small' style={{ marginRight: '10px' }} onClick={() => handleAcceptGame(notification.id)}>Accept</Button>

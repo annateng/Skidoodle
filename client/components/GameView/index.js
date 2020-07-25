@@ -56,7 +56,7 @@ const GameView = () => {
 
   // Button to begin round
   const beginRoundButton = buttonText => (
-    <Button type='primary' onClick={() => setGameState(game.currentRound.state)} id='begin-round-button'>{buttonText}</Button>
+    <Button onClick={() => setGameState(game.currentRound.state)} id='begin-round-button'>{buttonText}</Button>
   )
 
   // Button to return home if game/round is inactive

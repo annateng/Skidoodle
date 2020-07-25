@@ -104,7 +104,7 @@ const AddFriends = () => {
   return (
     <div className="main-layout" >
       <Alert message={alertMessage} type="success" showIcon style={displayStyle} />
-      <Typography.Title level={2} style={{ marginBottom: '0' }}>Add new friends </Typography.Title>
+      <Typography.Title level={2} style={{ marginBottom: '0' }}>Find new friends </Typography.Title>
 
       <Input.Search size="large" placeholder="search username" prefix={<UserOutlined />} style={{ marginTop: '20px' }} 
         enterButton='search' onSearch={handleSearch} onChange={handleSetQuery} />

@@ -68,7 +68,6 @@ const DrawingView = ({ wordsToDraw, roundLen, gameId, userId, setGame, setGameSt
   }
 
   const handleSetColor = color => {
-    console.log('got here', color)
     localStorage.setItem('scribbleColor', color)
   }
 
@@ -78,8 +77,9 @@ const DrawingView = ({ wordsToDraw, roundLen, gameId, userId, setGame, setGameSt
 
   return (
     <div className='vertical-center-div'>
-      <Typography.Title id='countdown-timer'>Time Left: {timeLeft}s</Typography.Title>
-      <Progress className='draw-progress' percent={timeLeft/roundLen*100} showInfo={false} />
+      <b style={{ fontSize: '20px' }}>Time Left:</b>
+      <Typography.Title id='countdown-timer'>{timeLeft}s</Typography.Title>
+      <Progress className='draw-progress' percent={timeLeft/roundLen*100} showInfo={false} strokeColor='dodgerblue'/>
       <Typography.Title id='word-to-draw'>{word || " "}</Typography.Title>
       
       <Row gutter={26}>

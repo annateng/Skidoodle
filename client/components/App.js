@@ -8,11 +8,10 @@ import Router from 'Components/Router'
 
 const App = () => {
   const location = useLocation()
-  const user = useSelector(state => state.user)
 
   return (
     <div style={{ maxHeight: '100%' }}>
-      {location.pathname !== '/' && <NavBar user={user}/>}
+      {location.pathname !== '/' && <NavBar />}
       <Router />
       {location.pathname !== '/' && <Footer />}
     </div>

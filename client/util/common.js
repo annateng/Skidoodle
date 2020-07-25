@@ -26,7 +26,7 @@ export const GameState = Object.freeze({
 
 export const monthNames = ["January", "February", "March", "April", "May", "June",
 "July", "August", "September", "October", "November", "December"
-];
+]
 
 // Everything from application wide common items is available through here
 export * from '@root/config/common'

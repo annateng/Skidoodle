@@ -6,11 +6,14 @@ const MONGODB_URI = process.env.MONGODB_URI
 const PRIVATE_KEY = process.env.PRIVATE_KEY
 
 // game variables
-const NUM_ROUNDS = common.inProduction ? 10 : 2
-const ROUND_LEN = common.inProduction ? 20 : 100
-const WORDS_PER_ROUND = common.inProduction ? 3 : 1
+const NUM_ROUNDS = common.inProduction ? 10 : 3
+const ROUND_LEN = common.inProduction ? 20 : 2
+const WORDS_PER_ROUND = common.inProduction ? 3 : 2
+
+// the number of high scores to track per player
+const NUM_HIGH_SCORES = 10
 
 module.exports = {
   ...common,
-  PORT, MONGODB_URI, PRIVATE_KEY, NUM_ROUNDS, ROUND_LEN, WORDS_PER_ROUND
+  PORT, MONGODB_URI, PRIVATE_KEY, NUM_ROUNDS, ROUND_LEN, WORDS_PER_ROUND, NUM_HIGH_SCORES
 }

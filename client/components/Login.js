@@ -21,7 +21,7 @@ const Login = () => {
         <Typography.Title level={2}>You are already logged in as {user.user.username} </Typography.Title>
         <Space direction='vertical'>
           <Button type='danger' size='large' onClick={() => dispatch(logout())}>Log Out</Button>
-          <Button type='primary' size='large' onClick={() => history.push('/profile')}>Go To My Profile</Button>
+          <Button type='primary' size='large' onClick={() => history.push(`/profile/${user.user.id}`)}>Go To My Profile</Button>
         </Space>
       </div>
     )

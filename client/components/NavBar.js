@@ -1,15 +1,16 @@
 import React from 'react'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { useHistory } from 'react-router-dom'
 import { Layout, Menu, Dropdown } from 'antd'
-import { MenuOutlined, HomeTwoTone } from '@ant-design/icons';
+import { MenuOutlined, HomeOutlined, SearchOutlined, UserOutlined } from '@ant-design/icons';
 
 import { images } from 'Utilities/common'
 import { logout } from 'Utilities/reducers/loginReducer'
 
-const NavBar = ({ user }) => {
+const NavBar = () => {
   const dispatch = useDispatch()
   const history = useHistory()
+  const user = useSelector(state => state.user)
 
   const handleMenuClick = ({ key }) => {
     switch (key) {
@@ -20,22 +21,31 @@ const NavBar = ({ user }) => {
       case 'home':
         history.push('/home')
         break
+      case 'search':
+        history.push('/add-friends')
+        break
+      case 'profile':
+        if (user && user.user) history.push(`/profile/${user.user.id}`)
+        break
     }
   }
 
   const menu = (
-    <Menu onClick={handleMenuClick} style={{ padding: '10px', fontSize: '16px' }}>
+    <Menu onClick={handleMenuClick} style={{ padding: '10px'}}>
       <b>Logged in as {user && user.user && user.user.username}</b>
-      <Menu.Item key='home' style={{ fontSize: '16px' }}>Home</Menu.Item>
-      <Menu.Item key='logout' style={{ fontSize: '16px' }}>Log Out</Menu.Item>
+      <Menu.Item className='navbar-hamburger-item' key='home'>Home</Menu.Item>
+      <Menu.Item className='navbar-hamburger-item' key='profile'>Profile</Menu.Item>  
+      <Menu.Item className='navbar-hamburger-item' key='logout'>Log Out</Menu.Item>
     </Menu>
   )
   
   return (
     <Layout.Header id='navbar'>
-      <div onClick={() => history.push('/home')}><img id='header-logo' src={images.logo} alt='skidoodle logo' /></div> 
+      <div onClick={() => history.push('/')}><img id='header-logo' src={images.logo} alt='skidoodle logo' /></div> 
       <Menu mode="horizontal" style={{ background: 'transparent', display: 'inline-block' }} onClick={handleMenuClick}>
-        <Menu.Item key="home"><HomeTwoTone /></Menu.Item>
+        <Menu.Item className='navbar-icon' key="home"><HomeOutlined /></Menu.Item>
+        <Menu.Item className='navbar-icon' key="search"><SearchOutlined /></Menu.Item>
+        <Menu.Item className='navbar-icon'key="profile"><UserOutlined /></Menu.Item>        
       </Menu>
       { user && user.user && 
         <Dropdown overlay={menu} style={{ display: 'block' }}>

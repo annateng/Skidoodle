@@ -5,8 +5,9 @@ const { generateWords } = require('@util/gameUtil')
 const Doodle = require('@models/doodle')
 const Game = require('@models/game')
 const GameRequest = require('@models/game-request')
+const User = require('@models/user')
 
-const { NUM_ROUNDS, ROUND_LEN, ServerGameStatus, ServerRoundState } = common
+const { NUM_ROUNDS, ROUND_LEN, NUM_HIGH_SCORES, ServerGameStatus, ServerRoundState } = common
 
 /** send userId in params */
 const getActive = async (req, res) => {
@@ -119,6 +120,7 @@ const sendRound = async (req, res) => {
     throw new ApplicationError('Game is already over.', 400)
   }
 
+  // client will either send guesses or doodles
   const type = req.query.type
   if (!(type === 'guess' || type === 'doodle')) throw new ApplicationError('Valid type is needed as query parameter: \'guess\' or \'doodle\'', 400)
 
@@ -213,6 +215,86 @@ const sendRound = async (req, res) => {
       game.activePlayer = null
       game.nextWords = null
       game.currentRoundNum = null
+
+      // calculate whether game qualifies as a high score
+      const p1 = await User.findById(game.player1)
+      const p2 = await User.findById(game.player2)
+
+      if (p1.highScores.length > NUM_HIGH_SCORES || p2.highScores.length > NUM_HIGH_SCORES) throw new ApplicationError('Player has too many high scores.', 500)
+
+      // if player has less than NUM_HIGH_SCORES total scores, just add this game to the high score list
+      if (p1.highScores.length < NUM_HIGH_SCORES) {
+        p1.highScores.push({
+          game: game._id,
+          partner: p2._id,
+          partnerUsername: p2.username,
+          timeStamp: game.timeOfLastMove,
+          score: {
+            ...game.result.gameTotals
+          }
+        })
+        console.log('p1hs', {
+          game: game._id,
+          partner: p2._id,
+          partnerUsername: p2.username,
+          timeStamp: game.timeOfLastMove,
+          score: {
+            ...game.result.gameTotals
+          }
+        })
+      } else if (p1.highScores.sort((a,b) => a.score.totalTimeSpent - b.score.totalTimeSpent)[NUM_HIGH_SCORES - 1] > game.result.gameTotals.totalTimeSpent) {
+        p1.highScores.pop() // remove slowest game
+        p1.highScores.push({
+          game: game._id,
+          partner: p2._id,
+          partnerUsername: p2.username,
+          timeStamp: game.timeOfLastMove,
+          score: {
+            ...game.result.gameTotals
+          }
+        })
+        p1.highScores.sort((a,b) => a.score.totalTimeSpent - b.score.totalTimeSpent) // sort ascending in time
+      }
+
+      // if player has less than NUM_HIGH_SCORES total scores, just add this game to the high score list
+      if (p2.highScores.length < NUM_HIGH_SCORES) {
+        p2.highScores.push({
+          game: game._id,
+          partner: p1._id,
+          partnerUsername: p1.username,
+          timeStamp: game.timeOfLastMove,
+          score: {
+            ...game.result.gameTotals
+          }
+        })
+        console.log('p2hs', {
+          game: game._id,
+          partner: p1._id,
+          partnerUsername: p1.username,
+          timeStamp: game.timeOfLastMove,
+          score: {
+            ...game.result.gameTotals
+          }
+        })
+      } else if (p2.highScores.sort((a,b) => a.score.totalTimeSpent - b.score.totalTimeSpent)[NUM_HIGH_SCORES - 1] > game.result.gameTotals.totalTimeSpent) {
+        p2.highScores.pop() // remove slowest game
+        p2.highScores.push({
+          game: game._id,
+          partner: p1._id,
+          partnerUsername: p1.username,
+          timeStamp: game.timeOfLastMove,
+          score: {
+            ...game.result.gameTotals
+          }
+        })
+        p2.highScores.sort((a,b) => a.score.totalTimeSpent - b.score.totalTimeSpent) // sort ascending in time
+      }
+      
+      console.log('got here')
+      console.log(p1)
+      console.log(p2)
+      await p1.save()
+      await p2.save()
     }
   } else {
     game.currentRound = currentRound

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { useSelector } from 'react-redux'
-import { useHistory } from 'react-router-dom'
-import { Button, Row, Divider, Typography, Alert } from 'antd';
+import { useHistory, Link } from 'react-router-dom'
+import { Button, Row, Col, Divider, Typography, Alert } from 'antd';
 
 import { setAllTokens, ServerGameStatus } from 'Utilities/common'
 import { getGame } from 'Utilities/services/gameService'
@@ -9,7 +9,7 @@ import { getActiveGames, getUserData, getNotifications, acceptGameRequest, rejec
 import { getNewGame } from 'Utilities/services/gameService'
 
 import ActiveGameCard from 'Components/Home/ActiveGameCard'
-import Friend from 'Components/Home/Friend'
+import FriendCard from 'Components/Home/FriendCard'
 import NotificationCard from 'Components/Home/NotificationCard'
 
 const Home = () => {
@@ -35,7 +35,7 @@ const Home = () => {
     return (
       <div className='main-layout' >
         <div className='vertical-center-div'>
-        <Typography.Title level={4}>Log in to see your profile</Typography.Title>
+        <Typography.Title level={4}>Log in to see your home page</Typography.Title>
         <Button type='primary' size='large' onClick={() => history.push('/login')}>Log In</Button>
         </div>
       </div>
@@ -44,14 +44,14 @@ const Home = () => {
 
   const handleGetActiveGames = async () => {
     const gamesFromDB = await getActiveGames(user.user.id)
-    console.log(gamesFromDB)
+    console.log(gamesFromDB) // DEBUG
     setActiveGames(gamesFromDB)
   }
 
   const handleGetFriends = async () => {
     const userFromDB = await getUserData(user.user.id)
     setUserData(userFromDB)
-    // console.log(userFromDB)
+    // console.log(userFromDB) // DEBUG
   }
 
   const handleGetNotifications = async () => {
@@ -79,9 +79,13 @@ const Home = () => {
 
   // create new game, navigate to game play page. game request to partner is generated
   // after first round is sent automatically on the backend
-  const handleNewGame = async (receiverId) => {
+  const handleNewGame = async receiverId => {
     const newGame = await getNewGame(user.user.id, receiverId)
     history.push(`/game/${newGame.id}`)
+  }
+
+  const handleSeeProfile = async userId => {
+    history.push(`/profile/${userId}`)
   }
 
   // accept game request, and navigate to begin playing game
@@ -90,20 +94,23 @@ const Home = () => {
     history.push(`/game/${acceptedGame.id}`)
   }
 
+  // reject game request, set alert, re-render
   const handleRejectGame = async gameRequestId => {
-    const acceptedGame = await rejectGameRequest(user.user.id, gameRequestId)
+    await rejectGameRequest(user.user.id, gameRequestId)
     handleGetActiveGames()
     handleGetNotifications()
+    handleSetAlert('Game request rejected')
   }
 
+  // accept friend request, set alert, re-render
   const handleAcceptFriend = async friendRequestId => {
     await acceptFriendRequest(user.user.id, friendRequestId)
-    handleSetAlert('Friend request rejected')
-    // re-render
+    handleSetAlert('Friend request accepted')
     handleGetFriends()
     handleGetNotifications()
   }
 
+  // reject friend request, set alert, re-render
   const handleRejectFriend = async friendRequestId => {
     await rejectFriendRequest(user.user.id, friendRequestId)
     handleSetAlert('Friend request rejected')
@@ -127,7 +134,7 @@ const Home = () => {
     return a.timeOfLastMove - b.timeOfLastMove
   }
 
-  // handlers for alert message, 5sec - successfully request friend, accept friend request, reject request
+  // handlers for alert message, 5sec
   const handleSetAlert = alertMessage => {
     setAlertMessage(alertMessage)
     if (alertRef.current) clearTimeout(alertRef.current)
@@ -142,27 +149,29 @@ const Home = () => {
   return (
     <div className="main-layout" >
       <Alert message={alertMessage} type="success" showIcon style={displayStyle} />
-      <Typography.Title level={2} style={{ marginBottom: '0' }}>Welcome {user.user.username} </Typography.Title>
-      {notifications && notifications.length > 0 && <Divider orientation='left'><b>Notifications</b></Divider>}
-      {notifications && 
+      <Typography.Title><Link to={`/profile/${user.user.id}`}>{user.user.username}</Link></Typography.Title>
+      <Typography.Title level={4}><div><b>Notifications</b></div></Typography.Title>
+      {notifications && notifications.length > 0 ? 
         <Row gutter={rowGutter}>
           {notifications.map(n => <NotificationCard key={n.id} notification={n} handleAcceptGame={handleAcceptGame} 
           handleRejectGame={handleRejectGame} handleAcceptFriend={handleAcceptFriend} handleRejectFriend={handleRejectFriend}/>)}
-        </Row>}
-      <Divider orientation='left'>Active Games</Divider>
+        </Row>
+        : <p>No new notifications</p>}
+      <Typography.Title level={4}><div><b>My Games</b></div></Typography.Title>
         <Row gutter={rowGutter}>
           {activeGames && activeGames.sort(sortByActivePlayerThenDate)
             .map(ag => <ActiveGameCard key={ag.id} game={ag} user={user.user} getGame={getGame} />)}
           </Row>
-      <Divider orientation='left'>Friends</Divider>
+      <Typography.Title level={4}><div><b>My Friends</b></div></Typography.Title>
         <div style={{ marginBottom: '15px' }}>
-          <Button onClick={() => history.push('/add-friends')}>Find New Friends</Button>
+          <Button style={{ border: '1px solid limegreen'}} onClick={() => history.push('/add-friends')}>Find New Friends</Button>
         </div>
         <Row gutter={rowGutter}>
         {userData && userData.friends.map(friend => 
-            <Friend key={friend.id} friend={friend} handleNewGame={handleNewGame} />)}
+            <Col xs={12} sm={8} lg={6} >
+              <FriendCard key={friend.id} friend={friend} handleNewGame={handleNewGame} handleSeeProfile={handleSeeProfile}/>
+            </Col>)}
         </Row>
-      <Divider orientation='left'>Inactive Games</Divider>
     </div>
   )
 }

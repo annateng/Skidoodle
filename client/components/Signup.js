@@ -1,14 +1,17 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { Form, Input, Button, Typography, Alert } from 'antd'
 import { useHistory } from 'react-router-dom'
+import { useDispatch } from 'react-redux'
 
 import { signUpUser } from 'Utilities/services/userService'
+import { loginUser } from 'Utilities/reducers/loginReducer'
 
 const Signup = () => {
   const [alertMessage, setAlertMessage] = useState()
   const [alertType, setAlertType] = useState('error')
   const alertRef = useRef()
   const history = useHistory()
+  const dispatch = useDispatch()
 
   // Clean up alert settimeouts if component unmounts
   useEffect(() => () => clearTimeout(alertRef.current), [])
