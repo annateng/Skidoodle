@@ -63,6 +63,7 @@ const Home = () => {
       id: fr.id,
       type: 'friendRequest',
       requester: fr.requester.username,
+      requesterId: fr.requester.id,
       dateRequested: fr.dateRequested
     })).concat(
       notificationsFromDB.gameRequests
@@ -154,7 +155,8 @@ const Home = () => {
       {notifications && notifications.length > 0 ? 
         <Row gutter={rowGutter}>
           {notifications.map(n => <NotificationCard key={n.id} notification={n} handleAcceptGame={handleAcceptGame} 
-          handleRejectGame={handleRejectGame} handleAcceptFriend={handleAcceptFriend} handleRejectFriend={handleRejectFriend}/>)}
+          handleRejectGame={handleRejectGame} handleAcceptFriend={handleAcceptFriend} handleRejectFriend={handleRejectFriend} 
+          handleSeeProfile={handleSeeProfile}/>)}
         </Row>
         : <p>No new notifications</p>}
       <Typography.Title level={4}><div><b>My Games</b></div></Typography.Title>
@@ -168,8 +170,8 @@ const Home = () => {
         </div>
         <Row gutter={rowGutter}>
         {userData && userData.friends.map(friend => 
-            <Col xs={12} sm={8} lg={6} >
-              <FriendCard key={friend.id} friend={friend} handleNewGame={handleNewGame} handleSeeProfile={handleSeeProfile}/>
+            <Col key={friend.id} xs={12} sm={8} lg={6} >
+              <FriendCard friend={friend} handleNewGame={handleNewGame} handleSeeProfile={handleSeeProfile}/>
             </Col>)}
         </Row>
     </div>

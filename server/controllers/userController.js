@@ -31,8 +31,6 @@ const findUsers = async (req, res) => {
       const fuIdStr = fu._id.toString()
 
       const frStatus = incomingFrStr.includes(fuIdStr) ? 'incoming' : outgoingFrStr.includes(fuIdStr) ? 'outgoing' : null
-      console.log(frStatus)
-      console.log(outgoingFr.map(fr => fr._id.toString()))
       const frId = frStatus === 'incoming' ? incomingFr.find(fr => fr.requester.toString() === fuIdStr)._id.toString() :
                     frStatus === 'outgoing' ? outgoingFr.find(fr => fr.receiver.toString() === fuIdStr)._id.toString() :
                     null
@@ -56,20 +54,53 @@ const deleteUser = async (req, res) => {
 }
 
 const getUser = async (req, res) => {
+  const userId = req.params.id
   let requestingUser
 
   const decodedToken = getDecodedToken(req)
 
   if (decodedToken && decodedToken.id) requestingUser = await User.findById(decodedToken.id).populate({ path: 'friends', select: 'username'})
-  if (requestingUser && requestingUser._id.toString() === req.params.id) return res.json(requestingUser.toJSON())
+  if (!requestingUser) throw new ApplicationError('User not found.', 404)
+  // self: return full user
+  if (requestingUser && requestingUser._id.toString() === userId) return res.json(requestingUser.toJSON())
 
-  const user = await User.findById(req.params.id)
+  const ruId = requestingUser._id.toString()
+  const user = await User.findById(userId)
+  
+
+  // incomingFrStr: string ids of users who have requested requestingUser as a friend, pending
+  const incomingFr = await FriendRequest.find({ receiver: ruId, isActive: true })
+  const incomingFrStr = incomingFr.map(fr => fr.requester.toString())
+  // outgoingFrStr: string ids of users who requestingUser has requested as a friend, pending
+  const outgoingFr = await FriendRequest.find({ requester: ruId, isActive: true })
+  const outgoingFrStr = outgoingFr.map(fr => fr.receiver.toString())
+
+  const frStatus = incomingFrStr.includes(userId) ? 'incoming' : outgoingFrStr.includes(userId) ? 'outgoing' : null
+  const frId = frStatus === 'incoming' ? incomingFr.find(fr => fr.requester.toString() === userId)._id.toString() :
+                    frStatus === 'outgoing' ? outgoingFr.find(fr => fr.receiver.toString() === userId)._id.toString() :
+                    null
 
   // not friends: return partial data
-  if (!requestingUser || !user.friends.includes(requestingUser._id)) return res.json({ username: user.username })
+  if (!requestingUser || !user.friends.includes(requestingUser._id)) return res.json(
+    { 
+      id: user._id.toString(),
+      username: user.username,
+      dateJoined: user.dateJoined,
+      isFriends: false,
+      frStatus,
+      frId
+    })
 
   // friends: return a little more data
-  res.json({ username: user.username, displayName: user.displayName })
+  res.json({
+    id: user._id.toString(),
+    username: user.username, 
+    dateJoined: user.dateJoined,
+    highScores: user.highScores,
+    isFriends: true,
+    frStatus,
+    frId
+  })
 }
 
 /* Get friend requests and game requests */

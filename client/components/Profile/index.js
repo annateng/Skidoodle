@@ -4,7 +4,7 @@ import { useHistory, useParams, Link } from 'react-router-dom'
 import { Button, Typography, Alert, Row, Col, Table } from 'antd';
 
 import { setAllTokens, monthNames } from 'Utilities/common'
-import { getUserData } from 'Utilities/services/userService'
+import { getUserData, acceptFriendRequest, rejectFriendRequest, addFriend } from 'Utilities/services/userService'
 import { getNewGame } from 'Utilities/services/gameService'
 import FriendCard from 'Components/Home/FriendCard'
 
@@ -36,8 +36,10 @@ const Profile = () => {
     return (
       <div className='main-layout' >
         <div className='vertical-center-div'>
-        <Typography.Title level={4}>Log in to see your profile</Typography.Title>
-        <Button type='primary' size='large' onClick={() => history.push('/login')}>Log In</Button>
+        <Typography.Title level={4}>User not found</Typography.Title>
+        <b><Link to='/' onClick={() => history.goBack()}>Go back</Link></b>
+        <b><Link to='/login'>Go to log in</Link></b>
+        <b><Link to='/home'>Go home</Link></b>
         </div>
       </div>
     )
@@ -48,6 +50,28 @@ const Profile = () => {
   const handleNewGame = async (receiverId) => {
     const newGame = await getNewGame(user.user.id, receiverId)
     history.push(`/game/${newGame.id}`)
+  }
+
+  // accept friend request handler
+  const handleAcceptRequest = async friendRequestId => {
+    await acceptFriendRequest(user.user.id, friendRequestId)
+    console.log(friendRequestId)
+    handleSetAlert('Friend request accepted')
+    handleGetUserData() // re-render page
+  }
+
+  // reject friend request handler
+  const handleRejectRequest = async friendRequestId => {
+    await rejectFriendRequest(user.user.id, friendRequestId)
+    handleSetAlert('Friend request rejected')
+    handleGetUserData() // re-render page
+  }
+
+  // send friend request handler
+  const handleAddFriend = async userId => {
+    await addFriend(user.user.id, userId)
+    handleSetAlert('Friend request sent')
+    handleGetUserData() // re-render page
   }
 
   // handlers for alert message, 5sec - successfully request friend, accept friend request, reject request
@@ -65,7 +89,8 @@ const Profile = () => {
   }
 
   // high score table data
-  const highScoreData = userData.highScores.map((hs, index) => 
+  const highScoreData = userData.highScores && 
+  userData.highScores.map((hs, index) => 
     ({ 
       key: index+1, 
       partner: hs.partnerUsername,
@@ -83,27 +108,46 @@ const Profile = () => {
     { title: 'Total Time Spent', dataIndex: 'tts', key: 'tts', render: tts => (tts / 1000).toFixed(2) + 's' }
   ]
 
+  // what to display under username. depends on whether users are friends, pending friends, not friends, or self
+  const friendDisplay = userData.friends ? <b><Link to={`/home`}>Go to my games</Link></b> : // if userData.friends, user is the requesting user
+  userData.isFriends ? (
+    <div>
+      <div>Friends</div>
+      <Button onClick={() => handleNewGame(userData.id)}>Start new game</Button>
+    </div>) :
+  userData.frStatus === 'outgoing' ? <div>friend request pending</div> :
+  userData.frStatus === 'incoming' ? 
+    (<div>
+      Friend request pending
+      <div style={{ float: 'right'}}>
+        <Button style={{ marginRight: '15px' }} onClick={() => handleAcceptRequest(userData.frId)}>Accept</Button>
+        <Button onClick={() => handleRejectRequest(userData.frId)}>Reject</Button>
+      </div>
+    </div>) : 
+  <Button onClick={() => handleAddFriend(userData.id)}>Add Friend</Button>
+
   return (
     <div className='main-layout' >
       <div>
         <Alert message={alertMessage} type="success" showIcon style={displayStyle} />
         <Typography.Title >{userData.username}</Typography.Title>
-        <div><b>Date joined: {getFormattedDate(userData.dateJoined)}</b></div>
-        <b><Link to={`/home`}>Go to my games</Link></b>
-        
+        {userData.dateJoined && <div><b>Date joined: {getFormattedDate(userData.dateJoined)}</b></div>}
+        <div>{friendDisplay}</div>
         <Row gutter={26}>
-          <Col span={18}>
-            <Typography.Title level={4} style={{ marginTop: '15px' }}>High scores</Typography.Title>
-            {userData.highScores.length > 0 && <Table dataSource={highScoreData} columns={highScoreColumns} tableLayout='fixed' pagination={false} />}
-          </Col>
-          <Col span={6}>
-            <Typography.Title level={4} style={{ marginTop: '15px' }}>Friends</Typography.Title>
-            <div style={{ marginBottom: '15px' }}>
-              <Button style={{ border: '1px solid limegreen'}} onClick={() => history.push('/add-friends')}>Find New Friends</Button>
-            </div>
-            {userData && userData.friends.map(friend => 
-              <FriendCard key={friend.id} friend={friend} handleNewGame={handleNewGame} />)}
-          </Col>
+          {userData.highScores && userData.highScores.length > 0 &&
+            <Col span={18}>
+              <Typography.Title level={4} style={{ marginTop: '15px' }}>High scores</Typography.Title>
+              <Table dataSource={highScoreData} columns={highScoreColumns} tableLayout='fixed' pagination={false} />
+            </Col>}
+          {userData && userData.friends &&
+            <Col span={6}>
+              <Typography.Title level={4} style={{ marginTop: '15px' }}>Friends</Typography.Title>
+              <div style={{ marginBottom: '15px' }}>
+                <Button style={{ border: '1px solid limegreen'}} onClick={() => history.push('/add-friends')}>Find New Friends</Button>
+              </div>
+              {userData.friends.map(friend => 
+                <FriendCard key={friend.id} friend={friend} handleNewGame={handleNewGame} />)}
+            </Col>}
         </Row>
       </div>
     </div>

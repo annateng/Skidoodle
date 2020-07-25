@@ -3,7 +3,7 @@ import { Col, Button, Card } from 'antd'
 
 import { monthNames } from 'Utilities/common'
 
-const NotificationCard = ({ notification, handleAcceptGame, handleAcceptFriend, handleRejectGame, handleRejectFriend }) => {
+const NotificationCard = ({ notification, handleAcceptGame, handleAcceptFriend, handleRejectGame, handleRejectFriend, handleSeeProfile }) => {
 
   const notificationBody = (notification) => {
     // console.log(notification)
@@ -21,7 +21,7 @@ const NotificationCard = ({ notification, handleAcceptGame, handleAcceptFriend, 
               <Button type='primary' size='small' style={{ marginRight: '10px' }} onClick={() => handleAcceptFriend(notification.id)}>Accept</Button>
               <Button type='danger' size='small' onClick={() => handleRejectFriend(notification.id)}>Reject</Button>
             </div>
-            <div><Button size='small' onClick={() => null}>View Profile</Button></div>
+            <div><Button size='small' onClick={() => handleSeeProfile(notification.requesterId)}>View Profile</Button></div>
           </div>
         )
       case 'gameRequest':
@@ -43,7 +43,6 @@ const NotificationCard = ({ notification, handleAcceptGame, handleAcceptFriend, 
     backgroundColor: notification.type === 'friendRequest' ? '#cfffef' : '#f1e6ff'
   }
 
-  // TODO: handleSeeProfile
   return (
     <Col xs={12} sm={8} lg={6} >
       <Card className='home-card' bordered='true' bodyStyle={{ padding: '10px' }} style={cardStyle}>

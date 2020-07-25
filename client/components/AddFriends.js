@@ -18,7 +18,6 @@ const AddFriends = () => {
 
   if (user) setAllTokens(user.token)
 
-  // TODO
   const seeProfileButton = userId => {
     return <Button style={{ float: 'right' }} onClick={() => handleSeeProfile(userId)}>See Profile</Button>
   }
@@ -68,7 +67,7 @@ const AddFriends = () => {
   }
 
   const handleSeeProfile = userId => {
-    // TODO
+    history.push(`/profile/${userId}`)
   }
 
   // accept friend request handler
