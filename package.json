@@ -1,7 +1,7 @@
 {
   "name": "skidoodle",
   "version": "1.0.0",
-  "description": "Collaborative, competitive doodling game with friends.",
+  "description": "Competitive doodling game with friends.",
   "main": "index.js",
   "scripts": {
     "dev": "cross-env NODE_ENV=development nodemon index.js",
@@ -27,11 +27,9 @@
     "babel-loader": "^8.0.6",
     "bcrypt": "^5.0.0",
     "chokidar": "^3.3.1",
-    "cloc": "^2.5.1",
     "cross-env": "^7.0.0",
     "css-loader": "^3.4.2",
     "dotenv": "^8.2.0",
-    "emotion-theming": "^10.0.27",
     "eslint": "^6.8.0",
     "eslint-config-airbnb": "^18.0.1",
     "eslint-plugin-import": "^2.20.0",
@@ -39,19 +37,16 @@
     "eslint-plugin-react": "^7.18.0",
     "express": "^4.17.1",
     "express-async-errors": "^3.1.1",
-    "fibers": "^4.0.2",
     "file-loader": "^5.0.2",
     "html-webpack-plugin": "^3.2.0",
     "jsonwebtoken": "^8.5.1",
-    "mini-css-extract-plugin": "^0.9.0",
     "module-alias": "^2.2.2",
     "mongoose-unique-validator": "^2.0.3",
-    "object-sizeof": "^1.6.1",
+    "nodemailer": "^6.4.10",
     "paper": "^0.12.11",
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
     "react-redux": "^7.2.0",
-    "react-router": "^5.1.2",
     "react-router-dom": "^5.1.2",
     "redux": "^4.0.5",
     "redux-persist": "^6.0.0",
@@ -60,7 +55,6 @@
     "sass": "^1.25.0",
     "sass-loader": "^8.0.2",
     "style-loader": "^1.1.3",
-    "use-query-params": "^1.1.6",
     "webpack": "^4.41.5",
     "webpack-cli": "^3.3.10"
   },
@@ -85,6 +79,7 @@
     "@controllers": "server/controllers",
     "@middleware": "server/middleware",
     "@util": "server/util",
-    "@models": "server/models"
+    "@models": "server/models",
+    "@resources": "server/resources"
   }
 }

@@ -59,7 +59,7 @@ const Signup = () => {
   }
 
   // Alert message settings
-  const displayStyle = alertMessage ? null : { display: 'none' }
+  const displayStyle = alertMessage ? { width: '100%', marginBottom: '10px' } : { display: 'none' }
 
   // antd form layout settings
   const layout = {
@@ -68,32 +68,34 @@ const Signup = () => {
   }
 
   return (
-    <div className='main-layout' id='sign-up-form-div'>
+    <div className='main-layout vertical-center-div'>
       <Alert message={alertMessage} type={alertType} showIcon style={displayStyle} />
-      <Typography.Title>Sign Up</Typography.Title> 
-      <Form {...layout} onFinish={handleSignUp} validateMessages={validateMessages}
-        onFinishFailed={() => console.error('Required form fields missing.')}>
-        <Form.Item label='Name' name='displayName'
+      <div className='skinny-skinny-container'>
+        <Typography.Title>Sign Up</Typography.Title> 
+        <Form {...layout} onFinish={handleSignUp} validateMessages={validateMessages}
+          onFinishFailed={() => console.error('Required form fields missing.')}>
+          <Form.Item label='Name' name='displayName'
+              rules={[{ required: true }]}>
+              <Input />
+          </Form.Item>
+          <Form.Item label='E-mail address' name='email'
+              rules={[{ required: true, type: 'email' }]}>
+              <Input />
+          </Form.Item>
+          <Form.Item label='Username' name='username'
             rules={[{ required: true }]}>
             <Input />
-        </Form.Item>
-        <Form.Item label='E-mail address' name='email'
-            rules={[{ required: true, type: 'email' }]}>
-            <Input />
-        </Form.Item>
-        <Form.Item label='Username' name='username'
-          rules={[{ required: true }]}>
-          <Input />
-        </Form.Item>
-        <Form.Item label='Password' name='password'
-          rules={[{ required: true }]}>
-          <Input.Password />
-        </Form.Item>
-        <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-            <Button type='primary' htmlType='submit' size='large' style={{ marginRight: '20px'}}>Sign Up</Button>
-            <Button htmlType='submit' size='large' style={{ fontSize: '16px' }} onClick={() => history.push('/login')}>I already have an account</Button>
-        </Form.Item>
-      </Form>    
+          </Form.Item>
+          <Form.Item label='Password' name='password'
+            rules={[{ required: true }]}>
+            <Input.Password />
+          </Form.Item>
+          <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
+              <Button type='primary' htmlType='submit' size='large' style={{ marginRight: '20px'}}>Sign Up</Button>
+              <Button htmlType='submit' size='large' style={{ fontSize: '16px' }} onClick={() => history.push('/login')}>I already have an account</Button>
+          </Form.Item>
+        </Form>    
+      </div>
     </div>
   )
 }

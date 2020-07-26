@@ -148,32 +148,35 @@ const Home = () => {
   const rowGutter = [{ xs: 8, sm: 8, md: 16 },{ xs: 8, sm: 8, md: 16 }]
 
   return (
-    <div className="main-layout" >
+    <div className='main-layout vertical-center-div'>
       <Alert message={alertMessage} type="success" showIcon style={displayStyle} />
-      <Typography.Title><Link to={`/profile/${user.user.id}`}>{user.user.username}</Link></Typography.Title>
-      <Typography.Title level={4}><div><b>Notifications</b></div></Typography.Title>
-      {notifications && notifications.length > 0 ? 
-        <Row gutter={rowGutter}>
-          {notifications.map(n => <NotificationCard key={n.id} notification={n} handleAcceptGame={handleAcceptGame} 
-          handleRejectGame={handleRejectGame} handleAcceptFriend={handleAcceptFriend} handleRejectFriend={handleRejectFriend} 
-          handleSeeProfile={handleSeeProfile}/>)}
-        </Row>
-        : <p>No new notifications</p>}
-      <Typography.Title level={4}><div><b>My Games</b></div></Typography.Title>
-        <Row gutter={rowGutter}>
-          {activeGames && activeGames.sort(sortByActivePlayerThenDate)
-            .map(ag => <ActiveGameCard key={ag.id} game={ag} user={user.user} getGame={getGame} />)}
+      <div className='skinny-container'>
+        <Typography.Title>Welcome <Link to={`/profile/${user.user.id}`}>{user.user.username}</Link></Typography.Title>
+        <Typography.Title level={4}><div><b>Notifications</b></div></Typography.Title>
+        {notifications && notifications.length > 0 ? 
+          <Row gutter={rowGutter}>
+            {notifications.map(n => <NotificationCard key={n.id} notification={n} handleAcceptGame={handleAcceptGame} 
+            handleRejectGame={handleRejectGame} handleAcceptFriend={handleAcceptFriend} handleRejectFriend={handleRejectFriend} 
+            handleSeeProfile={handleSeeProfile}/>)}
           </Row>
-      <Typography.Title level={4}><div><b>My Friends</b></div></Typography.Title>
-        <div style={{ marginBottom: '15px' }}>
-          <Button style={{ border: '1px solid limegreen'}} onClick={() => history.push('/add-friends')}>Find New Friends</Button>
+          : <p style={{ paddingLeft: '8px' }}>No new notifications</p>}
+        <Typography.Title level={4}><div><b>My Games</b></div></Typography.Title>
+          <Row gutter={rowGutter}>
+            {activeGames && activeGames.length > 0 ? activeGames.sort(sortByActivePlayerThenDate)
+              .map(ag => <ActiveGameCard key={ag.id} game={ag} user={user.user} getGame={getGame} />) 
+            : <p style={{ paddingLeft: '8px' }}>No active games</p>}
+            </Row>
+        <Typography.Title level={4}><div><b>My Friends</b></div></Typography.Title>
+          <div style={{ marginBottom: '15px' }}>
+            <Button style={{ border: '1px solid limegreen'}} onClick={() => history.push('/add-friends')}>Find New Friends</Button>
+          </div>
+          <Row gutter={rowGutter}>
+          {userData && userData.friends.map(friend => 
+              <Col key={friend.id} xs={12} sm={8} lg={6} >
+                <FriendCard friend={friend} handleNewGame={handleNewGame} handleSeeProfile={handleSeeProfile}/>
+              </Col>)}
+          </Row>
         </div>
-        <Row gutter={rowGutter}>
-        {userData && userData.friends.map(friend => 
-            <Col key={friend.id} xs={12} sm={8} lg={6} >
-              <FriendCard friend={friend} handleNewGame={handleNewGame} handleSeeProfile={handleSeeProfile}/>
-            </Col>)}
-        </Row>
     </div>
   )
 }

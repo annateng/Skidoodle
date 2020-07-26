@@ -41,7 +41,7 @@ const NavBar = () => {
   
   return (
     <Layout.Header id='navbar'>
-      <div onClick={() => history.push('/')}><img id='header-logo' src={images.logo} alt='skidoodle logo' /></div> 
+      <div onClick={() => history.push('/home')}><img id='header-logo' src={images.logo} alt='skidoodle logo' /></div> 
       <Menu mode="horizontal" style={{ background: 'transparent', display: 'inline-block' }} onClick={handleMenuClick}>
         <Menu.Item className='navbar-icon' key="home"><HomeOutlined /></Menu.Item>
         <Menu.Item className='navbar-icon' key="search"><SearchOutlined /></Menu.Item>

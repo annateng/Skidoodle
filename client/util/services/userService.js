@@ -39,7 +39,6 @@ export const acceptGameRequest = async (userId, gameRequestId) => {
     headers: { Authorization: token },
     params: { action: 'accept' }
   }
-  console.log(config)
 
   const res = await axios.post(`${basePath}/${userId}/game-requests/${gameRequestId}`, null, config)
   return res.data

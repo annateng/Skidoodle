@@ -36,10 +36,7 @@ const Profile = () => {
     return (
       <div className='main-layout' >
         <div className='vertical-center-div'>
-        <Typography.Title level={4}>User not found</Typography.Title>
-        <b><Link to='/' onClick={() => history.goBack()}>Go back</Link></b>
-        <b><Link to='/login'>Go to log in</Link></b>
-        <b><Link to='/home'>Go home</Link></b>
+        <Typography.Title level={4}>loading...</Typography.Title>
         </div>
       </div>
     )
@@ -128,17 +125,18 @@ const Profile = () => {
 
   return (
     <div className='main-layout' >
-      <div>
+      <div className='skinny-container'>
         <Alert message={alertMessage} type="success" showIcon style={displayStyle} />
         <Typography.Title >{userData.username}</Typography.Title>
         {userData.dateJoined && <div><b>Date joined: {getFormattedDate(userData.dateJoined)}</b></div>}
         <div>{friendDisplay}</div>
         <Row gutter={26}>
-          {userData.highScores && userData.highScores.length > 0 &&
-            <Col span={18}>
-              <Typography.Title level={4} style={{ marginTop: '15px' }}>High scores</Typography.Title>
+          <Col span={18}>
+            <Typography.Title level={4} style={{ marginTop: '15px' }}>High scores</Typography.Title>
+            {userData.highScores && userData.highScores.length > 0  ? 
               <Table dataSource={highScoreData} columns={highScoreColumns} tableLayout='fixed' pagination={false} />
-            </Col>}
+              : <div>No high scores yet</div>}
+          </Col>
           {userData && userData.friends &&
             <Col span={6}>
               <Typography.Title level={4} style={{ marginTop: '15px' }}>Friends</Typography.Title>

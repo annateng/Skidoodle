@@ -1,4 +1,4 @@
-const dictionary = require('@util/dictionary.json')
+const dictionary = require('@resources/dictionary.json')
 const { WORDS_PER_ROUND } = require('@util/common')
 const dictLen = dictionary.words.length
 

@@ -8,6 +8,7 @@
       "@middleware/*": ["server/middleware/*"],
       "@util/*": ["server/util/*"],
       "@models/*": ["server/models/*"],
+      "@resources/*": ["server/resources/*"],
       "Utilities/*": ["client/util/*"],
       "Components/*": ["client/components/*"],
       "Assets/*": ["client/assets/*"],

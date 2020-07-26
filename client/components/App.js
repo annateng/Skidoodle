@@ -10,7 +10,7 @@ const App = () => {
   const location = useLocation()
 
   return (
-    <div style={{ maxHeight: '100%' }}>
+    <div style={{ height: '100%' }}>
       {location.pathname !== '/' && <NavBar />}
       <Router />
       {location.pathname !== '/' && <Footer />}

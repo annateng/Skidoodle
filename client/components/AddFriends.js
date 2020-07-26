@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { useSelector } from 'react-redux'
+import { useHistory } from 'react-router-dom'
 import { Typography, Input, List, Button, Alert } from 'antd'
 import { UserOutlined, CheckOutlined, ExclamationOutlined } from '@ant-design/icons'
 
@@ -12,6 +13,7 @@ const AddFriends = () => {
   const [alertMessage, setAlertMessage] = useState()
   const [query, setQuery] = useState()
   const alertRef = useRef()
+  const history = useHistory()
 
   // Clean up alert settimeouts if component unmounts
   useEffect(() => () => clearTimeout(alertRef.current), [])
@@ -19,22 +21,42 @@ const AddFriends = () => {
   if (user) setAllTokens(user.token)
 
   const seeProfileButton = userId => {
-    return <Button style={{ float: 'right' }} onClick={() => handleSeeProfile(userId)}>See Profile</Button>
+    return <Button onClick={() => handleSeeProfile(userId)}>See Profile</Button>
   }
 
   const addFriendButton = userId => {
-    return <Button style={{ float: 'right' }} onClick={() => handleAddFriend(userId)}>Add Friend</Button>
+    return <Button style={{ marginRight: '15px' }} onClick={() => handleAddFriend(userId)}>Add Friend</Button>
   } 
 
   // Buttons for list item corresponding to an incoming friend request
-  const incomingButtons = friendRequestId => {
+  const incomingButtons = (friendRequestId, userId) => {
     return (
       <div style={{ float: 'right'}}>
         <Button style={{ marginRight: '15px' }} onClick={() => handleAcceptRequest(friendRequestId)}>Accept</Button>
         <Button onClick={() => handleRejectRequest(friendRequestId)}>Reject</Button>
+        {seeProfileButton(userId)}
       </div>
     )
   } 
+
+  // Buttons for outgoing friend request
+  const outgoingButtons = userId => {
+    return (
+      <div style={{ float: 'right'}}>
+        <span style={{ marginRight: '15px' }}>Friend request sent</span>
+        {seeProfileButton(userId)}
+      </div>
+    )
+  } 
+  // Buttons for list item corresponding to a stranger
+  const strangerButtons = userId => {
+    return (
+      <div style={{ float: 'right'}}>
+        {addFriendButton(userId)}
+        {seeProfileButton(userId)}
+      </div>
+    )
+  }
 
   // onSearch callback
   const handleSearch = async value => {
@@ -49,10 +71,10 @@ const AddFriends = () => {
     setFilteredUsers(usersFromDb.map(u => ({
         username: u.username,
         isFriends: u.isFriends,
-        button: u.isFriends ? seeProfileButton(u.id) : 
-          u.frStatus === 'incoming' ? incomingButtons(u.frId):
-          u.frStatus === 'outgoing' ? <div style={{ float: 'right' }}>friend request sent</div> :
-          addFriendButton(u.id),
+        button: u.isFriends ? <div style={{ float: 'right'}}>{seeProfileButton(u.id)}</div> : 
+          u.frStatus === 'incoming' ? incomingButtons(u.frId, u.id):
+          u.frStatus === 'outgoing' ? outgoingButtons(u.id):
+          strangerButtons(u.id),
         additionalStyles: { backgroundColor: u.isFriends ? '#f0ffe6' : 
           u.frStatus === 'incoming' ? '#f1ebff' : 
           u.frStatus === 'outgoing' ? '#e8e8e8' : 
@@ -101,36 +123,38 @@ const AddFriends = () => {
   const displayStyle = alertMessage ? null : { display: 'none' }
 
   return (
-    <div className="main-layout" >
+    <div className='main-layout'>
       <Alert message={alertMessage} type="success" showIcon style={displayStyle} />
-      <Typography.Title level={2} style={{ marginBottom: '0' }}>Find new friends </Typography.Title>
+        <div className='skinny-container'>
+        <Typography.Title level={2} style={{ marginBottom: '0' }}>Find new friends </Typography.Title>
 
-      <Input.Search size="large" placeholder="search username" prefix={<UserOutlined />} style={{ marginTop: '20px' }} 
-        enterButton='search' onSearch={handleSearch} onChange={handleSetQuery} />
+        <Input.Search size="large" placeholder="search username" prefix={<UserOutlined />} style={{ marginTop: '20px' }} 
+          enterButton='search' onSearch={handleSearch} onChange={handleSetQuery} />
 
-      <div className='vertical-center-div'>
-        { filteredUsers && filteredUsers.length > 0 && 
-        
-          <List
-            className='search-list'
-            itemLayout="horizontal"
-            dataSource={filteredUsers}
-            renderItem={item => (
-              <List.Item className='search-list-item' style={{ border: '1px solid #d1d1d1', ...item.additionalStyles }}>
-                <List.Item.Meta
-                  description={
-                    <div>
-                      <b style={{ color: 'black' }}>{item.username}</b>
-                      {item.button}
-                    </div>
-                  }
-                  title={item.title}
-                />
-              </List.Item> 
-            )}
-          />
+        <div>
+          { filteredUsers && filteredUsers.length > 0 && 
+          
+            <List
+              className='search-list'
+              itemLayout="horizontal"
+              dataSource={filteredUsers}
+              renderItem={item => (
+                <List.Item className='search-list-item' style={{ border: '1px solid #d1d1d1', ...item.additionalStyles }}>
+                  <List.Item.Meta
+                    description={
+                      <div>
+                        <b style={{ color: 'black' }}>{item.username}</b>
+                        {item.button}
+                      </div>
+                    }
+                    title={item.title}
+                  />
+                </List.Item> 
+              )}
+            />
 
-        }
+          }
+        </div>
       </div>
     </div>
   )

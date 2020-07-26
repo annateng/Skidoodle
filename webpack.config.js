@@ -52,7 +52,7 @@ module.exports = (env, argv) => {
             options: {
               lessOptions: {
                 modifyVars: {
-                  'primary-color': '#8aab60',
+                  'primary-color': '#228B22',
                   'border-radius-base': '3px',
                   'font-size-base': '20px',
                   'font-size-sm': '16px',

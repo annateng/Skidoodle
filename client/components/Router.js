@@ -1,6 +1,5 @@
 import React from 'react'
 import { Route, Switch } from 'react-router-dom'
-import { QueryParamProvider } from 'use-query-params'
 
 import FrontPage from 'Components/FrontPage'
 import Login from 'Components/Login'
