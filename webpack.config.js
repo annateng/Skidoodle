@@ -25,7 +25,6 @@ module.exports = (env, argv) => {
         Components: path.resolve(__dirname, 'client/components/'),
         Assets: path.resolve(__dirname, 'client/assets/'),
         '@root': path.resolve(__dirname),
-        '@ant-design/icons/lib/dist$': path.resolve(__dirname, "./src/icons.js")
       },
     },
     module: {
