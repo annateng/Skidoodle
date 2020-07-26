@@ -141,7 +141,7 @@ const Home = () => {
     if (alertRef.current) clearTimeout(alertRef.current)
     alertRef.current = setTimeout(() => setAlertMessage(null), 5000)
   }
-  const displayStyle = alertMessage ? null : { display: 'none' }
+  const displayStyle = alertMessage ? { width: '100%', marginBottom: '10px' } : { display: 'none' }
   
 
   // antd row gutter settings

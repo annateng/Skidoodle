@@ -36,7 +36,7 @@ const Signup = () => {
         history.push('/home')
       }, 1000)
     } catch (e) {
-      console.warn(e.message)
+      console.error(e.message)
       handleSetError(e.message)
     }
   }
@@ -69,7 +69,7 @@ const Signup = () => {
 
   return (
     <div className='main-layout vertical-center-div'>
-      <Alert message={alertMessage} type={alertType} showIcon style={displayStyle} />
+      <Alert message={alertMessage} type={alertType} showIcon style={displayStyle} className='skinny-skinny-alert' />
       <div className='skinny-skinny-container'>
         <Typography.Title>Sign Up</Typography.Title> 
         <Form {...layout} onFinish={handleSignUp} validateMessages={validateMessages}

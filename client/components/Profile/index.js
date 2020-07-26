@@ -77,7 +77,7 @@ const Profile = () => {
     if (alertRef.current) clearTimeout(alertRef.current)
     alertRef.current = setTimeout(() => setAlertMessage(null), 5000)
   }
-  const displayStyle = alertMessage ? null : { display: 'none' }
+  const displayStyle = alertMessage ? { width: '100%', marginBottom: '10px' } : { display: 'none' }
 
   // function for getting MMM DD, YYYY date format
   const getFormattedDate = dateStr => {

@@ -51,12 +51,12 @@ const Login = () => {
   }
 
   // Set alert invisible unless unsuccessful login
-  const displayStyle = alertMessage ? null : { display: 'none' }
+  const displayStyle = alertMessage ? { width: '100%', marginBottom: '10px' } : { display: 'none' }
 
   return (
     <div className='main-layout vertical-center-div'>
+      <Alert message={alertMessage} type="error" showIcon style={displayStyle} className='skinny-skinny-alert' />
       <div className='skinny-skinny-container'>
-        <Alert message={alertMessage} type="error" showIcon style={displayStyle} />
         <Typography.Title>Log In</Typography.Title> 
         <Form onFinish={handleLogin} onFinishFailed={() => console.error('Required form fields missing.')}>
           <Form.Item label='Username' name='username'

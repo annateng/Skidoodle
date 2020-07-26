@@ -2,6 +2,7 @@ const Router = require('express')
 const users = require('@controllers/userController')
 const login = require('@controllers/loginController')
 const games = require('@controllers/gameController')
+const email = require('@controllers/emailController')
 
 const router = Router()
 
@@ -19,6 +20,8 @@ router.delete('/users/:id', users.deleteUser)
 router.post('/users', users.createUser)
 
 router.post('/login', login.login)
+
+router.post('/send-email/invite', email.invite)
 
 router.get('/games/new-game', games.getNewGame)
 router.get('/games/:gameId', games.getGame)
