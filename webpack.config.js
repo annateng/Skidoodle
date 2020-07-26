@@ -1,12 +1,14 @@
 const path = require('path')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
 const webpack = require('webpack')
 
 module.exports = (env, argv) => {
   const { mode } = argv
   const additionalPlugins = mode === 'production'
-    ? []
-    : [new webpack.HotModuleReplacementPlugin()] // Enable hot module replacement
+    ? [new BundleAnalyzerPlugin()]
+    : [new webpack.HotModuleReplacementPlugin(), // Enable hot module replacement
+      new BundleAnalyzerPlugin()] 
 
   const additionalEntries = mode === 'production' ? [] : ['webpack-hot-middleware/client?http://localhost:8000']
 
@@ -23,6 +25,7 @@ module.exports = (env, argv) => {
         Components: path.resolve(__dirname, 'client/components/'),
         Assets: path.resolve(__dirname, 'client/assets/'),
         '@root': path.resolve(__dirname),
+        '@ant-design/icons/lib/dist$': path.resolve(__dirname, "./src/icons.js")
       },
     },
     module: {
