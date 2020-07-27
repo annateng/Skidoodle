@@ -25,6 +25,7 @@ const doodleSchema = new mongoose.Schema({
       ref: 'User'
     },
     drawing: [drawingSchema],
+    width: Number,
     label: String,
 })
 

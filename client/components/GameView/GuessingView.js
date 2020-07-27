@@ -69,7 +69,7 @@ const GuessingView = ({ doodlesToGuess, roundLen, gameId, userId, setGame, setGa
   }
 
   return (
-    <div className='vertical-center-div' style={{ width: '1960px' }}>
+    <div className='vertical-center-div'>
       <b style={{ fontSize: '20px' }}>Time Left:</b>
       <Typography.Title id='countdown-timer'>{timeLeft}s</Typography.Title>
       <Progress className='guess-progress' percent={timeLeft/roundLen*100} showInfo={false} strokeColor='dodgerblue'/>
@@ -78,7 +78,7 @@ const GuessingView = ({ doodlesToGuess, roundLen, gameId, userId, setGame, setGa
         <input className='borderless-input' id='guess-input' type='text' value={guess} onChange={event => handleSetGuess(event.target.value)} autoComplete='off' spellCheck='false' />
         <div id='underline-div'>{label}</div>
       </div>
-      <canvas id="paper-canvas" resize="true"></canvas>
+      <canvas id="paper-canvas" resize="false"></canvas>
       <Rodal visible={rodalVisible} onClose={() => setRodalVisible(false)} showCloseButton={false}
         width={600} height={400} enterAnimation='zoom' closeMaskOnClick={false}>
         <div className='rodal-header'>{rodalHeader}</div>

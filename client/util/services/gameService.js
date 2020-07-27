@@ -4,6 +4,12 @@ import axios from 'axios'
 const basePath = '/api/games'
 let token
 
+window.onresize = () => {
+  // redraw canvas
+  paper.view.draw();
+  console.log(paper.view.viewSize)
+}
+
 export const setToken = authToken => {
   token = `bearer ${authToken}`
 }
@@ -124,8 +130,11 @@ export const startRound = async (canvas, setTimeLeft, wordsToDraw, roundLen, set
 
     doodles.push({
       label: word,
-      drawing: completedDrawing.paths
+      drawing: completedDrawing.paths,
+      width: paper.view.viewSize.width
     })
+
+    console.log('push width', paper.view.viewSize.width) // DEBUG
   }
 
   return doodles
@@ -189,7 +198,7 @@ const startReplay = (replayDrawing, setTimeLeft, intervalRef, replayRef) => {
   }).catch(e => { console.error(e) })
 }
 
-const getReplay = (guessInput, roundLen, drawing, label) => {
+const getReplay = (guessInput, roundLen, drawing, label, scale) => {
   const replayDrawing = {
     drawing,
     lastIsDrawing: false,
@@ -201,6 +210,7 @@ const getReplay = (guessInput, roundLen, drawing, label) => {
     correctGuessTime: null,
     guessedCorrectly: false,
     isActive: false,
+    scale
   }
 
   paper.view.onFrame = event => {
@@ -216,12 +226,12 @@ const getReplay = (guessInput, roundLen, drawing, label) => {
     if (point.isDrawing && !replayDrawing.lastIsDrawing) {
       if (replayDrawing.path) replayDrawing.path.selected = false
       replayDrawing.path = new paper.Path({ 
-        segments: [new paper.Point(point.x, point.y)],
+        segments: [new paper.Point(point.x, point.y).multiply(replayDrawing.scale)],
         strokeColor: new paper.Color(point.r, point.g, point.b),
-        strokeWidth: point.width
+        strokeWidth: replayDrawing.scale * point.width
       })
     } else if (point.isDrawing) {
-      const paperPoint = new paper.Point(point.x, point.y)
+      const paperPoint = new paper.Point(point.x, point.y).multiply(replayDrawing.scale)
       replayDrawing.path.lineTo(paperPoint)
       replayDrawing.path.moveTo(paperPoint)
     }
@@ -252,7 +262,10 @@ export const startGuessingRound = async (canvas, guessInput, doodlesToGuess, rou
     setLabel(doodle.label)
     setDoodleNum(doodleNum++)
     setTimeLeft(roundLen)
-    const replayDrawing = getReplay(guessInput, roundLen, doodle.drawing, doodle.label)
+
+    const scale = paper.view.viewSize.width / doodle.width
+    console.log(scale) // DEBUG
+    const replayDrawing = getReplay(guessInput, roundLen, doodle.drawing, doodle.label, scale)
 
     await startRodal()
     guessInput.focus()

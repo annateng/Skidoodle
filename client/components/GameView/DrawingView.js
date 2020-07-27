@@ -109,8 +109,8 @@ const DrawingView = ({ wordsToDraw, roundLen, gameId, userId, setGame, setGameSt
               </Col>) }
           </Row>
         </Col>
-        <Col span={19} style={{ display: 'flex', alignContent: 'center'}}>
-          <canvas id="paper-canvas" resize="true"></canvas>
+        <Col span={19}>
+          <canvas id="paper-canvas" resize="false"></canvas>
         </Col>
       </Row>
       <Rodal visible={rodalVisible} onClose={() => setRodalVisible(false)} showCloseButton={false}

@@ -133,10 +133,11 @@ const sendRound = async (req, res) => {
     // save doodles to round
     for (const doodle of gameData.doodles) {
       const newDoodle = new Doodle({
-        game: gameId,
         artist: gameData.requesterId,
+        recipient: game.player1.toString() === gameData.requesterId ? game.player2 : game.player1,
         drawing: doodle.drawing,
-        label: doodle.label
+        label: doodle.label,
+        width: doodle.width
       })
 
       const savedDoodle = await newDoodle.save()
