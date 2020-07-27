@@ -95,7 +95,9 @@ export const getDrawing = (roundLen, paper) => {
   paper.view.onFrame = event => {
     if (!drawing.isActive) return
 
-    if (drawing.isDrawing) drawing.curPath.add(drawing.curPoint)
+    if (drawing.isDrawing) {
+      drawing.curPath.add(drawing.curPoint)
+    }
     
     drawing.paths.push({
       timeElapsed: Date.now() - drawing.startTime,
@@ -171,6 +173,8 @@ export const getGame = async (gameId, userId) => {
 }
 
 const startReplay = (replayDrawing, setTimeLeft, intervalRef, replayRef, paper) => {
+  console.log('got here 3')
+  console.log(replayDrawing)
   return new Promise((resolve, reject) => {
     paper.project.activeLayer.removeChildren()
     paper.view.draw()
@@ -193,6 +197,8 @@ const startReplay = (replayDrawing, setTimeLeft, intervalRef, replayRef, paper) 
 }
 
 const getReplay = (guessInput, roundLen, drawing, label, scale, paper) => {
+  console.log(' got here 2')
+  
   const replayDrawing = {
     drawing,
     lastIsDrawing: false,
@@ -253,6 +259,7 @@ export const startGuessingRound = async (canvas, guessInput, doodlesToGuess, rou
 
   let doodleNum = 1
   for (const doodle of doodlesToGuess) {
+    console.log(' got here 1')
     setGuess('')
     setLabel(doodle.label)
     setDoodleNum(doodleNum++)

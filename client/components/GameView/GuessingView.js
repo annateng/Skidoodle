@@ -22,6 +22,12 @@ const GuessingView = ({ doodlesToGuess, roundLen, gameId, userId, setGame, setGa
   
   useEffect(() => {
     if (canvas) {
+
+      // keep fixed canvas aspect ratio 2:1 for scaling
+      const canvasDiv = document.getElementById('canvas-div')
+      canvasDiv.style.height = (canvasDiv.clientWidth / 2) + 'px'
+      window.onresize = () => canvasDiv.style.height = (canvasDiv.clientWidth / 2) + 'px'
+
       handleStartGuessing()
     } else {
       const thisCanvas = document.getElementById('paper-canvas')
@@ -78,7 +84,9 @@ const GuessingView = ({ doodlesToGuess, roundLen, gameId, userId, setGame, setGa
         <input className='borderless-input' id='guess-input' type='text' value={guess} onChange={event => handleSetGuess(event.target.value)} autoComplete='off' spellCheck='false' />
         <div id='underline-div'>{label}</div>
       </div>
-      <canvas id="paper-canvas" resize="false"></canvas>
+      <div id='canvas-div'>
+        <canvas id="paper-canvas" resize="false"></canvas>
+      </div>
       <Rodal visible={rodalVisible} onClose={() => setRodalVisible(false)} showCloseButton={false}
         width={600} height={400} enterAnimation='zoom' closeMaskOnClick={false}>
         <div className='rodal-header'>{rodalHeader}</div>

@@ -5,7 +5,7 @@ import Rodal from 'rodal'
 import { startRound, sendDoodles, startRodal } from 'Utilities/services/gameService'
 import { GameState, ServerGameStatus } from 'Utilities/common'
 
-const colors = ['black', 'darkred', 'crimson', 'deeppink', 'pink', 'coral', 'orange', 'gold', 'limegreen', 'darkgreen', 
+const colors = ['black', 'siena', 'crimson', 'deeppink', 'pink', 'coral', 'orange', 'gold', 'limegreen', 'darkgreen', 
   'lightseagreen', 'paleturquoise', 'cadetblue', 'cornflowerblue', 'mediumblue', 'mediumpurple', 'indigo', 'dimgray']
 
 const sizes = [2, 4, 8, 14, 22, 30]
@@ -24,9 +24,16 @@ const DrawingView = ({ wordsToDraw, roundLen, gameId, userId, setGame, setGameSt
   
   useEffect(() => {
     if (canvas) {
+      // keep fixed canvas aspect ratio 2:1 for scaling
+      const canvasDiv = document.getElementById('canvas-div')
+      canvasDiv.style.height = (canvasDiv.clientWidth / 2) + 'px'
+      window.onresize = () => canvasDiv.style.height = (canvasDiv.clientWidth / 2) + 'px'
+
       handleStartRound()
+      
     } else {
       const thisCanvas = document.getElementById('paper-canvas')
+
       setCanvas(thisCanvas)
       localStorage.setItem('scribbleColor', 'black')
       localStorage.setItem('scribbleSize', 2)
@@ -110,7 +117,9 @@ const DrawingView = ({ wordsToDraw, roundLen, gameId, userId, setGame, setGameSt
           </Row>
         </Col>
         <Col span={19}>
-          <canvas id="paper-canvas" resize="false"></canvas>
+          <div id='canvas-div'>
+            <canvas id="paper-canvas" resize="false"></canvas>
+          </div>
         </Col>
       </Row>
       <Rodal visible={rodalVisible} onClose={() => setRodalVisible(false)} showCloseButton={false}
