@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { useSelector } from 'react-redux'
 import { useHistory, Link } from 'react-router-dom'
-import { Button, Row, Col, Typography, Alert, Popover } from 'antd'
-import { HomeTwoTone } from '@ant-design/icons'
+import { Button, Row, Col, Typography, Alert } from 'antd'
+import { HomeTwoTone, QuestionOutlined } from '@ant-design/icons'
 import { useQueryParam, StringParam } from 'use-query-params'
 
 import { setAllTokens, ServerGameStatus } from 'Utilities/common'
@@ -13,6 +13,8 @@ import { getNewGame } from 'Utilities/services/gameService'
 import ActiveGameCard from 'Components/Home/ActiveGameCard'
 import FriendSidebar from 'Components/Home/FriendSidebar'
 import NotificationCard from 'Components/Home/NotificationCard'
+import NewGameModal from 'Components/Home/NewGameModal'
+import { images } from 'Utilities/common'
 
 const Home = () => {
   const user = useSelector(state => state.user)
@@ -20,6 +22,7 @@ const Home = () => {
   const [userData, setUserData] = useState()
   const [notifications, setNotifications] = useState()
   const [alertMessage, setAlertMessage] = useState()
+  const [visible, setVisible] = useState(false) // Modal
   const alertRef = useRef()
   const history = useHistory()
   const [friendId, ] = useQueryParam('friendId', StringParam)
@@ -138,6 +141,12 @@ const Home = () => {
     handleGetNotifications()
   }
 
+  const handleStartPractice = () => { // TODO 
+  }
+
+  const handleFreeDraw = () => { // TODO 
+  }
+
   // sorting function for active games sort by status first (players turn > others turn > pending), then sort games within each category by date
   const sortByActivePlayerThenDate = (a, b) => {
     const isActiveA = user.user.id === a.activePlayer.id
@@ -168,10 +177,24 @@ const Home = () => {
   return (
     <div className='main-layout vertical-center-div'>
       <Alert message={alertMessage} type="success" showIcon style={displayStyle} className='skinny-alert' />
+      <NewGameModal visible={visible} setVisible={setVisible} handleNewGame={handleNewGame} userId={user.user.id}/>
       <div className='skinny-container'>
         <Typography.Title><HomeTwoTone />&nbsp;&nbsp;Welcome <Link to={`/profile/${user.user.id}`}>{user.user.username}</Link></Typography.Title>
         <Row gutter={{sm: 24, md: 32}}>
         <Col span={18}>
+        <Row gutter={rowGutter}>
+          <Col span={8}>
+            <Button type='danger' className='home-button' size='large' onClick={() => setVisible(true)}>New Game</Button>
+          </Col>
+          <Col span={8}>
+            <Button type='danger' className='home-button' size='large' icon={<img style={{marginRight: '5px'}} 
+              src={images.PenIcon}/>} onClick={handleFreeDraw}>Free Draw</Button>
+          </Col>
+          <Col span={8}>
+            <Button type='danger' className='home-button' size='large' icon={<img style={{marginRight: '5px'}} 
+              src={images.GuessIcon}/>} onClick={handleStartPractice}>Practice</Button>
+          </Col>
+        </Row>
         <Typography.Title level={4}><b>Notifications</b></Typography.Title>
         <Row gutter={rowGutter}>{notifications && notifications.length > 0 ? 
             notifications.map(n => <NotificationCard key={n.id} notification={n} handleAcceptGame={handleAcceptGame} 

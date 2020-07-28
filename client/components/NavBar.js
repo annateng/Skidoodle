@@ -25,8 +25,11 @@ const NavBar = () => {
         history.push('/add-friends')
         break
       case 'profile':
-        if (user && user.user) history.push(`/profile/${user.user.id}`)
-        history.go()
+        if (user && user.user) {
+          history.push(`/profile/${user.user.id}`)
+          history.go()
+        }
+        else history.push('/login')
         break
       case 'invite':
         history.push(`/send-invite`)

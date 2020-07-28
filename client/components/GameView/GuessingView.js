@@ -84,11 +84,11 @@ const GuessingView = ({ doodlesToGuess, roundLen, gameId, userId, setGame, setGa
         <input className='borderless-input' id='guess-input' type='text' value={guess} onChange={event => handleSetGuess(event.target.value)} autoComplete='off' spellCheck='false' />
         <div id='underline-div'>{label}</div>
       </div>
-      <div id='canvas-div'>
+      <div id='canvas-div' className='centered-div'>
         <canvas id="paper-canvas" resize="false"></canvas>
       </div>
       <Rodal visible={rodalVisible} onClose={() => setRodalVisible(false)} showCloseButton={false}
-        width={600} height={400} enterAnimation='zoom' closeMaskOnClick={false} 
+        width={600} height={450} animation='rotate' closeMaskOnClick={false} 
         customStyles={{ borderRadius: '10px', border: '2px solid tomato'}}>
         <div className='rodal-header'>{rodalHeader}</div>
         <div className='rodal-body'>

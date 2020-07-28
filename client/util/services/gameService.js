@@ -49,7 +49,7 @@ export const getNewGame = async (requesterId, receiverId) => {
   return res.data
 }
 
-export const getDrawing = (roundLen, paper) => {
+export const getDrawing = (roundLen, paper, isSaved) => {
 
   const drawing = {
     duration: roundLen,
@@ -59,6 +59,7 @@ export const getDrawing = (roundLen, paper) => {
     curPath: null,
     curPoint: null,
     startTime: null,
+    isSaved,
   }
 
   paper.view.onMouseDown = event => {
@@ -95,8 +96,11 @@ export const getDrawing = (roundLen, paper) => {
     if (!drawing.isActive) return
 
     if (drawing.isDrawing) {
-      drawing.curPath.add(drawing.curPoint)
+      drawing.curPath.lineTo(drawing.curPoint)
+      drawing.curPath.moveTo(drawing.curPoint)
     }
+
+    if (!drawing.isSaved) return
     
     drawing.paths.push({
       timeElapsed: Date.now() - drawing.startTime,
@@ -119,7 +123,7 @@ export const startRound = async (canvas, setTimeLeft, wordsToDraw, roundLen, set
   const doodles = []
 
   for (const word of wordsToDraw) {
-    const drawing = getDrawing(roundLen, paper)
+    const drawing = getDrawing(roundLen, paper, true)
     setWord(word)
     setTimeLeft(roundLen)
     await startRodal()

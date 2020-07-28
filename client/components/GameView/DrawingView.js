@@ -1,14 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { Typography, Progress, Row, Col, Card } from 'antd'
+import { Typography, Progress, Row, Col } from 'antd'
 import Rodal from 'rodal'
 
 import { startRound, sendDoodles, startRodal } from 'Utilities/services/gameService'
 import { GameState, ServerGameStatus } from 'Utilities/common'
-
-const colors = ['black', 'chocolate', 'crimson', 'deeppink', 'pink', 'coral', 'orange', 'gold', 'limegreen', 'darkgreen', 
-  'lightseagreen', 'paleturquoise', 'cadetblue', 'cornflowerblue', 'mediumblue', 'mediumpurple', 'indigo', 'dimgray']
-
-const sizes = [2, 4, 8, 14, 22, 30]
+import Palette from 'Components/GameView/Palette'
 
 const DrawingView = ({ wordsToDraw, roundLen, gameId, userId, setGame, setGameState }) => {
   // console.log('render') //DEBUG
@@ -73,14 +69,6 @@ const DrawingView = ({ wordsToDraw, roundLen, gameId, userId, setGame, setGameSt
     }
   }
 
-  const handleSetColor = color => {
-    localStorage.setItem('scribbleColor', color)
-  }
-
-  const handleSetSize = size => {
-    localStorage.setItem('scribbleSize', size)
-  }
-
   return (
     <div className='vertical-center-div'>
       <b style={{ fontSize: '20px' }}>Time Left:</b>
@@ -89,32 +77,7 @@ const DrawingView = ({ wordsToDraw, roundLen, gameId, userId, setGame, setGameSt
       <Typography.Title id='word-to-draw'>{word || " "}</Typography.Title>
       
       <Row gutter={26}>
-        <Col span={5}>
-          <Typography.Text>Color</Typography.Text>
-          <Row gutter={[6, 6]}>
-            { colors.map(color => 
-              <Col span={6} key={color}>
-                <div onClick={() => handleSetColor(color)}>
-                  <Card hoverable='true' style={{ backgroundColor: color }} ></Card>
-                </div>
-              </Col>) 
-            }
-            <Col span={12} key={'eraser'}>
-              <div id='ubitch' onClick={() => handleSetColor('white')}>
-                <Card hoverable='true' style={{ backgroundColor: 'white', maxHeight: '50px', padding: '0px' }} bodyStyle={{ padding: '10px' }}>Eraser</Card>
-              </div>
-            </Col>
-          </Row>
-          <Typography.Text>Size</Typography.Text>
-          <Row gutter={[4, 8]}>
-            { sizes.map(size => 
-              <Col span={4} key={'size-' + size}>
-                <div style={{ height: 50, display: 'flex', justifyContent: 'center', alignItems: 'center' }} onClick={() => handleSetSize(size)}>
-                  <div className='dot' style={{ height: size+'px', width: size+'px' }} ></div>
-                </div>
-              </Col>) }
-          </Row>
-        </Col>
+        <Palette />
         <Col span={19}>
           <div id='canvas-div'>
             <canvas id="paper-canvas" resize="false"></canvas>
@@ -122,7 +85,7 @@ const DrawingView = ({ wordsToDraw, roundLen, gameId, userId, setGame, setGameSt
         </Col>
       </Row>
       <Rodal visible={rodalVisible} onClose={() => setRodalVisible(false)} showCloseButton={false}
-        width={600} height={400} enterAnimation='zoom' closeMaskOnClick={false} 
+        width={600} height={300} animation='rotate' closeMaskOnClick={false} 
         customStyles={{ borderRadius: '10px', border: '2px solid tomato'}}>
         <div className='rodal-header'>{rodalHeader}</div>
         <div className='rodal-body'>Draw: {word}</div>
