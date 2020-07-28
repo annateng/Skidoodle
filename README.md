@@ -4,7 +4,7 @@
 
 ## What is Skidoodle?
 
-Skidoodle is a multi-player doodling game similar to pictionary. Players take turns sketching words, and their partner then tries to guess each word. The goal is to complete each round as quickly as possible to get on the high score board.
+Skidoodle is a multi-player doodling game similar to pictionary. Players take turns sketching words, then trying to guess each word that their partner has sketched. The goal is to complete each round as quickly as possible to get on the high score board.
 
 Join the fun here: https://skidoodle.herokuapp.com
 
