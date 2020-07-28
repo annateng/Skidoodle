@@ -65,6 +65,10 @@ const getNewGame = async (req, res) => {
         numCorrect: 0,
         totalTimeSpent: 0
       } 
+    },
+    isHighScore: {
+      p1: false,
+      p2: false
     }
   })
 
@@ -235,6 +239,8 @@ const sendRound = async (req, res) => {
             ...game.result.gameTotals
           }
         })
+
+        game.isHighScore.p1 = true
         
       } else if (p1.highScores.sort((a,b) => a.score.totalTimeSpent - b.score.totalTimeSpent)[NUM_HIGH_SCORES - 1] > game.result.gameTotals.totalTimeSpent) {
         p1.highScores.pop() // remove slowest game
@@ -248,6 +254,7 @@ const sendRound = async (req, res) => {
           }
         })
         p1.highScores.sort((a,b) => a.score.totalTimeSpent - b.score.totalTimeSpent) // sort ascending in time
+        game.isHighScore.p1 = true
       }
 
       // if player has less than NUM_HIGH_SCORES total scores, just add this game to the high score list
@@ -261,6 +268,7 @@ const sendRound = async (req, res) => {
             ...game.result.gameTotals
           }
         })
+        game.isHighScore.p2 = true
 
       } else if (p2.highScores.sort((a,b) => a.score.totalTimeSpent - b.score.totalTimeSpent)[NUM_HIGH_SCORES - 1] > game.result.gameTotals.totalTimeSpent) {
         p2.highScores.pop() // remove slowest game
@@ -274,6 +282,7 @@ const sendRound = async (req, res) => {
           }
         })
         p2.highScores.sort((a,b) => a.score.totalTimeSpent - b.score.totalTimeSpent) // sort ascending in time
+        game.isHighScore.p2 = true
       }
       
       await p1.save()

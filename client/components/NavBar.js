@@ -54,8 +54,7 @@ const NavBar = () => {
   return (
     <Layout.Header id='navbar'>
       <div onClick={() => {
-        if (!user.user) history.push('/login')
-        else history.push('/home')
+        history.push('/')
       }}><img id='header-logo' src={images.logo_gif} alt='skidoodle logo' /></div> 
       <Menu mode="horizontal" style={{ background: 'transparent', display: 'inline-block' }} onClick={handleMenuClick}>
         <Menu.Item className='navbar-icon' key="home"><HomeOutlined /></Menu.Item>

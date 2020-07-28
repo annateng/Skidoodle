@@ -47,7 +47,6 @@ if (!inProduction) {
 
   const devMiddleware = middleware(compiler)
   app.use(devMiddleware)
-  console.log(webpackConf) // DEBUG
   app.use(hotMiddleWare(compiler, { publicPath: config.output.publicPath }))
   app.use('*', (req, res, next) => {
     const filename = path.join(compiler.outputPath, 'index.html')

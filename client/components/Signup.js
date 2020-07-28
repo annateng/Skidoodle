@@ -33,9 +33,6 @@ const Signup = () => {
         password: values.password 
       }))
 
-      // automatically request requester as friend
-      console.log(user, 'user')
-
       setAlertMessage('Success!')
       setAlertType('success')
 

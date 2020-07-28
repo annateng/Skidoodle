@@ -55,6 +55,10 @@ const gameSchema = new mongoose.Schema({
       numCorrect: Number,
       totalTimeSpent: Number
     }
+  },
+  isHighScore: {
+    p1: Boolean,
+    p2: Boolean
   }
 })
 

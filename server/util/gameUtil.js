@@ -8,11 +8,8 @@ const generateWords = wordsSoFar => {
 
   const wordsToReturn = []
 
-  console.log(dictLen) // DEBUG
-
   while (wordsToReturn.length < WORDS_PER_ROUND) {
     const randomWordIndex = Math.floor(Math.random() * dictLen)
-    console.log(randomWordIndex) // DEBUG
     const randomWord = dictionary.words[randomWordIndex]
     if (!wordsSoFar.includes(randomWord) && !wordsToReturn.includes(randomWord)) wordsToReturn.push(randomWord)
   }

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useSelector } from 'react-redux'
 import { useParams, Redirect, useHistory } from 'react-router-dom'
-import { Typography, Button } from 'antd'
+import { Typography, Button, Alert } from 'antd'
 
 import { getGame } from 'Utilities/services/gameService'
 import { acceptGameRequest, rejectGameRequest } from 'Utilities/services/userService'
@@ -78,8 +78,10 @@ const GameView = () => {
     switch (gameState) {
 
       case GameState.inactiveGame: 
+        const isHighScore = game.player1.id === user.user.id ? game.isHighScore.p1 : game.isHighScore.p2
         return ( 
           <div className='centered-div'>
+            {isHighScore && <Alert message='New High Score!' type='success' showIcon className='skinny-alert' />}
             <Typography.Title>Game finished!</Typography.Title>
             <GameResults result={game.result} />
             {backHomeButton}

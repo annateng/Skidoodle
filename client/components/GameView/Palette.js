@@ -11,7 +11,7 @@ const Palette = () => {
     localStorage.setItem('scribbleSize', size)
   }
 
-  const colors = ['black', 'chocolate', 'crimson', 'deeppink', 'pink', 'coral', 'orange', 'gold', 'limegreen', 'darkgreen', 
+  const colors = ['black', 'saddlebrown', 'crimson', 'deeppink', 'pink', 'coral', 'orange', 'gold', 'limegreen', 'darkgreen', 
   'lightseagreen', 'paleturquoise', 'cadetblue', 'cornflowerblue', 'mediumblue', 'mediumpurple', 'indigo', 'dimgray']
 
   const sizes = [2, 4, 8, 14, 22, 30]

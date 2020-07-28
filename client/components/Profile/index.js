@@ -30,7 +30,6 @@ const Profile = () => {
   const handleGetUserData = async () => {
     const userFromDB = await getUserData(userId)
     setUserData(userFromDB)
-    console.log(userFromDB)
   }
 
   if (!userData) {
@@ -53,7 +52,6 @@ const Profile = () => {
   // accept friend request handler
   const handleAcceptRequest = async friendRequestId => {
     await acceptFriendRequest(user.user.id, friendRequestId)
-    console.log(friendRequestId)
     handleSetAlert('Friend request accepted')
     handleGetUserData() // re-render page
   }

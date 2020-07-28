@@ -1,10 +1,12 @@
 import React, { useState } from 'react'
 import { Col, Typography, Button, Input } from 'antd'
+import { useHistory } from 'react-router-dom'
 
 import FriendCard from 'Components/Home/FriendCard'
 
 const FriendSidebar = ({ userData, handleNewGame, handleSeeProfile }) => {
   const [filter, setFilter] = useState()
+  const history = useHistory()
 
   return (
     <Col span={6}>

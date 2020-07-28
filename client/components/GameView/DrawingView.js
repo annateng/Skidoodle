@@ -88,7 +88,7 @@ const DrawingView = ({ wordsToDraw, roundLen, gameId, userId, setGame, setGameSt
         width={600} height={300} animation='rotate' closeMaskOnClick={false} 
         customStyles={{ borderRadius: '10px', border: '2px solid tomato'}}>
         <div className='rodal-header'>{rodalHeader}</div>
-        <div className='rodal-body'>Draw: {word}</div>
+        <div className='rodal-body' style={{ fontSize: '26px'}}>Draw: {word}</div>
       </Rodal>
     </div>
   )
