@@ -3,6 +3,7 @@ import { render } from 'react-dom'
 import { BrowserRouter, Route } from 'react-router-dom'
 import { Provider } from 'react-redux'
 import { PersistGate } from 'redux-persist/integration/react'
+import { QueryParamProvider } from 'use-query-params'
 
 import 'Assets/styles.less'
 import 'rodal/lib/rodal.css'
@@ -17,7 +18,9 @@ const refresh = () => render(
     <ErrorBoundary>
       <Provider store={store}>
         <PersistGate loading={null} persistor={persistor}>
-          <App />
+          <QueryParamProvider ReactRouterRoute={Route}>
+            <App />
+          </QueryParamProvider>
         </PersistGate>
       </Provider>
     </ErrorBoundary>

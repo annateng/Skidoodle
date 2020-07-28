@@ -1,9 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { Form, Input, Button, Typography, Alert } from 'antd'
 import { useHistory } from 'react-router-dom'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
+import { useQueryParam, StringParam } from 'use-query-params'
 
-import { signUpUser } from 'Utilities/services/userService'
+import { signUpUser, addFriend } from 'Utilities/services/userService'
 import { loginUser } from 'Utilities/reducers/loginReducer'
 
 const Signup = () => {
@@ -12,6 +13,9 @@ const Signup = () => {
   const alertRef = useRef()
   const history = useHistory()
   const dispatch = useDispatch()
+  const [email, ] = useQueryParam('email', StringParam)
+  const [friendId, ] = useQueryParam('friend', StringParam)
+  const user = useSelector(state => state.user)
 
   // Clean up alert settimeouts if component unmounts
   useEffect(() => () => clearTimeout(alertRef.current), [])
@@ -21,19 +25,23 @@ const Signup = () => {
       const newUser = await signUpUser({
         ...values
       })
-
+      
       // automatically log in after sign up
       await dispatch(loginUser({
         username: newUser.username, 
         password: values.password 
       }))
 
+      // automatically request requester as friend
+      console.log(user, 'user')
+
       setAlertMessage('Success!')
       setAlertType('success')
 
       if (alertRef.current) clearTimeout(alertRef.current)
       alertRef.current = setTimeout(() => {
-        history.push('/home')
+        if (!friendId) history.push('/home?firstTime=true')
+        else history.push(`/home?firstTime=true&friendId=${friendId}`)
       }, 1000)
     } catch (e) {
       console.error(e.message)
@@ -78,7 +86,7 @@ const Signup = () => {
               rules={[{ required: true }]}>
               <Input />
           </Form.Item>
-          <Form.Item label='E-mail address' name='email'
+          <Form.Item label='E-mail address' name='email' initialValue={email ? decodeURIComponent(email) : null}
               rules={[{ required: true, type: 'email' }]}>
               <Input />
           </Form.Item>

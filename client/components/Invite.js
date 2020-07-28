@@ -21,7 +21,7 @@ const Signup = () => {
     }
 
     try {
-      await sendInvite(values.email, user.user.username)
+      await sendInvite(values.email, user.user.username, user.user.id)
 
       handleSetAlert('Invite sent', 'success')
     } catch (e) {

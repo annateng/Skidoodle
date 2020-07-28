@@ -7,11 +7,11 @@ export const setToken = authToken => {
   token = `bearer ${authToken}`
 }
 
-export const sendInvite = async (emailAddr, name) => {
+export const sendInvite = async (emailAddr, name, friendId) => {
   const config = { 
     headers: { Authorization: token },
   }
 
-  const res = await axios.post(`${basePath}/invite`, { emailAddr, name }, config)
+  const res = await axios.post(`${basePath}/invite`, { emailAddr, name, friendId }, config)
   return res.data
 }
