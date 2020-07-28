@@ -59,7 +59,6 @@ const DrawingView = ({ wordsToDraw, roundLen, gameId, userId, setGame, setGameSt
       const doodles = await startRound(canvas, setTimeLeft, wordsToDraw, roundLen, setWord, intervalRef, 
         roundRef, handleStartRodal)
       const newGame = await sendDoodles(doodles, userId, gameId)
-      console.log(newGame) // DEBUG
 
       if (newGame.status === ServerGameStatus.pending) {
         setGameState(GameState.pending)
@@ -101,8 +100,8 @@ const DrawingView = ({ wordsToDraw, roundLen, gameId, userId, setGame, setGameSt
               </Col>) 
             }
             <Col span={12} key={'eraser'}>
-              <div id='ubitch' onClick={() => handleSetColor('whitesmoke')}>
-                <Card hoverable='true' style={{ backgroundColor: 'whitesmoke', maxHeight: '50px', padding: '0px' }} bodyStyle={{ padding: '10px' }}>Eraser</Card>
+              <div id='ubitch' onClick={() => handleSetColor('white')}>
+                <Card hoverable='true' style={{ backgroundColor: 'white', maxHeight: '50px', padding: '0px' }} bodyStyle={{ padding: '10px' }}>Eraser</Card>
               </div>
             </Col>
           </Row>
@@ -123,7 +122,8 @@ const DrawingView = ({ wordsToDraw, roundLen, gameId, userId, setGame, setGameSt
         </Col>
       </Row>
       <Rodal visible={rodalVisible} onClose={() => setRodalVisible(false)} showCloseButton={false}
-        width={600} height={400} enterAnimation='zoom' closeMaskOnClick={false}>
+        width={600} height={400} enterAnimation='zoom' closeMaskOnClick={false} 
+        customStyles={{ borderRadius: '10px', border: '2px solid tomato'}}>
         <div className='rodal-header'>{rodalHeader}</div>
         <div className='rodal-body'>Draw: {word}</div>
       </Rodal>

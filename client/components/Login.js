@@ -51,7 +51,7 @@ const Login = () => {
   }
 
   // Set alert invisible unless unsuccessful login
-  const displayStyle = alertMessage ? { width: '100%', marginBottom: '10px' } : { display: 'none' }
+  const displayStyle = alertMessage ? null : { display: 'none' }
 
   return (
     <div className='main-layout vertical-center-div'>

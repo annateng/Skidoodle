@@ -9,8 +9,8 @@ const routes = require('@util/routes')
 const mongoUrl = common.MONGODB_URI
 
 console.log('connecting to...', mongoUrl)
-mongoose.connect(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true })
-    .then(res => { console.log('connected to DB')} )
+mongoose.connect(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true })
+    // .then(res => { console.log('connected to DB')} )
     .catch(err => { console.error('error connecting to DB', err.message)})
 
 const app = express()

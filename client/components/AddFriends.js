@@ -66,7 +66,6 @@ const AddFriends = () => {
     }
 
     const usersFromDb = await searchForUsers(user.user.id, value)
-    console.log(usersFromDb) // DEBUG
     // map data from DB into formatting information for the list items
     setFilteredUsers(usersFromDb.map(u => ({
         username: u.username,
@@ -95,7 +94,6 @@ const AddFriends = () => {
   // accept friend request handler
   const handleAcceptRequest = async friendRequestId => {
     await acceptFriendRequest(user.user.id, friendRequestId)
-    console.log(friendRequestId)
     handleSetAlert('Friend request accepted')
     handleSearch(query) // re-render page
   }
@@ -123,8 +121,8 @@ const AddFriends = () => {
   const displayStyle = alertMessage ? null : { display: 'none' }
 
   return (
-    <div className='main-layout'>
-      <Alert message={alertMessage} type="success" showIcon style={displayStyle} />
+    <div className='main-layout vertical-center-div'>
+      <Alert message={alertMessage} type="success" showIcon style={displayStyle} className='skinny-alert' />
         <div className='skinny-container'>
         <Typography.Title level={2} style={{ marginBottom: '0' }}>Find new friends </Typography.Title>
 

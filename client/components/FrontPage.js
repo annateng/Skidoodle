@@ -9,7 +9,7 @@ const FrontPage = () => {
 
   return (
     <Layout id="homepage-div" style={{ padding: '0 24px 24px' }}>
-        <img src={images.logo} id="homepage-logo" />
+        <img src={images.logo_gif} id="homepage-logo" />
         <Space direction='vertical' align='center' >
           <Button type='primary' size='large' style={{ width: 400 }} block onClick={() => { history.push('/login') }}>Log In</Button>
           <Button type='primary' size='large' style={{ width: 400 }} block onClick={() => { history.push('/signup') }}>Sign Up</Button>

@@ -37,7 +37,7 @@ const Signup = () => {
     alertRef.current = setTimeout(() => setAlertMessage(null), 5000)
   }
   // Set alert invisible unless unsuccessful login
-  const displayStyle = alertMessage ? { width: '100%', marginBottom: '10px' } : { display: 'none' }
+  const displayStyle = alertMessage ? null : { display: 'none' }
   // antd form layout settings
   const layout = {
     layout: 'vertical'

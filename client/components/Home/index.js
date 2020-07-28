@@ -44,7 +44,6 @@ const Home = () => {
 
   const handleGetActiveGames = async () => {
     const gamesFromDB = await getActiveGames(user.user.id)
-    console.log(gamesFromDB) // DEBUG
     setActiveGames(gamesFromDB)
   }
 
@@ -56,7 +55,6 @@ const Home = () => {
 
   const handleGetNotifications = async () => {
     const notificationsFromDB = await getNotifications(user.user.id)
-    console.log(notificationsFromDB)
 
     const formattedNotifications = notificationsFromDB.friendRequests
     .map(fr => ({
@@ -141,7 +139,7 @@ const Home = () => {
     if (alertRef.current) clearTimeout(alertRef.current)
     alertRef.current = setTimeout(() => setAlertMessage(null), 5000)
   }
-  const displayStyle = alertMessage ? { width: '100%', marginBottom: '10px' } : { display: 'none' }
+  const displayStyle = alertMessage ? null : { display: 'none' }
   
 
   // antd row gutter settings
@@ -149,7 +147,7 @@ const Home = () => {
 
   return (
     <div className='main-layout vertical-center-div'>
-      <Alert message={alertMessage} type="success" showIcon style={displayStyle} />
+      <Alert message={alertMessage} type="success" showIcon style={displayStyle} className='skinny-alert' />
       <div className='skinny-container'>
         <Typography.Title>Welcome <Link to={`/profile/${user.user.id}`}>{user.user.username}</Link></Typography.Title>
         <Typography.Title level={4}><div><b>Notifications</b></div></Typography.Title>

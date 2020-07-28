@@ -261,7 +261,6 @@ export const startGuessingRound = async (canvas, guessInput, doodlesToGuess, rou
     setTimeLeft(roundLen)
 
     const scale = paper.view.viewSize.width / doodle.width
-    console.log('scale', scale)
     const replayDrawing = getReplay(guessInput, roundLen, doodle.drawing, doodle.label, scale, paper)
 
     await startRodal()

@@ -6,10 +6,11 @@ const webpack = require('webpack')
 module.exports = (env, argv) => {
   const { mode } = argv
   const additionalPlugins = mode === 'production'
-    ? [] // new BundleAnalyzerPlugin()
+    ? [] //new BundleAnalyzerPlugin() 
     : [new webpack.HotModuleReplacementPlugin()] // Enable hot module replacement
 
   const additionalEntries = mode === 'production' ? [] : ['webpack-hot-middleware/client?http://localhost:8000']
+  const outputSettings = mode === 'production' ? { publicPath: '/' } : { publicPath: '/' }
 
   return {
     mode,
@@ -90,7 +91,7 @@ module.exports = (env, argv) => {
       ...additionalPlugins,
     ],
     output: {
-      publicPath: '/'
+      ...outputSettings
     }
   }
 }

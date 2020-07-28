@@ -207,8 +207,8 @@ const sendRound = async (req, res) => {
         guesses: []
       })
 
-      game.nextWords = generateWords(game.allWords)
       game.allWords = [...game.allWords, ...game.nextWords]
+      game.nextWords = generateWords(game.allWords)
       game.currentRound = game.rounds[game.currentRoundNum++]
     } else {
       // Game over

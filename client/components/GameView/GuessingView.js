@@ -88,7 +88,8 @@ const GuessingView = ({ doodlesToGuess, roundLen, gameId, userId, setGame, setGa
         <canvas id="paper-canvas" resize="false"></canvas>
       </div>
       <Rodal visible={rodalVisible} onClose={() => setRodalVisible(false)} showCloseButton={false}
-        width={600} height={400} enterAnimation='zoom' closeMaskOnClick={false}>
+        width={600} height={400} enterAnimation='zoom' closeMaskOnClick={false} 
+        customStyles={{ borderRadius: '10px', border: '2px solid tomato'}}>
         <div className='rodal-header'>{rodalHeader}</div>
         <div className='rodal-body'>
           {lastResult && <div style={{ fontSize: '1.5em', color: 'gold' }}>{lastResult}</div>}

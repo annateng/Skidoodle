@@ -26,6 +26,7 @@ const NavBar = () => {
         break
       case 'profile':
         if (user && user.user) history.push(`/profile/${user.user.id}`)
+        history.go()
         break
       case 'invite':
         history.push(`/send-invite`)
@@ -48,7 +49,7 @@ const NavBar = () => {
       <div onClick={() => {
         if (!user.user) history.push('/login')
         else history.push('/home')
-      }}><img id='header-logo' src={images.logo} alt='skidoodle logo' /></div> 
+      }}><img id='header-logo' src={images.logo_gif} alt='skidoodle logo' /></div> 
       <Menu mode="horizontal" style={{ background: 'transparent', display: 'inline-block' }} onClick={handleMenuClick}>
         <Menu.Item className='navbar-icon' key="home"><HomeOutlined /></Menu.Item>
         <Menu.Item className='navbar-icon' key="search"><SearchOutlined /></Menu.Item>

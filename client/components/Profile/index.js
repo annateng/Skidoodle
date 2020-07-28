@@ -77,7 +77,7 @@ const Profile = () => {
     if (alertRef.current) clearTimeout(alertRef.current)
     alertRef.current = setTimeout(() => setAlertMessage(null), 5000)
   }
-  const displayStyle = alertMessage ? { width: '100%', marginBottom: '10px' } : { display: 'none' }
+  const displayStyle = alertMessage ? null : { display: 'none' }
 
   // function for getting MMM DD, YYYY date format
   const getFormattedDate = dateStr => {
@@ -124,9 +124,9 @@ const Profile = () => {
   <Button onClick={() => handleAddFriend(userData.id)}>Add Friend</Button>
 
   return (
-    <div className='main-layout' >
+    <div className='main-layout vertical-center-div' >
+      <Alert message={alertMessage} type="success" showIcon style={displayStyle} className='skinny-alert' />
       <div className='skinny-container'>
-        <Alert message={alertMessage} type="success" showIcon style={displayStyle} />
         <Typography.Title >{userData.username}</Typography.Title>
         {userData.dateJoined && <div><b>Date joined: {getFormattedDate(userData.dateJoined)}</b></div>}
         <div>{friendDisplay}</div>

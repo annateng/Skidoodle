@@ -25,7 +25,6 @@ const GameView = () => {
 
     const getGameFromDB = async () => {
       const gameData = await getGame(gameId, user.user.id)
-      console.log(gameData)
       setGame(gameData)
 
       if (gameData.status === ServerGameStatus.inactive) setGameState(GameState.inactiveGame)
@@ -221,9 +220,9 @@ const GameView = () => {
   }
 
   return (
-    <div className='main-layout'>
+    <div className='main-layout vertical-center-div'>
       <div className='skinny-container'>
-      {getGameBody()}
+        {getGameBody()}
       </div>
     </div>
   )

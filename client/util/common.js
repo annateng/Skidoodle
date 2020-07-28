@@ -1,11 +1,10 @@
-import logo from 'Assets/logo.png'
-import logo_pic_only from 'Assets/logo_pic_only.png'
+import logo_gif from 'Assets/logo-gif.gif'
 import { setToken as setGameToken } from 'Utilities/services/gameService'
 import { setToken as setUserToken } from 'Utilities/services/userService'
 import { setToken as setEmailToken } from 'Utilities/services/emailService'
 
 export const images = {
-  logo, logo_pic_only
+  logo_gif
 }
 
 export const setAllTokens = authToken => {

@@ -59,7 +59,7 @@ const Signup = () => {
   }
 
   // Alert message settings
-  const displayStyle = alertMessage ? { width: '100%', marginBottom: '10px' } : { display: 'none' }
+  const displayStyle = alertMessage ? null : { display: 'none' }
 
   // antd form layout settings
   const layout = {
