@@ -41,6 +41,7 @@
     "html-webpack-plugin": "^3.2.0",
     "jsonwebtoken": "^8.5.1",
     "module-alias": "^2.2.2",
+    "mongoose": "^5.9.26",
     "mongoose-unique-validator": "^2.0.3",
     "nodemailer": "^6.4.10",
     "paper": "^0.12.11",
@@ -60,7 +61,6 @@
   },
   "devDependencies": {
     "less-loader": "^6.2.0",
-    "mongoose": "^5.9.22",
     "nodemon": "^2.0.2",
     "redux-devtools-extension": "^2.13.8",
     "webpack-bundle-analyzer": "^3.8.0",
