@@ -9,6 +9,7 @@ const Signup = () => {
   const user = useSelector(state => state.user)
   const [alertMessage, setAlertMessage] = useState()
   const [alertType, setAlertType] = useState()
+  const [loading, setLoading] = useState(false)
   const alertRef = useRef()
 
   // Clean up alert settimeouts if component unmounts
@@ -21,9 +22,11 @@ const Signup = () => {
     }
 
     try {
+      setLoading(true)
       await sendInvite(values.email, user.user.username, user.user.id)
 
       handleSetAlert('Invite sent', 'success')
+      setLoading(false)
     } catch (e) {
       console.error(e.message)
     }
@@ -54,7 +57,7 @@ const Signup = () => {
               <Input />
           </Form.Item>
           <Form.Item>
-              <Button type='primary' htmlType='submit' size='large'><MailOutlined />Send Invite</Button>
+              <Button type='primary' htmlType='submit' size='large' loading={loading}><MailOutlined />Send Invite</Button>
           </Form.Item>
         </Form>    
       </div>
