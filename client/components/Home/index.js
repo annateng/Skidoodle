@@ -181,7 +181,6 @@ const Home = () => {
         destroyTooltipOnHide={true}
         visible={popoverVisible}
         placement='bottomRight'
-        color='pink'
       > 
         <Button style={{ border: '1px solid limegreen'}} onClick={() => history.push('/add-friends')}>Find New Friends</Button>
       </Popover>
@@ -195,27 +194,27 @@ const Home = () => {
       <Alert message={alertMessage} type="success" showIcon style={displayStyle} className='skinny-alert' />
       <div className='skinny-container'>
         <Typography.Title>Welcome <Link to={`/profile/${user.user.id}`}>{user.user.username}</Link></Typography.Title>
-        <Row gutter={rowGutter}>
+        <Row gutter={{sm: 24, md: 32}}>
         <Col span={18}>
-        <Typography.Title level={4}><div><b>Notifications</b></div></Typography.Title>
-        {notifications && notifications.length > 0 ? 
+        <Typography.Title level={4}><b>Notifications</b></Typography.Title>
+        <Row gutter={rowGutter}>{notifications && notifications.length > 0 ? 
             notifications.map(n => <NotificationCard key={n.id} notification={n} handleAcceptGame={handleAcceptGame} 
             handleRejectGame={handleRejectGame} handleAcceptFriend={handleAcceptFriend} handleRejectFriend={handleRejectFriend} 
             handleSeeProfile={handleSeeProfile}/>)
-          : <p style={{ paddingLeft: '8px' }}>No new notifications</p>}
-        <Typography.Title level={4}><div><b>My Games</b></div></Typography.Title>
-            {activeGames && activeGames.length > 0 ? activeGames.sort(sortByActivePlayerThenDate)
+          : <p style={{ paddingLeft: '8px' }}>No new notifications</p>}</Row>
+        <Typography.Title level={4}><b>My Games</b></Typography.Title>
+            <Row gutter={rowGutter}>{activeGames && activeGames.length > 0 ? activeGames.sort(sortByActivePlayerThenDate)
               .map(ag => <ActiveGameCard key={ag.id} game={ag} user={user.user} getGame={getGame} />) 
-            : <p style={{ paddingLeft: '8px' }}>No active games</p>}
+            : <p style={{ paddingLeft: '8px' }}>No active games</p>}</Row>
         </Col>
         <Col span={6}>
-        <Typography.Title level={4}><div><b>My Friends</b></div></Typography.Title>
+        <Typography.Title level={4}><b>My Friends</b></Typography.Title>
           <div style={{ marginBottom: '15px' }}>
             {findFriendsButton()}
           </div>
           {userData && userData.friends.length > 0 ? userData.friends.map(friend => 
                 <FriendCard friend={friend} handleNewGame={handleNewGame} handleSeeProfile={handleSeeProfile}/>)
-                : <p style={{ paddingLeft: '8px' }}>No friends yet</p>}
+                : <p>No friends yet</p>}
         </Col>
         </Row>
         </div>

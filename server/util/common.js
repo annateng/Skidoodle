@@ -7,9 +7,9 @@ const PRIVATE_KEY = process.env.PRIVATE_KEY
 const EMAIL_PWORD = process.env.EMAIL_PWORD
 
 // game variables
-const NUM_ROUNDS = common.inProduction ? 10 : 3
-const ROUND_LEN = common.inProduction ? 30 : 2
-const WORDS_PER_ROUND = common.inProduction ? 3 : 2
+const NUM_ROUNDS = common.inProduction ? 6 : 3
+const ROUND_LEN = common.inProduction ? 45 : 2
+const WORDS_PER_ROUND = common.inProduction ? 3 : 5
 
 // the number of high scores to track per player
 const NUM_HIGH_SCORES = 10
