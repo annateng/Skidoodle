@@ -56,7 +56,7 @@ const GameView = () => {
 
   // Button to begin round
   const beginRoundButton = buttonText => (
-    <Button onClick={() => setGameState(game.currentRound.state)} id='begin-round-button'>{buttonText}</Button>
+    <Button type='primary' onClick={() => setGameState(game.currentRound.state)} id='begin-round-button'>{buttonText}</Button>
   )
 
   // Button to return home if game/round is inactive
@@ -80,7 +80,7 @@ const GameView = () => {
 
       case GameState.inactiveGame: 
         return ( 
-          <div className='vertical-center-div'>
+          <div className='centered-div'>
             <Typography.Title>Game finished!</Typography.Title>
             <GameResults result={game.result} />
             {backHomeButton}
@@ -89,7 +89,7 @@ const GameView = () => {
 
       case GameState.inactivePlayer:
         return (
-          <div className='vertical-center-div'>
+          <div className='centered-div'>
             <Typography.Title level={2}>It's {game.activePlayer.username}'s turn</Typography.Title>
             {game.currentRoundNum > 1 && <Typography.Title level={4}>Game results so far: Round {game.currentRoundNum-1} of {game.numRounds} </Typography.Title>}
             <GameResults result={game.result} />
@@ -101,14 +101,14 @@ const GameView = () => {
         
         if (game.player1.id === user.user.id) {
           return (
-            <div className='vertical-center-div'>
+            <div className='centered-div'>
               <Typography.Title level={4}>Game request to {game.activePlayer.username} sent</Typography.Title>
               {backHomeButton}
             </div>
           )
         } else {
           return (
-            <div className='vertical-center-div'>
+            <div className='centered-div'>
               <Typography.Title level={4}>Accept game request from {game.player1.username}?</Typography.Title>
               <div>
                 <Button type='primary' style={{ marginBottom: '20px', marginRight: '20px' }} onClick={() => handleAcceptRequest(game.gameRequestId)}>Accept request</Button>
@@ -128,7 +128,7 @@ const GameView = () => {
         // During first round: no scores to show
         if (game.result.roundScores.length === 0 && game.currentRoundNum === 1) {
           return (
-            <div className='vertical-center-div'>
+            <div className='centered-div'>
               <Typography.Title level={2}>New Game with {game.inactivePlayer.username} </Typography.Title>
               <Typography.Title level={3}>Guessing Round</Typography.Title>
               <Typography.Paragraph>
@@ -151,7 +151,7 @@ const GameView = () => {
 
         // Regular round results
         return ( 
-          <div className='vertical-center-div'>
+          <div className='centered-div'>
             <RoundResults roundResults={game.result.roundScores[game.currentRoundNum - 2]} roundNum={game.currentRoundNum - 1} 
               artist={game.activePlayer.username} guesser={game.inactivePlayer.username} />
             <Typography.Title level={3}>Ready for round {game.currentRoundNum}?</Typography.Title>
@@ -168,7 +168,7 @@ const GameView = () => {
         // Before the first round: no scores to show
         if (game.result.roundScores.length === 0 && game.currentRoundNum === 1) {
           return (
-            <div className='vertical-center-div'>
+            <div className='centered-div'>
               <Typography.Title level={2}>New Game with {game.inactivePlayer.username}</Typography.Title>
               <Typography.Paragraph>
                 <ul>
@@ -191,7 +191,7 @@ const GameView = () => {
 
         // Regular round results
         return (
-          <div className='vertical-center-div'>
+          <div className='centered-div'>
             <RoundResults roundResults={game.result.roundScores[game.currentRoundNum - 2]} roundNum={game.currentRoundNum - 1}
               guesser={game.activePlayer.username} artist={game.inactivePlayer.username} />
             <Typography.Title level={3}>Ready for round {game.currentRoundNum}?</Typography.Title>
@@ -209,8 +209,8 @@ const GameView = () => {
 
       case GameState.over:
         return ( 
-          <div className='vertical-center-div'>
-            <Typography.Title level={3}>Finished!</Typography.Title>
+          <div className='centered-div'>
+            <Typography.Title level={3}>Round finished</Typography.Title>
             {backHomeButton}
           </div> 
         )
@@ -221,8 +221,10 @@ const GameView = () => {
   }
 
   return (
-    <div className='main-layout vertical-center-div'>
+    <div className='main-layout'>
+      <div className='skinny-container'>
       {getGameBody()}
+      </div>
     </div>
   )
 }

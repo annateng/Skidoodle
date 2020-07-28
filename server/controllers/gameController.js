@@ -234,15 +234,7 @@ const sendRound = async (req, res) => {
             ...game.result.gameTotals
           }
         })
-        console.log('p1hs', {
-          game: game._id,
-          partner: p2._id,
-          partnerUsername: p2.username,
-          timeStamp: game.timeOfLastMove,
-          score: {
-            ...game.result.gameTotals
-          }
-        })
+        
       } else if (p1.highScores.sort((a,b) => a.score.totalTimeSpent - b.score.totalTimeSpent)[NUM_HIGH_SCORES - 1] > game.result.gameTotals.totalTimeSpent) {
         p1.highScores.pop() // remove slowest game
         p1.highScores.push({
@@ -268,15 +260,7 @@ const sendRound = async (req, res) => {
             ...game.result.gameTotals
           }
         })
-        console.log('p2hs', {
-          game: game._id,
-          partner: p1._id,
-          partnerUsername: p1.username,
-          timeStamp: game.timeOfLastMove,
-          score: {
-            ...game.result.gameTotals
-          }
-        })
+
       } else if (p2.highScores.sort((a,b) => a.score.totalTimeSpent - b.score.totalTimeSpent)[NUM_HIGH_SCORES - 1] > game.result.gameTotals.totalTimeSpent) {
         p2.highScores.pop() // remove slowest game
         p2.highScores.push({
@@ -291,9 +275,6 @@ const sendRound = async (req, res) => {
         p2.highScores.sort((a,b) => a.score.totalTimeSpent - b.score.totalTimeSpent) // sort ascending in time
       }
       
-      console.log('got here')
-      console.log(p1)
-      console.log(p2)
       await p1.save()
       await p2.save()
     }

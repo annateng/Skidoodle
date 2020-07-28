@@ -1,4 +1,4 @@
-import { PaperScope, Path, Point, Color } from 'paper'
+import { PaperScope, Path, Point, Color } from 'paper/dist/paper-core'
 import axios from 'axios'
 
 const basePath = '/api/games'
@@ -45,7 +45,6 @@ export const getNewGame = async (requesterId, receiverId) => {
       requesterId, receiverId
     }
   }
-  // console.log(config)
   const res = await axios.get(`${basePath}/new-game`, config)
   return res.data
 }
@@ -173,8 +172,6 @@ export const getGame = async (gameId, userId) => {
 }
 
 const startReplay = (replayDrawing, setTimeLeft, intervalRef, replayRef, paper) => {
-  console.log('got here 3')
-  console.log(replayDrawing)
   return new Promise((resolve, reject) => {
     paper.project.activeLayer.removeChildren()
     paper.view.draw()
@@ -197,7 +194,6 @@ const startReplay = (replayDrawing, setTimeLeft, intervalRef, replayRef, paper) 
 }
 
 const getReplay = (guessInput, roundLen, drawing, label, scale, paper) => {
-  console.log(' got here 2')
   
   const replayDrawing = {
     drawing,
@@ -259,13 +255,13 @@ export const startGuessingRound = async (canvas, guessInput, doodlesToGuess, rou
 
   let doodleNum = 1
   for (const doodle of doodlesToGuess) {
-    console.log(' got here 1')
     setGuess('')
     setLabel(doodle.label)
     setDoodleNum(doodleNum++)
     setTimeLeft(roundLen)
 
     const scale = paper.view.viewSize.width / doodle.width
+    console.log('scale', scale)
     const replayDrawing = getReplay(guessInput, roundLen, doodle.drawing, doodle.label, scale, paper)
 
     await startRodal()

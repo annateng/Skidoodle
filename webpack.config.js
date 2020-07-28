@@ -1,14 +1,13 @@
 const path = require('path')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
-const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
+// const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
 const webpack = require('webpack')
 
 module.exports = (env, argv) => {
   const { mode } = argv
   const additionalPlugins = mode === 'production'
-    ? [new BundleAnalyzerPlugin()]
-    : [new webpack.HotModuleReplacementPlugin(), // Enable hot module replacement
-      new BundleAnalyzerPlugin()] 
+    ? [] // new BundleAnalyzerPlugin()
+    : [new webpack.HotModuleReplacementPlugin()] // Enable hot module replacement
 
   const additionalEntries = mode === 'production' ? [] : ['webpack-hot-middleware/client?http://localhost:8000']
 

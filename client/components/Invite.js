@@ -21,8 +21,7 @@ const Signup = () => {
     }
 
     try {
-      const emailConfirm = await sendInvite(values.email, user.user.username)
-      console.log(emailConfirm)
+      await sendInvite(values.email, user.user.username)
 
       handleSetAlert('Invite sent', 'success')
     } catch (e) {

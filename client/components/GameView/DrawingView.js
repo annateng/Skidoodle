@@ -5,7 +5,7 @@ import Rodal from 'rodal'
 import { startRound, sendDoodles, startRodal } from 'Utilities/services/gameService'
 import { GameState, ServerGameStatus } from 'Utilities/common'
 
-const colors = ['black', 'siena', 'crimson', 'deeppink', 'pink', 'coral', 'orange', 'gold', 'limegreen', 'darkgreen', 
+const colors = ['black', 'chocolate', 'crimson', 'deeppink', 'pink', 'coral', 'orange', 'gold', 'limegreen', 'darkgreen', 
   'lightseagreen', 'paleturquoise', 'cadetblue', 'cornflowerblue', 'mediumblue', 'mediumpurple', 'indigo', 'dimgray']
 
 const sizes = [2, 4, 8, 14, 22, 30]

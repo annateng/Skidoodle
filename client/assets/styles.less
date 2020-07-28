@@ -1,4 +1,4 @@
-@import '~antd/dist/antd.less';
+// @import '~antd/dist/antd.less';
 
 @mainColor: #c5ccc0;
 @highlightColor: #FF6347;
@@ -102,7 +102,7 @@ img {
 }
 
 #guess-input-wrapper {
-  background-color: whitesmoke;
+  background-color: white;
   height: 120px;
   position: relative;
   max-width: @canvasMaxWidth;
@@ -131,14 +131,15 @@ img {
 
 #canvas-div {
   width: 100%;
-  height: 100%;
+  height: 100%; 
 }
 
 canvas {
   width: 100%;
+  height: 100%;
   border: 2px solid @borderColor;
   border-radius: 5px; 
-  background-color: whitesmoke;
+  background-color: white;
   max-width: @canvasMaxWidth;
   margin-left: auto;
   margin-right: auto;
@@ -237,8 +238,15 @@ canvas {
   padding-top: 10px;
 }
 
-
 .skinny-skinny-alert {
   width: 100%;
   max-width: 800px;
+}
+
+.centered-div {
+  margin-left: auto;
+  margin-right: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
