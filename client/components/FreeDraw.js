@@ -8,18 +8,18 @@ import Palette from 'Components/GameView/Palette'
 const FreeDraw = ({ wordsToDraw, roundLen, gameId, userId, setGame, setGameState }) => {
   // console.log('render') //DEBUG
   const [canvas, setCanvas] = useState()
-  const [paper, setPaper] = useState(new PaperScope())
+  const [paper, ] = useState(new PaperScope())
   
   useEffect(() => {
     if (canvas) {
-      console.log('got here1')
       // keep fixed canvas aspect ratio 2:1 for scaling
       const canvasDiv = document.getElementById('canvas-div')
       canvasDiv.style.height = (canvasDiv.clientWidth / 2) + 'px'
-      window.onresize = () => canvasDiv.style.height = (canvasDiv.clientWidth / 2) + 'px'
+      window.onresize = () => {
+        canvasDiv.style.height = (canvasDiv.clientWidth / 2) + 'px'
+      }
 
       handleStartRound()
-      console.log('got here2')
     } else {
       const thisCanvas = document.getElementById('paper-canvas')
 
@@ -27,7 +27,6 @@ const FreeDraw = ({ wordsToDraw, roundLen, gameId, userId, setGame, setGameState
       localStorage.setItem('scribbleColor', 'black')
       localStorage.setItem('scribbleSize', 2)
       localStorage.setItem('scribbleEraser', false)
-      console.log('got here')
     }
   }, [canvas])
 
@@ -36,7 +35,6 @@ const FreeDraw = ({ wordsToDraw, roundLen, gameId, userId, setGame, setGameState
       paper.setup(canvas)
       const drawing = getDrawing(-1, paper, false)
       drawing.isActive = true
-      console.log('got here4')
       
     } catch (e) {
       console.error('Error in handleStartRound', e)
@@ -49,17 +47,21 @@ const FreeDraw = ({ wordsToDraw, roundLen, gameId, userId, setGame, setGameState
   }
 
   return (
-    <div className='vertical-center-div'>
-      <Typography.Title level={2} style={{ marginTop: '20px' }}>Free Draw</Typography.Title>
-      <Row gutter={26}>
-        <Palette />
-        <Col span={19}>
-          <div id='canvas-div'>
-            <canvas id="paper-canvas" resize="false"></canvas>
-          </div>
-          <Button style={{ marginTop: '15px' }} type='danger' onClick={clear}size='large'>Start Over</Button>
-        </Col>
-      </Row>
+    <div className='main-layout vertical-center-div'>
+      <div className='skinny-container'>
+        <div className='vertical-center-div'>
+          <Typography.Title level={2} >Free Draw Mode</Typography.Title>
+          <Row gutter={26}>
+            <Palette />
+            <Col span={19}>
+              <div id='canvas-div'>
+                <canvas id="paper-canvas" resize="false"></canvas>
+              </div>
+              <Button style={{ marginTop: '15px' }} type='danger' onClick={clear}size='large'>Start Over</Button>
+            </Col>
+          </Row>  
+        </div>
+      </div>
     </div>
   )
 }

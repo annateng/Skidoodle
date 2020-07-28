@@ -326,4 +326,12 @@ const getGame = async (req, res) => {
   res.json(gameJson)
 }
 
-module.exports = { getActive, sendRound, getNewGame, getGame }
+const getRandomDoodle = async (req,res) => {
+  const numDoodles = await Doodle.count()
+  const randomIndex = Math.floor(Math.random() * numDoodles)
+  const doodle = await Doodle.findOne().skip(randomIndex)
+
+  res.json(doodle.toJSON())
+}
+
+module.exports = { getActive, sendRound, getNewGame, getGame, getRandomDoodle }

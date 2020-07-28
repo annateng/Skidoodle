@@ -1,24 +1,26 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { Typography, Progress, Row } from 'antd'
+import { useHistory } from 'react-router-dom'
+import { Typography, Progress, Button, Card } from 'antd'
 import Rodal from 'rodal'
 
-import { startGuessingRound, sendGuesses, startRodal } from 'Utilities/services/gameService'
-import { GameState, ServerGameStatus } from 'Utilities/common'
+import { startGuessingRound, getRandomDoodle, startRodal } from 'Utilities/services/gameService'
+import { ROUND_LEN } from 'Utilities/common'
 
-const GuessingView = ({ doodlesToGuess, roundLen, gameId, userId, setGame, setGameState }) => {
-  const [timeLeft, setTimeLeft] = useState(roundLen)
+const PracticeMode = () => {
+  const [timeLeft, setTimeLeft] = useState(ROUND_LEN)
   const [canvas, setCanvas] = useState()
   const [guessInput, setGuessInput] = useState()
   const [guess, setGuess] = useState('')
   const [label, setLabel] = useState('')
+  const [lastWord, setLastWord] = useState()
+  const [lastResult, setLastResult] = useState()
   const [rodalVisible, setRodalVisible] = useState(false)
   const [rodalHeader, setRodalHeader] = useState()
-  const [doodleNum, setDoodleNum] = useState()
-  const [lastResult, setLastResult] = useState()
   const intervalRef = useRef()
   const replayRef = useRef()
   const modalIntervalRef = useRef()
   const modalRef = useRef()
+  const history = useHistory()
   
   useEffect(() => {
     if (canvas) {
@@ -28,7 +30,6 @@ const GuessingView = ({ doodlesToGuess, roundLen, gameId, userId, setGame, setGa
       canvasDiv.style.height = (canvasDiv.clientWidth / 2) + 'px'
       window.onresize = () => canvasDiv.style.height = (canvasDiv.clientWidth / 2) + 'px'
 
-      handleStartGuessing()
     } else {
       const thisCanvas = document.getElementById('paper-canvas')
       setCanvas(thisCanvas)
@@ -55,18 +56,21 @@ const GuessingView = ({ doodlesToGuess, roundLen, gameId, userId, setGame, setGa
     await startRodal(setRodalVisible, setRodalHeader, modalIntervalRef, modalRef)
   }
 
-  const handleStartGuessing = async () => {
+  const handleStartPractice = async () => {
     try {
-      const guesses = await startGuessingRound(canvas, guessInput, doodlesToGuess, roundLen, setTimeLeft, handleSetGuess, 
-        handleSetLabel, intervalRef, replayRef, setDoodleNum, handleStartRodal, setLastResult)
-      const newGame = await sendGuesses(guesses, userId, gameId)
-      setGame(newGame)
+      setLastResult(null)
+      setLastWord(null)
 
-      if (newGame.status === ServerGameStatus.active) setGameState(GameState.showThisResult)
-      else setGameState(GameState.inactiveGame)
+      const doodle = await getRandomDoodle()
+      setLastWord(doodle.label)
+      await startGuessingRound(canvas, guessInput, [doodle], ROUND_LEN, setTimeLeft, handleSetGuess, 
+        handleSetLabel, intervalRef, replayRef, null, handleStartRodal, setLastResult)
+
+      setRodalVisible(true)
+      setRodalHeader(null)
       
     } catch (e) {
-      console.error('Error in handleStartGuessing', e)
+      console.error('Error in handleStartPractice', e)
     }
   }
 
@@ -77,10 +81,23 @@ const GuessingView = ({ doodlesToGuess, roundLen, gameId, userId, setGame, setGa
   }
 
   return (
+    <div className='main-layout vertical-center-div'>
+    <div className='skinny-container'>
     <div className='vertical-center-div'>
-      <b style={{ fontSize: '20px' }}>Time Left:</b>
-      <Typography.Title id='countdown-timer'>{timeLeft}s</Typography.Title>
-      <Progress className='guess-progress' percent={timeLeft/roundLen*100} showInfo={false} strokeColor='dodgerblue'/>
+      <Card style={{ margin: '10px' }}>
+        <Typography.Title level={4}>Practice Mode</Typography.Title>
+        <Typography.Text>Practice guessing with random doodles made by our users</Typography.Text>
+      </Card>
+      <div style={{ display: 'flex', flexDirection: 'vertical'}}>
+        <div className='centered-div' style={{ marginRight: '20px' }}>
+          <b style={{ fontSize: '20px' }}>Time Left:</b>
+           <Typography.Title id='countdown-timer'>{timeLeft}s</Typography.Title>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+        <Button style={{ height: '80px' }} size='large' type='primary' onClick={handleStartPractice}size='large'>Start</Button>
+        </div>
+      </div>
+      <Progress className='guess-progress' percent={timeLeft/ROUND_LEN*100} showInfo={false} strokeColor='dodgerblue'/>
       <b>Guess:</b>
       <div id='guess-input-wrapper'>
         <input className='borderless-input' id='guess-input' type='text' value={guess} onChange={event => handleSetGuess(event.target.value)} autoComplete='off' spellCheck='false' />
@@ -90,16 +107,25 @@ const GuessingView = ({ doodlesToGuess, roundLen, gameId, userId, setGame, setGa
         <canvas id="paper-canvas" resize="false"></canvas>
       </div>
       <Rodal visible={rodalVisible} onClose={() => setRodalVisible(false)} showCloseButton={false}
-        width={600} height={450} animation='rotate' closeMaskOnClick={false} 
+          width={600} height={300} animation='rotate' closeMaskOnClick={false} 
         customStyles={{ borderRadius: '10px', border: '2px solid tomato'}}>
         <div className='rodal-header'>{rodalHeader}</div>
         <div className='rodal-body'>
-          {lastResult && <div style={{ fontSize: '1.5em', color: 'gold' }}>{lastResult}</div>}
-          <div>Doodle {doodleNum} of {doodlesToGuess.length}</div>
+          {lastResult && 
+            <div>
+              <div style={{ fontSize: '1.5em', color: 'gold' }}>{lastResult}</div>
+              <div style={{ fontSize: '22px'}}>The word was: {lastWord}</div>
+              <Button size='large' onClick={handleStartPractice} style={{ marginRight: '15px' }}>Play Again</Button>
+              <Button size='large' onClick={() => history.push('/home')}>Go Home</Button>
+            </div>
+          }
+          {!lastResult && <div>Practice mode</div>}
         </div>
       </Rodal>
+    </div>
+    </div>
     </div>
   )
 }
 
-export default GuessingView
+export default PracticeMode

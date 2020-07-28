@@ -261,7 +261,7 @@ export const startGuessingRound = async (canvas, guessInput, doodlesToGuess, rou
   for (const doodle of doodlesToGuess) {
     setGuess('')
     setLabel(doodle.label)
-    setDoodleNum(doodleNum++)
+    if (setDoodleNum) setDoodleNum(doodleNum++)
     setTimeLeft(roundLen)
 
     const scale = paper.view.viewSize.width / doodle.width
@@ -310,4 +310,9 @@ export const startRodal = (setRodalVisible, setRodalHeader, modalIntervalRef, mo
     modalIntervalRef.current = rodalTick
     modalRef.current = () => reject('Modal: Component Unmounted')
   })
+}
+
+export const getRandomDoodle = async () => {
+  const res = await axios.get(`${basePath}/random-doodle`)
+  return res.data
 }

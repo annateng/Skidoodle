@@ -24,6 +24,7 @@ router.post('/login', login.login)
 router.post('/send-email/invite', email.invite)
 
 router.get('/games/new-game', games.getNewGame)
+router.get('/games/random-doodle', games.getRandomDoodle)
 router.get('/games/:gameId', games.getGame)
 router.post('/games/:gameId', games.sendRound)
 

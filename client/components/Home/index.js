@@ -27,7 +27,6 @@ const Home = () => {
   const history = useHistory()
   const [friendId, ] = useQueryParam('friendId', StringParam)
   const [friendName, ] = useQueryParam('friendId', StringParam)
-  const [firstTime, ] = useQueryParam('firstTime', StringParam)
 
   if (user) setAllTokens(user.token)
 
@@ -141,12 +140,6 @@ const Home = () => {
     handleGetNotifications()
   }
 
-  const handleStartPractice = () => { // TODO 
-  }
-
-  const handleFreeDraw = () => { // TODO 
-  }
-
   // sorting function for active games sort by status first (players turn > others turn > pending), then sort games within each category by date
   const sortByActivePlayerThenDate = (a, b) => {
     const isActiveA = user.user.id === a.activePlayer.id
@@ -188,11 +181,11 @@ const Home = () => {
           </Col>
           <Col span={8}>
             <Button type='danger' className='home-button' size='large' icon={<img style={{marginRight: '5px'}} 
-              src={images.PenIcon}/>} onClick={handleFreeDraw}>Free Draw</Button>
+                src={images.GuessIcon}/>} onClick={() => history.push('/practice-mode')}>Practice</Button>
           </Col>
           <Col span={8}>
             <Button type='danger' className='home-button' size='large' icon={<img style={{marginRight: '5px'}} 
-              src={images.GuessIcon}/>} onClick={handleStartPractice}>Practice</Button>
+                src={images.PenIcon}/>} onClick={() => history.push('/free-doodle')}>Free Draw</Button>
           </Col>
         </Row>
         <Typography.Title level={4}><b>Notifications</b></Typography.Title>

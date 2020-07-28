@@ -11,6 +11,7 @@ import AddFriends from 'Components/AddFriends'
 import Invite from 'Components/Invite'
 import Rules from 'Components/Rules'
 import FreeDraw from 'Components/FreeDraw'
+import PracticeMode from 'Components/PracticeMode'
 import NoMatch from 'Components/NoMatch'
 
 const Router = () => {
@@ -27,7 +28,8 @@ const Router = () => {
         <Route path='/profile/:userId' component={Profile} />
         <Route path='/send-invite' component={Invite} />
         <Route path='/about' component={Rules} />
-        <Route path='/free-draw' component={FreeDraw} />
+        <Route path='/free-doodle' component={FreeDraw} />
+        <Route path='/practice-mode' component={PracticeMode} />
         <Route path='*' component={NoMatch} />
       </Switch>
     </div>
