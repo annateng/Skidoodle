@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react'
 import { useSelector } from 'react-redux'
 import { useHistory, useParams, Link } from 'react-router-dom'
 import { Button, Typography, Alert, Row, Col, Table } from 'antd'
+import { UserOutlined } from '@ant-design/icons'
 
 import { setAllTokens, monthNames } from 'Utilities/common'
 import { getUserData, acceptFriendRequest, rejectFriendRequest, addFriend } from 'Utilities/services/userService'
@@ -127,7 +128,7 @@ const Profile = () => {
     <div className='main-layout vertical-center-div' >
       <Alert message={alertMessage} type="success" showIcon style={displayStyle} className='skinny-alert' />
       <div className='skinny-container'>
-        <Typography.Title >{userData.username}</Typography.Title>
+        <Typography.Title ><UserOutlined style={{ color: 'dodgerblue' }}/>&nbsp;&nbsp;{userData.username}</Typography.Title>
         {userData.dateJoined && <div><b>Date joined: {getFormattedDate(userData.dateJoined)}</b></div>}
         <div>{friendDisplay}</div>
         <Row gutter={26}>

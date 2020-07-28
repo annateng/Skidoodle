@@ -9,6 +9,7 @@ import Home from 'Components/Home'
 import Signup from 'Components/Signup'
 import AddFriends from 'Components/AddFriends'
 import Invite from 'Components/Invite'
+import Rules from 'Components/Rules'
 import NoMatch from 'Components/NoMatch'
 
 const Router = () => {
@@ -24,6 +25,7 @@ const Router = () => {
         <Route path='/add-friends' component={AddFriends} />
         <Route path='/profile/:userId' component={Profile} />
         <Route path='/send-invite' component={Invite} />
+        <Route path='/about' component={Rules} />
         <Route path='*' component={NoMatch} />
       </Switch>
     </div>

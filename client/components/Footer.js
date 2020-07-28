@@ -9,10 +9,10 @@ const Footer = () => (
     </div>
     <div style={{ width: '33%', display: 'flex', alignItems: 'bottom', flexDirection: 'column' }}>
     <div>Contact me:</div>
-    <div>(781) 789-6616</div>
+    <div><a href='mailto:anna.w.teng@gmail.com?subject=[Skidoodle]'>anna.w.teng@gmail.com</a></div>
     </div>
     <div style={{ height: '100%', width: '33%', display: 'flex', alignItems: 'bottom', flexDirection: 'column' }}>
-    <div><a href='mailto:anna.w.teng@gmail.com?subject=[Skidoodle]'>anna.w.teng@gmail.com</a></div>
+    <div>Copyright 2020 Anna Teng</div>
     </div>
     </div>
   </div>

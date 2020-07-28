@@ -1,6 +1,6 @@
 const common = require('@util/common')
 const { ApplicationError } = require('@util/customErrors')
-const { checkAuthorization, isFriendsWith } = require('@util/authUtil')
+const { checkAuthorization } = require('@util/authUtil')
 const { generateWords } = require('@util/gameUtil')
 const Doodle = require('@models/doodle')
 const Game = require('@models/game')
@@ -36,8 +36,9 @@ const getNewGame = async (req, res) => {
   const gameData = req.query
   checkAuthorization(req, gameData.requesterId)
 
-  const isFriends = await isFriendsWith(gameData.requesterId, gameData.receiverId) 
-  if (!isFriends) throw new ApplicationError('Requester is not friends with this user.', 401)
+  // // User can start a game with anyone - doesn't have to be friends 
+  // const isFriends = await isFriendsWith(gameData.requesterId, gameData.receiverId) 
+  // if (!isFriends) throw new ApplicationError('Requester is not friends with this user.', 401)
 
   const newRound = {
     state: ServerRoundState.doodle,
@@ -81,8 +82,8 @@ const createGameRequest = async (req, requesterId, receiverId, gameId) => {
 
   if (checkExisting) throw new ApplicationError('Game request already pending.', 400)
 
-  const isFriends = await isFriendsWith(receiverId, requesterId)
-  if (!isFriends) throw new ApplicationError('Unauthorized request, users are not friends.', 400)
+  // const isFriends = await isFriendsWith(receiverId, requesterId)
+  // if (!isFriends) throw new ApplicationError('Unauthorized request, users are not friends.', 400)
 
   const newGameRequest = new GameRequest({
     requester: requesterId,

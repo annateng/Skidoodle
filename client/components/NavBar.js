@@ -31,6 +31,9 @@ const NavBar = () => {
       case 'invite':
         history.push(`/send-invite`)
         break
+      case 'about':
+        history.push('/about')
+        break
     }
   }
 
@@ -40,6 +43,7 @@ const NavBar = () => {
       <Menu.Item className='navbar-hamburger-item' key='home'>Home</Menu.Item>
       <Menu.Item className='navbar-hamburger-item' key='profile'>Profile</Menu.Item>  
       <Menu.Item className='navbar-hamburger-item' key='invite'>Invite Friends</Menu.Item>
+      <Menu.Item className='navbar-hamburger-item' key='about'>About Skidoodle</Menu.Item>
       <Menu.Item className='navbar-hamburger-item' key='logout'>Log Out</Menu.Item>
     </Menu>
   )

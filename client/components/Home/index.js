@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react'
 import { useSelector } from 'react-redux'
 import { useHistory, Link } from 'react-router-dom'
 import { Button, Row, Col, Typography, Alert, Popover } from 'antd'
+import { HomeTwoTone } from '@ant-design/icons'
 import { useQueryParam, StringParam } from 'use-query-params'
 
 import { setAllTokens, ServerGameStatus } from 'Utilities/common'
@@ -193,7 +194,7 @@ const Home = () => {
     <div className='main-layout vertical-center-div'>
       <Alert message={alertMessage} type="success" showIcon style={displayStyle} className='skinny-alert' />
       <div className='skinny-container'>
-        <Typography.Title>Welcome <Link to={`/profile/${user.user.id}`}>{user.user.username}</Link></Typography.Title>
+        <Typography.Title><HomeTwoTone />&nbsp;&nbsp;Welcome <Link to={`/profile/${user.user.id}`}>{user.user.username}</Link></Typography.Title>
         <Row gutter={{sm: 24, md: 32}}>
         <Col span={18}>
         <Typography.Title level={4}><b>Notifications</b></Typography.Title>
@@ -213,7 +214,7 @@ const Home = () => {
             {findFriendsButton()}
           </div>
           {userData && userData.friends.length > 0 ? userData.friends.map(friend => 
-                <FriendCard friend={friend} handleNewGame={handleNewGame} handleSeeProfile={handleSeeProfile}/>)
+                <FriendCard key={friend.id} friend={friend} handleNewGame={handleNewGame} handleSeeProfile={handleSeeProfile}/>)
                 : <p>No friends yet</p>}
         </Col>
         </Row>

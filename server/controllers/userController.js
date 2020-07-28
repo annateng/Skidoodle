@@ -80,18 +80,18 @@ const getUser = async (req, res) => {
                     frStatus === 'outgoing' ? outgoingFr.find(fr => fr.receiver.toString() === userId)._id.toString() :
                     null
 
-  // not friends: return partial data
-  if (!requestingUser || !user.friends.includes(requestingUser._id)) return res.json(
-    { 
-      id: user._id.toString(),
-      username: user.username,
-      dateJoined: user.dateJoined,
-      isFriends: false,
-      frStatus,
-      frId
-    })
+  // // not friends: return partial data
+  // if (!requestingUser || !user.friends.includes(requestingUser._id)) return res.json(
+  //   { 
+  //     id: user._id.toString(),
+  //     username: user.username,
+  //     dateJoined: user.dateJoined,
+  //     isFriends: false,
+  //     frStatus,
+  //     frId
+  //   })
 
-  // friends: return a little more data
+  // not friends or friends: return partial data
   res.json({
     id: user._id.toString(),
     username: user.username, 
