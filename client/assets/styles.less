@@ -27,6 +27,7 @@ body {
   top: 64px;
   bottom: 64px;
   width: 100%;
+  // min-height: 100%;
 }
 
 #navbar {
@@ -205,7 +206,7 @@ canvas {
   // display: flex;
   // flex: auto;
   // flex-direction: column;
-  min-height: 0;
+  min-height: 100%;
   background: @mainColor;
   box-sizing: border-box;
 }
@@ -236,14 +237,15 @@ canvas {
 .skinny-container {
   width: 100%;
   max-width: 1200px;
-  // min-height: 100%;
   height: auto;
+  min-height: 100%;
   // overflow: hidden;
   padding-left: 50px;
   padding-right: 50px;
   background-color: whitesmoke; 
   margin-top: 10px;
   padding-top: 10px;
+  padding-bottom: 50px;
 }
 
 .skinny-skinny-container {

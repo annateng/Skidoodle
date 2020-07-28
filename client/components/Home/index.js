@@ -11,7 +11,7 @@ import { getActiveGames, getUserData, getNotifications, acceptGameRequest, rejec
 import { getNewGame } from 'Utilities/services/gameService'
 
 import ActiveGameCard from 'Components/Home/ActiveGameCard'
-import FriendCard from 'Components/Home/FriendCard'
+import FriendSidebar from 'Components/Home/FriendSidebar'
 import NotificationCard from 'Components/Home/NotificationCard'
 
 const Home = () => {
@@ -25,7 +25,6 @@ const Home = () => {
   const [friendId, ] = useQueryParam('friendId', StringParam)
   const [friendName, ] = useQueryParam('friendId', StringParam)
   const [firstTime, ] = useQueryParam('firstTime', StringParam)
-  const [popoverVisible, setPopoverVisible] = useState(true)
 
   if (user) setAllTokens(user.token)
 
@@ -105,6 +104,7 @@ const Home = () => {
 
   const handleSeeProfile = async userId => {
     history.push(`/profile/${userId}`)
+    history.go()
   }
 
   // accept game request, and navigate to begin playing game
@@ -165,31 +165,6 @@ const Home = () => {
   // antd row gutter settings
   const rowGutter = [{ xs: 8, sm: 8, md: 16 },{ xs: 8, sm: 8, md: 16 }]
 
-  // if its the users first time logging in, create a popover explaining he needs friends to play
-  const findFriendsButton = () => {
-    if (firstTime) {
-      return (
-      <Popover
-        content={
-          <div style={{ fontSize: '16px'}}>
-            Find friends to play with. 
-            When your friend request is <br />
-            accepted, you can begin a game.
-            <div><a onClick={() => setPopoverVisible(false)}>OK</a></div>
-          </div>
-        }
-        defaultVisible={true}
-        destroyTooltipOnHide={true}
-        visible={popoverVisible}
-        placement='bottomRight'
-      > 
-        <Button style={{ border: '1px solid limegreen'}} onClick={() => history.push('/add-friends')}>Find New Friends</Button>
-      </Popover>
-      )
-    } 
-    else return <Button style={{ border: '1px solid limegreen'}} onClick={() => history.push('/add-friends')}>Find New Friends</Button>
-  }
-
   return (
     <div className='main-layout vertical-center-div'>
       <Alert message={alertMessage} type="success" showIcon style={displayStyle} className='skinny-alert' />
@@ -208,15 +183,7 @@ const Home = () => {
               .map(ag => <ActiveGameCard key={ag.id} game={ag} user={user.user} getGame={getGame} />) 
             : <p style={{ paddingLeft: '8px' }}>No active games</p>}</Row>
         </Col>
-        <Col span={6}>
-        <Typography.Title level={4}><b>My Friends</b></Typography.Title>
-          <div style={{ marginBottom: '15px' }}>
-            {findFriendsButton()}
-          </div>
-          {userData && userData.friends.length > 0 ? userData.friends.map(friend => 
-                <FriendCard key={friend.id} friend={friend} handleNewGame={handleNewGame} handleSeeProfile={handleSeeProfile}/>)
-                : <p>No friends yet</p>}
-        </Col>
+        {userData && userData.friends && <FriendSidebar userData={userData} handleNewGame={handleNewGame} handleSeeProfile={handleSeeProfile} />}
         </Row>
         </div>
     </div>

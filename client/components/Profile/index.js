@@ -7,7 +7,7 @@ import { UserOutlined } from '@ant-design/icons'
 import { setAllTokens, monthNames } from 'Utilities/common'
 import { getUserData, acceptFriendRequest, rejectFriendRequest, addFriend } from 'Utilities/services/userService'
 import { getNewGame } from 'Utilities/services/gameService'
-import FriendCard from 'Components/Home/FriendCard'
+import FriendSidebar from 'Components/Home/FriendSidebar'
 
 
 const Profile = () => {
@@ -30,7 +30,7 @@ const Profile = () => {
   const handleGetUserData = async () => {
     const userFromDB = await getUserData(userId)
     setUserData(userFromDB)
-    // console.log(userFromDB)
+    console.log(userFromDB)
   }
 
   if (!userData) {
@@ -70,6 +70,12 @@ const Profile = () => {
     await addFriend(user.user.id, userId)
     handleSetAlert('Friend request sent')
     handleGetUserData() // re-render page
+  }
+
+  // redirect to user profile
+  const handleSeeProfile = async userId => {
+    history.push(`/profile/${userId}`)
+    history.go()
   }
 
   // handlers for alert message, 5sec - successfully request friend, accept friend request, reject request
@@ -138,15 +144,7 @@ const Profile = () => {
               <Table dataSource={highScoreData} columns={highScoreColumns} tableLayout='fixed' pagination={false} />
               : <div>No high scores yet</div>}
           </Col>
-          {userData && userData.friends &&
-            <Col span={6}>
-              <Typography.Title level={4} style={{ marginTop: '15px' }}>My Friends</Typography.Title>
-              <div style={{ marginBottom: '15px' }}>
-                <Button style={{ border: '1px solid limegreen'}} onClick={() => history.push('/add-friends')}>Find New Friends</Button>
-              </div>
-              {userData.friends.map(friend => 
-                <FriendCard key={friend.id} friend={friend} handleNewGame={handleNewGame} />)}
-            </Col>}
+          {userData && userData.friends && <FriendSidebar userData={userData} handleNewGame={handleNewGame} handleSeeProfile={handleSeeProfile} />}
         </Row>
       </div>
     </div>
