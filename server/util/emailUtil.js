@@ -353,7 +353,7 @@ const sendInvite = async (emailAddr, name, friendId)  => {
                     <table role="presentation" border="0" cellpadding="0" cellspacing="0">
                       <tr>
                         <td>
-                          <img src="https://raw.githubusercontent.com/annateng/Skidoodle/master/client/assets/logo-small.jpg" alt="skidoodle logo" />
+                          <img src="https://raw.githubusercontent.com/annateng/Skidoodle/master/client/assets/logo-gif.gif" alt="skidoodle logo" />
                           <p><b style="color:tomato;">${name}</b> has invited you to play skidoodle! Follow the link below to get started.</p>
                           <table role="presentation" border="0" cellpadding="0" cellspacing="0" class="btn btn-primary">
                             <tbody>
@@ -362,7 +362,7 @@ const sendInvite = async (emailAddr, name, friendId)  => {
                                   <table role="presentation" border="0" cellpadding="0" cellspacing="0">
                                     <tbody>
                                       <tr>
-                                        <td> <a href="${common.BASE_URL}/signup?email=${encodeURIComponent(emailAddr)}&friendId=${friendId}" target="_blank">Let's play</a> </td>
+                                        <td> <a href="${common.BASE_URL}/signup?email=${encodeURIComponent(emailAddr)}&friendId=${friendId}&friendName=${name}" target="_blank">Let's play</a> </td>
                                       </tr>
                                     </tbody>
                                   </table>

@@ -14,7 +14,8 @@ const Signup = () => {
   const history = useHistory()
   const dispatch = useDispatch()
   const [email, ] = useQueryParam('email', StringParam)
-  const [friendId, ] = useQueryParam('friend', StringParam)
+  const [friendId, ] = useQueryParam('friendId', StringParam)
+  const [friendName, ] = useQueryParam('friendName', StringParam)
   const user = useSelector(state => state.user)
 
   // Clean up alert settimeouts if component unmounts
@@ -41,7 +42,7 @@ const Signup = () => {
       if (alertRef.current) clearTimeout(alertRef.current)
       alertRef.current = setTimeout(() => {
         if (!friendId) history.push('/home?firstTime=true')
-        else history.push(`/home?firstTime=true&friendId=${friendId}`)
+        else history.push(`/home?firstTime=true&friendId=${friendId}&friendName=${friendName}`)
       }, 1000)
     } catch (e) {
       console.error(e.message)

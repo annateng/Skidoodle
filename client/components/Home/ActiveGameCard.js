@@ -47,7 +47,7 @@ const ActiveGameCard = ({ game, user }) => {
   else cardBody = <div>Game with <b>{partner}</b></div>
 
   return (
-    <Col xs={12} sm={8} lg={6}>
+    <Col xs={12} sm={12} lg={8}>
       <Card className='home-card' bordered='true' hoverable='true' bodyStyle={{ padding: '10px' }} style={cardStyle}>
         <div onClick={handleChooseGame}>
             <div style={{ fontSize: '1.1em' }}>{cardHeader}</div>

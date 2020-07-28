@@ -45,7 +45,7 @@ const NotificationCard = ({ notification, handleAcceptGame, handleAcceptFriend, 
   }
 
   return (
-    <Col xs={12} sm={8} lg={6} >
+    <Col xs={12} sm={12} lg={8} >
       <Card className='home-card' bordered='true' bodyStyle={{ padding: '10px' }} style={cardStyle}>
         {notificationBody(notification)}
       </Card>

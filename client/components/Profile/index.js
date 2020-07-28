@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { useSelector } from 'react-redux'
 import { useHistory, useParams, Link } from 'react-router-dom'
-import { Button, Typography, Alert, Row, Col, Table } from 'antd';
+import { Button, Typography, Alert, Row, Col, Table } from 'antd'
 
 import { setAllTokens, monthNames } from 'Utilities/common'
 import { getUserData, acceptFriendRequest, rejectFriendRequest, addFriend } from 'Utilities/services/userService'
@@ -29,7 +29,7 @@ const Profile = () => {
   const handleGetUserData = async () => {
     const userFromDB = await getUserData(userId)
     setUserData(userFromDB)
-    console.log(userFromDB)
+    // console.log(userFromDB)
   }
 
   if (!userData) {
@@ -139,7 +139,7 @@ const Profile = () => {
           </Col>
           {userData && userData.friends &&
             <Col span={6}>
-              <Typography.Title level={4} style={{ marginTop: '15px' }}>Friends</Typography.Title>
+              <Typography.Title level={4} style={{ marginTop: '15px' }}>My Friends</Typography.Title>
               <div style={{ marginBottom: '15px' }}>
                 <Button style={{ border: '1px solid limegreen'}} onClick={() => history.push('/add-friends')}>Find New Friends</Button>
               </div>
