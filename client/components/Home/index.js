@@ -7,8 +7,9 @@ import { useQueryParam, StringParam } from 'use-query-params'
 
 import { setAllTokens, ServerGameStatus } from 'Utilities/common'
 import { getGame } from 'Utilities/services/gameService'
-import { getActiveGames, getUserData, getNotifications, acceptGameRequest, rejectGameRequest, acceptFriendRequest, rejectFriendRequest, addFriend } from 'Utilities/services/userService'
-import { getNewGame } from 'Utilities/services/gameService'
+import { getActiveGames, getUserData, getNotifications, acceptGameRequest, rejectGameRequest, 
+  acceptFriendRequest, rejectFriendRequest, addFriend } from 'Utilities/services/userService'
+import { getNewGame, deleteGameOverNote } from 'Utilities/services/gameService'
 
 import ActiveGameCard from 'Components/Home/ActiveGameCard'
 import FriendSidebar from 'Components/Home/FriendSidebar'
@@ -91,7 +92,16 @@ const Home = () => {
       type: 'gameRequest',
       requester: gr.requester.username,
       dateRequested: gr.dateRequested
-    })))
+    }))).concat(
+      notificationsFromDB.gameOverNotes
+      .map(gon => ({
+        id: gon.id,
+        gameId: gon.game,
+        type: 'gameOver',
+        requester: gon.sender.username,
+        dateRequested: gon.dateRequested
+      }))
+    )
     .sort((a,b) => a.dateRequested - b.dateRequested)
 
     setNotifications(formattedNotifications)
@@ -138,6 +148,12 @@ const Home = () => {
     // re-render
     handleGetFriends()
     handleGetNotifications()
+  }
+
+  // see results of completed game
+  const handleSeeGame = (gameId, noteId) => {
+    deleteGameOverNote(noteId)
+    history.push(`/game/${gameId}`)
   }
 
   // sorting function for active games sort by status first (players turn > others turn > pending), then sort games within each category by date
@@ -192,7 +208,7 @@ const Home = () => {
         <Row gutter={rowGutter}>{notifications && notifications.length > 0 ? 
             notifications.map(n => <NotificationCard key={n.id} notification={n} handleAcceptGame={handleAcceptGame} 
             handleRejectGame={handleRejectGame} handleAcceptFriend={handleAcceptFriend} handleRejectFriend={handleRejectFriend} 
-            handleSeeProfile={handleSeeProfile}/>)
+            handleSeeProfile={handleSeeProfile} handleSeeGame={handleSeeGame}/>)
           : <p style={{ paddingLeft: '8px' }}>No new notifications</p>}</Row>
         <Typography.Title level={4}><b>My Games</b></Typography.Title>
             <Row gutter={rowGutter}>{activeGames && activeGames.length > 0 ? activeGames.sort(sortByActivePlayerThenDate)

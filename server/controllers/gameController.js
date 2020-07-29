@@ -6,6 +6,7 @@ const Doodle = require('@models/doodle')
 const Game = require('@models/game')
 const GameRequest = require('@models/game-request')
 const User = require('@models/user')
+const GameOverNote = require('@models/game-over-note')
 
 const { NUM_ROUNDS, ROUND_LEN, NUM_HIGH_SCORES, ServerGameStatus, ServerRoundState } = common
 
@@ -216,6 +217,15 @@ const sendRound = async (req, res) => {
       game.nextWords = generateWords(game.allWords)
       game.currentRound = game.rounds[game.currentRoundNum++]
     } else {
+      // send game over note to the inactive player
+      const gon = new GameOverNote({
+        game: game,
+        sender: game.activePlayer,
+        receiver: game.player1.toString() === game.activePlayer.toString() ? game.player2 : game.player1,
+        isActive: true
+      })
+      await gon.save()
+      
       // Game over
       game.status = ServerGameStatus.inactive
       game.activePlayer = null
@@ -343,4 +353,16 @@ const getRandomDoodle = async (req,res) => {
   res.json(doodle.toJSON())
 }
 
-module.exports = { getActive, sendRound, getNewGame, getGame, getRandomDoodle }
+const deleteNote = async (req, res) => {
+  const note = await GameOverNote.findById(req.params.noteId)
+  if (!note) res.status(410).send()
+
+  checkAuthorization(req, note.receiver)
+  
+  note.isActive = false
+  await note.save()
+
+  res.status(204).send()
+}
+
+module.exports = { getActive, sendRound, getNewGame, getGame, getRandomDoodle, deleteNote }

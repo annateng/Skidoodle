@@ -101,3 +101,12 @@ export const rejectFriendRequest = async (userId, frId) => {
   const res = await axios.post(`${basePath}/${userId}/friend-requests/${frId}`, null, config)
   return res.data
 }
+
+export const deleteGameOverNote = async noteId => {
+  const config = {
+    headers: { Authorization: token }
+  }
+
+  const res = await axios.put(`${basePath}/delete-gameover-note/${noteId}`, null, config)
+  return res.data
+}

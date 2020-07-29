@@ -5,6 +5,7 @@ const User = require('@models/user')
 const FriendRequest = require('@models/friend-request')
 const GameRequest = require('@models/game-request')
 const Game = require('@models/game')
+const GameOverNote = require('@models/game-over-note')
 const { getDecodedToken, checkAuthorization, isFriendsWith } = require('@util/authUtil')
 
 /** send search string, requesterId in query params */
@@ -113,10 +114,14 @@ const getNotifications = async (req, res) => {
   const gameRequests = await GameRequest
     .find({ receiver: req.params.id, isActive: true })
     .populate({ path: 'requester', select: 'username' })
+  const gameOverNotes = await GameOverNote
+    .find({ receiver: req.params.id, isActive: true })
+    .populate({ path: 'sender', select: 'username' })
 
   res.json({
     friendRequests: friendRequests.map(fr => fr.toJSON()),
-    gameRequests: gameRequests.map(gr => gr.toJSON())
+    gameRequests: gameRequests.map(gr => gr.toJSON()),
+    gameOverNotes: gameOverNotes.map(gon => gon.toJSON())
   })
 }
 
