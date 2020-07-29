@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useSelector } from 'react-redux'
 import { useParams, Redirect, useHistory } from 'react-router-dom'
 import { Typography, Button, Alert } from 'antd'
+import { LoadingOutlined } from '@ant-design/icons'
 
 import { getGame } from 'Utilities/services/gameService'
 import { acceptGameRequest, rejectGameRequest } from 'Utilities/services/userService'
@@ -19,6 +20,7 @@ const GameView = () => {
   const history = useHistory()
   const [game, setGame] = useState()
   const [gameState, setGameState] = useState()
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     if (!user) return
@@ -202,11 +204,11 @@ const GameView = () => {
 
       case GameState.guess: 
         return ( <GuessingView doodlesToGuess={game.currentRound.doodles} roundLen={game.roundLen} gameId={game.id} 
-          userId={user.user.id} setGame={setGame} setGameState={setGameState} /> )
+          userId={user.user.id} setGame={setGame} setGameState={setGameState} setLoading={setLoading}/> )
 
       case GameState.doodle:
         return ( <DrawingView wordsToDraw={game.nextWords} roundLen={game.roundLen} gameId={game.id} userId={user.user.id} 
-          setGame={setGame} setGameState={setGameState} /> )
+          setGame={setGame} setGameState={setGameState} setLoading={setLoading}/> )
 
       case GameState.over:
         return ( 
@@ -224,6 +226,7 @@ const GameView = () => {
   return (
     <div className='main-layout vertical-center-div'>
       <div className='skinny-container'>
+        {loading && <Alert message='sending...' type='info' showIcon icon={<LoadingOutlined />}/>}
         {getGameBody()}
       </div>
     </div>

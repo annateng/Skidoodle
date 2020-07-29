@@ -5,7 +5,7 @@ import Rodal from 'rodal'
 import { startGuessingRound, sendGuesses, startRodal } from 'Utilities/services/gameService'
 import { GameState, ServerGameStatus } from 'Utilities/common'
 
-const GuessingView = ({ doodlesToGuess, roundLen, gameId, userId, setGame, setGameState }) => {
+const GuessingView = ({ doodlesToGuess, roundLen, gameId, userId, setGame, setGameState, setLoading }) => {
   const [timeLeft, setTimeLeft] = useState(roundLen)
   const [canvas, setCanvas] = useState()
   const [guessInput, setGuessInput] = useState()
@@ -59,7 +59,9 @@ const GuessingView = ({ doodlesToGuess, roundLen, gameId, userId, setGame, setGa
     try {
       const guesses = await startGuessingRound(canvas, guessInput, doodlesToGuess, roundLen, setTimeLeft, handleSetGuess, 
         handleSetLabel, intervalRef, replayRef, setDoodleNum, handleStartRodal, setLastResult)
+      setLoading(true)
       const newGame = await sendGuesses(guesses, userId, gameId)
+      setLoading(false)
       setGame(newGame)
 
       if (newGame.status === ServerGameStatus.active) setGameState(GameState.showThisResult)

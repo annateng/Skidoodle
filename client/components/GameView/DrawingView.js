@@ -6,7 +6,7 @@ import { startRound, sendDoodles, startRodal } from 'Utilities/services/gameServ
 import { GameState, ServerGameStatus } from 'Utilities/common'
 import Palette from 'Components/GameView/Palette'
 
-const DrawingView = ({ wordsToDraw, roundLen, gameId, userId, setGame, setGameState }) => {
+const DrawingView = ({ wordsToDraw, roundLen, gameId, userId, setGame, setGameState, setLoading }) => {
   // console.log('render') //DEBUG
   const [timeLeft, setTimeLeft] = useState(roundLen)
   const [canvas, setCanvas] = useState()
@@ -54,7 +54,9 @@ const DrawingView = ({ wordsToDraw, roundLen, gameId, userId, setGame, setGameSt
     try {
       const doodles = await startRound(canvas, setTimeLeft, wordsToDraw, roundLen, setWord, intervalRef, 
         roundRef, handleStartRodal)
+      setLoading(true)
       const newGame = await sendDoodles(doodles, userId, gameId)
+      setLoading(false)
 
       if (newGame.status === ServerGameStatus.pending) {
         setGameState(GameState.pending)

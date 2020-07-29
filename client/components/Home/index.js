@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react'
 import { useSelector } from 'react-redux'
 import { useHistory, Link } from 'react-router-dom'
 import { Button, Row, Col, Typography, Alert } from 'antd'
-import { HomeTwoTone, QuestionOutlined } from '@ant-design/icons'
+import { HomeTwoTone } from '@ant-design/icons'
 import { useQueryParam, StringParam } from 'use-query-params'
 
 import { setAllTokens, ServerGameStatus } from 'Utilities/common'
