@@ -118,8 +118,10 @@ export const getDrawing = (roundLen, paper, isSaved) => {
 }
 
 export const startRound = async (canvas, setTimeLeft, wordsToDraw, roundLen, setWord, intervalRef, roundRef, startRodal) => {
+    
   const paper = new PaperScope()
   paper.setup(canvas)
+  
   const doodles = []
 
   for (const word of wordsToDraw) {
@@ -251,10 +253,14 @@ const getReplay = (guessInput, roundLen, drawing, label, scale, paper) => {
 }
 
 export const startGuessingRound = async (canvas, guessInput, doodlesToGuess, roundLen, setTimeLeft, setGuess, 
-  setLabel, intervalRef, replayRef, setDoodleNum, startRodal, setLastResult) => {
+  setLabel, intervalRef, replayRef, setDoodleNum, startRodal, setLastResult, isPractice, inputPaper) => {
   
-  const paper = new PaperScope()
-  paper.setup(canvas)
+  let paper
+  if (!isPractice) { // In practice mode, can't call paper.setup multiple times, so don't run this line
+    paper = new PaperScope()
+    paper.setup(canvas)
+  } else paper = inputPaper
+  
   const guesses = []
 
   let doodleNum = 1

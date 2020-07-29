@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react'
 import { useHistory } from 'react-router-dom'
 import { Typography, Progress, Button, Card } from 'antd'
 import Rodal from 'rodal'
+import { PaperScope } from 'paper/dist/paper-core'
 
 import { startGuessingRound, getRandomDoodle, startRodal } from 'Utilities/services/gameService'
 import { ROUND_LEN } from 'Utilities/common'
@@ -17,6 +18,7 @@ const PracticeMode = () => {
   const [rodalVisible, setRodalVisible] = useState(false)
   const [rodalHeader, setRodalHeader] = useState()
   const [running, setRunning] = useState(false)
+  const [paper, ] = useState(new PaperScope())
   const intervalRef = useRef()
   const replayRef = useRef()
   const modalIntervalRef = useRef()
@@ -31,6 +33,7 @@ const PracticeMode = () => {
       canvasDiv.style.height = (canvasDiv.clientWidth / 2) + 'px'
       window.onresize = () => canvasDiv.style.height = (canvasDiv.clientWidth / 2) + 'px'
 
+      paper.setup(canvas)
     } else {
       const thisCanvas = document.getElementById('paper-canvas')
       setCanvas(thisCanvas)
@@ -67,7 +70,7 @@ const PracticeMode = () => {
       const doodle = await getRandomDoodle()
       setLastWord(doodle.label)
       await startGuessingRound(canvas, guessInput, [doodle], ROUND_LEN, setTimeLeft, handleSetGuess, 
-        handleSetLabel, intervalRef, replayRef, null, handleStartRodal, setLastResult)
+        handleSetLabel, intervalRef, replayRef, null, handleStartRodal, setLastResult, true, paper)
 
       setRodalVisible(true)
       setRodalHeader(null)
