@@ -16,6 +16,7 @@ const PracticeMode = () => {
   const [lastResult, setLastResult] = useState()
   const [rodalVisible, setRodalVisible] = useState(false)
   const [rodalHeader, setRodalHeader] = useState()
+  const [running, setRunning] = useState(false)
   const intervalRef = useRef()
   const replayRef = useRef()
   const modalIntervalRef = useRef()
@@ -58,8 +59,10 @@ const PracticeMode = () => {
 
   const handleStartPractice = async () => {
     try {
+      if (running) return
       setLastResult(null)
       setLastWord(null)
+      setRunning(true)
 
       const doodle = await getRandomDoodle()
       setLastWord(doodle.label)
@@ -68,7 +71,7 @@ const PracticeMode = () => {
 
       setRodalVisible(true)
       setRodalHeader(null)
-      
+      setRunning(false)
     } catch (e) {
       console.error('Error in handleStartPractice', e)
     }
