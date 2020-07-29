@@ -27,7 +27,7 @@ const Home = () => {
   const alertRef = useRef()
   const history = useHistory()
   const [friendId, ] = useQueryParam('friendId', StringParam)
-  const [friendName, ] = useQueryParam('friendId', StringParam)
+  const [friendName, ] = useQueryParam('friendName', StringParam)
 
   if (user) setAllTokens(user.token)
 
