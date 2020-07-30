@@ -25,7 +25,8 @@ const login = async (req, res) => {
         user: {
           id: user._id.toString(),
           username: user.username,
-          displayName: user.displayName
+          displayName: user.displayName,
+          settings: user.settings
         }
     })
 }

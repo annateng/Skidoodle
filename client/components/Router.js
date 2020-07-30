@@ -13,6 +13,7 @@ import Rules from 'Components/Rules'
 import FreeDraw from 'Components/FreeDraw'
 import PracticeMode from 'Components/PracticeMode'
 import ReplayView from 'Components/ReplayView'
+import Settings from 'Components/Settings'
 import NoMatch from 'Components/NoMatch'
 
 const Router = () => {
@@ -32,6 +33,7 @@ const Router = () => {
         <Route path='/about' component={Rules} />
         <Route path='/free-doodle' component={FreeDraw} />
         <Route path='/practice-mode' component={PracticeMode} />
+        <Route path='/settings' component={Settings} />
         <Route path='*' component={NoMatch} />
       </Switch>
     </div>

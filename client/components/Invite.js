@@ -5,7 +5,7 @@ import { useSelector } from 'react-redux'
 
 import { sendInvite } from 'Utilities/services/emailService'
 
-const Signup = () => {
+const Invite = () => {
   const user = useSelector(state => state.user)
   const [alertMessage, setAlertMessage] = useState()
   const [alertType, setAlertType] = useState()
@@ -65,4 +65,4 @@ const Signup = () => {
   )
 }
 
-export default Signup
+export default Invite

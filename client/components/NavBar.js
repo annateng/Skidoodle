@@ -2,7 +2,7 @@ import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory } from 'react-router-dom'
 import { Layout, Menu, Dropdown } from 'antd'
-import { MenuOutlined, HomeOutlined, SearchOutlined, UserOutlined, MailOutlined } from '@ant-design/icons'
+import { MenuOutlined, HomeOutlined, SearchOutlined, UserOutlined, MailOutlined, SettingOutlined } from '@ant-design/icons'
 
 import { images } from 'Utilities/common'
 import { logout } from 'Utilities/reducers/loginReducer'
@@ -37,16 +37,17 @@ const NavBar = () => {
       case 'about':
         history.push('/about')
         break
+      case 'settings':
+        history.push('/settings')
+        break
     }
   }
 
   const menu = (
     <Menu onClick={handleMenuClick} style={{ padding: '10px'}}>
       <b>Logged in as {user && user.user && user.user.username}</b>
-      <Menu.Item className='navbar-hamburger-item' key='home'>Home</Menu.Item>
-      <Menu.Item className='navbar-hamburger-item' key='profile'>Profile</Menu.Item>  
-      <Menu.Item className='navbar-hamburger-item' key='invite'>Invite Friends</Menu.Item>
       <Menu.Item className='navbar-hamburger-item' key='about'>About Skidoodle</Menu.Item>
+      <Menu.Item className='navbar-hamburger-item' key='settings' icon={<SettingOutlined />}>Settings</Menu.Item>
       <Menu.Item className='navbar-hamburger-item' key='logout'>Log Out</Menu.Item>
     </Menu>
   )
@@ -57,10 +58,10 @@ const NavBar = () => {
         history.push('/')
       }}><img id='header-logo' src={images.logo_gif} alt='skidoodle logo' /></div> 
       <Menu mode="horizontal" style={{ background: 'transparent', display: 'inline-block' }} onClick={handleMenuClick}>
-        <Menu.Item className='navbar-icon' key="home"><HomeOutlined /></Menu.Item>
-        <Menu.Item className='navbar-icon' key="search"><SearchOutlined /></Menu.Item>
-        <Menu.Item className='navbar-icon'key="profile"><UserOutlined /></Menu.Item> 
-        <Menu.Item className='navbar-icon' key='invite'><MailOutlined /></Menu.Item>       
+        <Menu.Item title="Home" className='navbar-icon' key="home"><HomeOutlined /></Menu.Item>
+        <Menu.Item title="My Profile" className='navbar-icon'key="profile"><UserOutlined /></Menu.Item> 
+        <Menu.Item title="Find New Friends" className='navbar-icon' key="search"><SearchOutlined /></Menu.Item>
+        <Menu.Item title="Invite Friends" className='navbar-icon' key='invite'><MailOutlined /></Menu.Item>       
       </Menu>
       { user && user.user && 
         <Dropdown overlay={menu} style={{ display: 'block' }}>

@@ -41,7 +41,6 @@
     "html-webpack-plugin": "^3.2.0",
     "jsonwebtoken": "^8.5.1",
     "less-loader": "^6.2.0",
-    "lodash": "^4.17.19",
     "module-alias": "^2.2.2",
     "mongoose": "^5.9.26",
     "mongoose-unique-validator": "^2.0.3",

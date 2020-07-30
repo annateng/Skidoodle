@@ -1,5 +1,6 @@
 import { login } from 'Utilities/services/loginService'
 import { setAllTokens } from 'Utilities/common'
+import { sendUpdateSettings } from 'Utilities/services/userService'
 
 const loginReducer = (state = {}, action) => {
   switch (action.type) {
@@ -9,6 +10,14 @@ const loginReducer = (state = {}, action) => {
       }
     case 'LOGOUT':
       return {}
+    case 'UPDATE-SETTINGS':
+      return {
+        ...state,
+        user: {
+          ...state.user,
+          settings: action.data
+        }
+      }
   }
   return state
 }
@@ -33,6 +42,22 @@ export const loginUser = userData => {
 export const logout = () => {
   return {
     type: 'LOGOUT'
+  }
+}
+
+export const updateSettings = (settings, userId) => {
+  return async dispatch => {
+    try {
+      const updatedSettings = await sendUpdateSettings(settings, userId)
+      dispatch({
+        type: 'UPDATE-SETTINGS',
+        data: {
+          ...updatedSettings
+        }
+      })
+    } catch (e) {
+      throw new Error(e.message)
+    }
   }
 }
 

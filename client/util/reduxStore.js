@@ -5,11 +5,9 @@ import { persistStore, persistReducer } from 'redux-persist'
 import storage from 'redux-persist/lib/storage' // defaults to localStorage for web
 
 import loginReducer from 'Utilities/reducers/loginReducer'
-import gameReducer from 'Utilities/reducers/gameReducer'
 
 const reducer = combineReducers({
   user: loginReducer,
-  game: gameReducer
 })
 
 const persistConfig = {

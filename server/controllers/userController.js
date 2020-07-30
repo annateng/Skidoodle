@@ -300,8 +300,20 @@ const respondToFriendRequest = async (req, res) => {
   throw new ApplicationError('Send query param action = \'accept\' or \'reject\'', 400)
 }
 
+const updateSettings = async (req, res) => {
+  checkAuthorization(req, req.params.id)
+
+  const user = await User.findById(req.params.id)
+  user.settings = req.body
+  console.log(user.settings)
+
+  const savedUser = await user.save()
+  console.log(savedUser)
+  res.json(user.settings)
+}
+
 module.exports = {
   deleteUser, getUser, addFriend, updateUser, createUser, addFriend, 
   getFriendRequests, deleteFriendRequest, respondToFriendRequest,
-  getNotifications, respondToGameRequest, findUsers
+  getNotifications, respondToGameRequest, findUsers, updateSettings
 }

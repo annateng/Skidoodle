@@ -37,7 +37,13 @@ const userSchema = new mongoose.Schema({
         numCorrect: Number,
         totalTimeSpent: Number,
       }
-    }]
+    }],
+    settings: {
+      alertFrequency: {
+        type: String,
+        default: 'ALL'
+      },
+    }
 })
 
 userSchema.set('toJSON', {
