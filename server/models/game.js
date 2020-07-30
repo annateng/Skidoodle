@@ -8,6 +8,7 @@ const roundSchema = new mongoose.Schema({
   }],
   guesses: [{
     guesses: [String],
+    timeElapsed: [Number],
     isCorrect: Boolean,
     timeSpent: Number,
   }]

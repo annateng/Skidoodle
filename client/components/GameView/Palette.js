@@ -1,15 +1,16 @@
 import React from 'react'
 import {Col, Row, Typography, Card } from 'antd'
 
+// note: removing sizes for now because large sizes create jagged lines on paperjs
 const Palette = () => {
 
   const handleSetColor = color => {
     localStorage.setItem('scribbleColor', color)
   }
 
-  const handleSetSize = size => {
-    localStorage.setItem('scribbleSize', size)
-  }
+  // const handleSetSize = size => {
+  //   localStorage.setItem('scribbleSize', size)
+  // }
 
   const colors = ['black', 'saddlebrown', 'crimson', 'deeppink', 'pink', 'coral', 'orange', 'gold', 'limegreen', 'darkgreen', 
   'lightseagreen', 'paleturquoise', 'cadetblue', 'cornflowerblue', 'mediumblue', 'mediumpurple', 'indigo', 'dimgray']
@@ -28,12 +29,12 @@ const Palette = () => {
           </Col>) 
         }
         <Col span={12} key={'eraser'}>
-          <div id='ubitch' onClick={() => handleSetColor('white')}>
+          <div onClick={() => handleSetColor('white')}>
             <Card hoverable='true' style={{ backgroundColor: 'white', maxHeight: '50px', padding: '0px' }} bodyStyle={{ padding: '10px' }}>Eraser</Card>
           </div>
         </Col>
       </Row>
-      <Typography.Text>Size</Typography.Text>
+      {/* <Typography.Text>Size</Typography.Text>
       <Row gutter={[4, 8]}>
         { sizes.map(size => 
           <Col span={4} key={'size-' + size}>
@@ -41,7 +42,7 @@ const Palette = () => {
               <div className='dot' style={{ height: size+'px', width: size+'px' }} ></div>
             </div>
           </Col>) }
-      </Row>
+      </Row> */}
     </Col>
   )
 }

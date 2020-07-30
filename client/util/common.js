@@ -31,5 +31,7 @@ export const monthNames = ["January", "February", "March", "April", "May", "June
 "July", "August", "September", "October", "November", "December"
 ]
 
+export const STROKE_WIDTH = 3
+
 // Everything from application wide common items is available through here
 export * from '@root/config/common'

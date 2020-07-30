@@ -1,14 +1,14 @@
 const mongoose = require('mongoose')
 
 const drawingSchema = new mongoose.Schema({
-  timeElapsed: Number,
-  x: Number,
-  y: Number,
-  r: Number,
-  g: Number,
-  b: Number,
-  width: String,
-  isDrawing: Boolean
+  timeElapsed: [Number],
+  x: [Number],
+  y: [Number],
+  r: [Number],
+  g: [Number],
+  b: [Number],
+  // width: [String],
+  isDrawing: [Boolean]
 }, { _id: false })
 
 const doodleSchema = new mongoose.Schema({
@@ -24,7 +24,7 @@ const doodleSchema = new mongoose.Schema({
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User'
     },
-    drawing: [drawingSchema],
+    drawing: drawingSchema,
     width: Number,
     label: String,
 })

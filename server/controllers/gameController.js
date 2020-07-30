@@ -365,4 +365,22 @@ const deleteNote = async (req, res) => {
   res.status(204).send()
 }
 
-module.exports = { getActive, sendRound, getNewGame, getGame, getRandomDoodle, deleteNote }
+// router.get('/games/:gameId/get-replay/:roundNum', games.getRoundReplay)
+const getRoundReplay = async (req, res) => {
+
+  const gameId = req.params.gameId
+  const roundNum = req.params.roundNum
+
+  const game = await Game.findById(gameId).populate(`rounds.${roundNum-1}.doodles`).lean()
+  console.log(game) // DEBUG
+
+  if (game.rounds.length < roundNum) throw new ApplicationError(`Game only has ${game.rounds.length} rounds of data. You requested round ${roundNum}`, 400)
+
+  const round = game.rounds[roundNum - 1]
+  if (round.state !== ServerRoundState.over) throw new ApplicationError(`Round is not over. State is ${round.state}`, 400)
+
+  res.send(JSON.stringify(round))
+
+}
+
+module.exports = { getActive, sendRound, getNewGame, getGame, getRandomDoodle, deleteNote, getRoundReplay }

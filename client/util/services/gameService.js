@@ -1,5 +1,8 @@
 import { PaperScope, Path, Point, Color } from 'paper/dist/paper-core'
 import axios from 'axios'
+import _ from 'lodash'
+
+import { STROKE_WIDTH } from 'Utilities/common'
 
 const basePath = '/api/games'
 let token
@@ -55,7 +58,16 @@ export const getDrawing = (roundLen, paper, isSaved) => {
     duration: roundLen,
     isActive: false,
     isDrawing: false,
-    paths: [],
+    paths: {
+      timeElapsed: [],
+      x: [],
+      y: [],
+      r: [],
+      g: [],
+      b: [],
+      // width: []
+      isDrawing: []
+    },
     curPath: null,
     curPoint: null,
     startTime: null,
@@ -102,16 +114,14 @@ export const getDrawing = (roundLen, paper, isSaved) => {
 
     if (!drawing.isSaved) return
     
-    drawing.paths.push({
-      timeElapsed: Date.now() - drawing.startTime,
-      x: drawing.curPoint ? drawing.curPoint.x : null,
-      y: drawing.curPoint ? drawing.curPoint.y : null,
-      r: drawing.curPath ? drawing.curPath.strokeColor.red : null,
-      g: drawing.curPath ? drawing.curPath.strokeColor.green : null,
-      b: drawing.curPath ? drawing.curPath.strokeColor.blue : null,
-      width: drawing.curPath ? drawing.curPath.strokeWidth : null,
-      isDrawing: drawing.curPoint ? drawing.isDrawing : false
-    })
+    drawing.paths.timeElapsed.push(Date.now() - drawing.startTime)
+    drawing.paths.x.push(drawing.curPoint ? drawing.curPoint.x : null)
+    drawing.paths.y.push(drawing.curPoint ? drawing.curPoint.y : null)
+    drawing.paths.r.push(drawing.curPath ? drawing.curPath.strokeColor.red : null)
+    drawing.paths.g.push(drawing.curPath ? drawing.curPath.strokeColor.green : null)
+    drawing.paths.b.push(drawing.curPath ? drawing.curPath.strokeColor.blue : null)
+    // drawing.paths.width.push(drawing.curPath ? drawing.curPath.strokeWidth : null)
+    drawing.paths.isDrawing.push(drawing.curPoint ? drawing.isDrawing : false)
   }
   
   return drawing
@@ -206,47 +216,54 @@ const getReplay = (guessInput, roundLen, drawing, label, scale, paper) => {
     lastIsDrawing: false,
     path: null,
     guess: [],
+    timeElapsed: [],
     duration: roundLen,
     label,
     startTime: null,
     correctGuessTime: null,
     guessedCorrectly: false,
     isActive: false,
-    scale
+    scale,
+    lastI: 0
   }
 
   paper.view.onFrame = event => {
     if (!replayDrawing.isActive || !replayDrawing.drawing) return
 
     const timeElapsed = Date.now() - replayDrawing.startTime
-    const point = replayDrawing.drawing.find(p => p.timeElapsed >= timeElapsed)
-    if (!point) {
+    const i = _.findIndex(replayDrawing.drawing.timeElapsed, p => p >= timeElapsed, replayDrawing.lastI)
+    if (i == -1) {
       replayDrawing.isActive = false
       return
     }
 
-    if (point.isDrawing && !replayDrawing.lastIsDrawing) {
+    const isDrawing = replayDrawing.drawing.isDrawing[i]
+    const point = new Point(replayDrawing.drawing.x[i], replayDrawing.drawing.y[i]).multiply(replayDrawing.scale)
+
+    if (isDrawing && !replayDrawing.lastIsDrawing) {
       if (replayDrawing.path) replayDrawing.path.selected = false
       replayDrawing.path = new Path({ 
-        segments: [new Point(point.x, point.y).multiply(replayDrawing.scale)],
-        strokeColor: new Color(point.r, point.g, point.b),
-        strokeWidth: replayDrawing.scale * point.width
+        segments: [point],
+        strokeColor: new Color(replayDrawing.drawing.r[i], replayDrawing.drawing.g[i], replayDrawing.drawing.b[i]),
+        strokeWidth: replayDrawing.scale * STROKE_WIDTH // replayDrawing.scale * point.width
       })
-    } else if (point.isDrawing) {
-      const paperPoint = new Point(point.x, point.y).multiply(replayDrawing.scale)
-      replayDrawing.path.lineTo(paperPoint)
-      replayDrawing.path.moveTo(paperPoint)
+    } else if (isDrawing) {
+      replayDrawing.path.lineTo(point)
+      replayDrawing.path.moveTo(point)
     }
 
-    replayDrawing.lastIsDrawing = point.isDrawing
+    replayDrawing.lastIsDrawing = isDrawing
 
     const guessInputVal = guessInput.value
     replayDrawing.guess.push(guessInputVal)
+    replayDrawing.timeElapsed.push(timeElapsed)
     if (guessInputVal.toLowerCase() === replayDrawing.label.toLowerCase()) {
       replayDrawing.guessedCorrectly = true
       replayDrawing.correctGuessTime = Date.now()
       replayDrawing.isActive = false
     }
+
+    replayDrawing.lastI = i
   }
 
   return replayDrawing
@@ -267,7 +284,7 @@ export const startGuessingRound = async (canvas, guessInput, doodlesToGuess, rou
   for (const doodle of doodlesToGuess) {
     setGuess('')
     setLabel(doodle.label)
-    if (setDoodleNum) setDoodleNum(doodleNum++)
+    if (setDoodleNum) setDoodleNum(doodleNum++) // in practice mode, this function is undefined
     setTimeLeft(roundLen)
 
     const scale = paper.view.viewSize.width / doodle.width
@@ -280,6 +297,7 @@ export const startGuessingRound = async (canvas, guessInput, doodlesToGuess, rou
     const guessToPush = {
       doodleId: doodle.id,
       guesses: completedReplay.guess,
+      timeElapsed: completedReplay.timeElapsed,
       isCorrect: completedReplay.guessedCorrectly,
       // max time spent is the round length. time is represented in milliseconds.
       timeSpent: completedReplay.correctGuessTime ? Math.min(completedReplay.correctGuessTime - completedReplay.startTime, roundLen * 1000) : roundLen * 1000,
@@ -330,5 +348,11 @@ export const deleteGameOverNote = async noteId => {
   }
 
   const res = await axios.put(`${basePath}/delete-gameover-note/${noteId}`, null, config)
+  return res.data
+}
+
+export const getRoundReplay = async (gameId, roundNum) => {
+  console.log(`${basePath}/${gameId}/get-replay/${roundNum}`)
+  const res = await axios.get(`${basePath}/${gameId}/get-replay/${roundNum}`)
   return res.data
 }

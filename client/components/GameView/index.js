@@ -155,6 +155,7 @@ const GameView = () => {
         // Regular round results
         return ( 
           <div className='centered-div'>
+            <Button onClick={() => history.push(`/game/${game.id}/replay/${game.currentRoundNum - 1}`)}>Watch Replay</Button>
             <RoundResults roundResults={game.result.roundScores[game.currentRoundNum - 2]} roundNum={game.currentRoundNum - 1} 
               artist={game.activePlayer.username} guesser={game.inactivePlayer.username} />
             <Typography.Title level={3}>Ready for round {game.currentRoundNum}?</Typography.Title>

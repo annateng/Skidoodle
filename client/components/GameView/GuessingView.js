@@ -6,6 +6,7 @@ import { startGuessingRound, sendGuesses, startRodal } from 'Utilities/services/
 import { GameState, ServerGameStatus } from 'Utilities/common'
 
 const GuessingView = ({ doodlesToGuess, roundLen, gameId, userId, setGame, setGameState, setLoading }) => {
+  // console.log(doodlesToGuess) // DEBUG
   const [timeLeft, setTimeLeft] = useState(roundLen)
   const [canvas, setCanvas] = useState()
   const [guessInput, setGuessInput] = useState()

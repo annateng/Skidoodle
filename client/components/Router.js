@@ -12,6 +12,7 @@ import Invite from 'Components/Invite'
 import Rules from 'Components/Rules'
 import FreeDraw from 'Components/FreeDraw'
 import PracticeMode from 'Components/PracticeMode'
+import ReplayView from 'Components/ReplayView'
 import NoMatch from 'Components/NoMatch'
 
 const Router = () => {
@@ -21,6 +22,7 @@ const Router = () => {
       <Switch>
         <Route exact path='/' component={FrontPage} />
         <Route path='/login' component={Login} />
+        <Route path='/game/:gameId/replay/:roundNum' component={ReplayView} />
         <Route path='/game/:gameId' component={GameView} />
         <Route path='/home' component={Home} />
         <Route path='/signup' component={Signup} />
