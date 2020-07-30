@@ -3,7 +3,7 @@ import { Typography, Progress, Row, Col } from 'antd'
 import Rodal from 'rodal'
 
 import { startRound, sendDoodles, startRodal } from 'Utilities/services/gameService'
-import { GameState, ServerGameStatus } from 'Utilities/common'
+import { GameState, ServerGameStatus, STROKE_WIDTH } from 'Utilities/common'
 import Palette from 'Components/GameView/Palette'
 
 const DrawingView = ({ wordsToDraw, roundLen, gameId, userId, setGame, setGameState, setLoading }) => {
@@ -32,8 +32,7 @@ const DrawingView = ({ wordsToDraw, roundLen, gameId, userId, setGame, setGameSt
 
       setCanvas(thisCanvas)
       localStorage.setItem('scribbleColor', 'black')
-      localStorage.setItem('scribbleSize', 2)
-      localStorage.setItem('scribbleEraser', false)
+      localStorage.setItem('scribbleSize', STROKE_WIDTH)
     }
 
     // clean up intervals and unresolved promises

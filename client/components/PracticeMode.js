@@ -71,7 +71,6 @@ const PracticeMode = () => {
       setLastWord(doodle.label)
       await startGuessingRound(canvas, guessInput, [doodle], ROUND_LEN, setTimeLeft, handleSetGuess, 
         handleSetLabel, intervalRef, replayRef, null, handleStartRodal, setLastResult, true, paper)
-
       setRodalVisible(true)
       setRodalHeader(null)
       setRunning(false)

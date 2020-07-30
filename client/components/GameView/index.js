@@ -226,8 +226,8 @@ const GameView = () => {
 
   return (
     <div className='main-layout vertical-center-div'>
+      {loading && <Alert className='skinny-alert' message='sending...' type='warning' showIcon icon={<LoadingOutlined />}/>}
       <div className='skinny-container'>
-        {loading && <Alert message='sending...' type='info' showIcon icon={<LoadingOutlined />}/>}
         {getGameBody()}
       </div>
     </div>

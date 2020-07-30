@@ -4,8 +4,9 @@ import { PaperScope } from 'paper/dist/paper-core'
 
 import { getDrawing } from 'Utilities/services/gameService'
 import Palette from 'Components/GameView/Palette'
+import { STROKE_WIDTH } from 'Utilities/common'
 
-const FreeDraw = ({ wordsToDraw, roundLen, gameId, userId, setGame, setGameState }) => {
+const FreeDraw = () => {
   // console.log('render') //DEBUG
   const [canvas, setCanvas] = useState()
   const [paper, ] = useState(new PaperScope())
@@ -25,8 +26,7 @@ const FreeDraw = ({ wordsToDraw, roundLen, gameId, userId, setGame, setGameState
 
       setCanvas(thisCanvas)
       localStorage.setItem('scribbleColor', 'black')
-      localStorage.setItem('scribbleSize', 2)
-      localStorage.setItem('scribbleEraser', false)
+      localStorage.setItem('scribbleSize', STROKE_WIDTH)
     }
   }, [canvas])
 

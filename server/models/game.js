@@ -12,7 +12,13 @@ const roundSchema = new mongoose.Schema({
     isCorrect: Boolean,
     timeSpent: Number,
   }]
-}, { _id: false })
+})
+
+roundSchema.set('toJSON', {
+  transform: (document, returnedObject) => {
+    if (returnedObject._id) returnedObject.id = returnedObject._id.toString()
+  }
+})
 
 const gameSchema = new mongoose.Schema({
   player1: {

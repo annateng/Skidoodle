@@ -1,28 +1,34 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { useParams } from 'react-router-dom'
-import { Typography, Progress, Row } from 'antd'
+import { useParams, useHistory } from 'react-router-dom'
+import { Typography, Progress, Alert, Button } from 'antd'
+import { LoadingOutlined } from '@ant-design/icons'
 import Rodal from 'rodal'
+import { PaperScope } from 'paper/dist/paper-core'
 
-import { startRodal, getRoundReplay } from 'Utilities/services/gameService'
+import { startRodal, getRound, replayRound } from 'Utilities/services/gameService'
 import { ROUND_LEN } from 'Utilities/common'
 
 // <Route path='/game/:gameId/replay/:roundNum' component={ReplayView} />
 const ReplayView = () => {
-  const [timeLeft, setTimeLeft] = useState(ROUND_LEN)
+  const [timeLeft, setTimeLeft] = useState()
   const [canvas, setCanvas] = useState()
-  const [guessInput, setGuessInput] = useState()
+  const [, setGuessInput] = useState()
   const [guess, setGuess] = useState('')
   const [label, setLabel] = useState('')
   const [rodalVisible, setRodalVisible] = useState(false)
   const [rodalHeader, setRodalHeader] = useState()
   const [doodleNum, setDoodleNum] = useState()
   const [lastResult, setLastResult] = useState()
-  const [loading, setLoading] = useState(false)
+  const [replay, setReplay] = useState()
+  const [loading, setLoading] = useState(true)
+  const [paper,] = useState(new PaperScope())
+  const [endRodalVisible, setEndRodalVisible] = useState(false)
   const intervalRef = useRef()
   const replayRef = useRef()
   const modalIntervalRef = useRef()
   const modalRef = useRef()
   const params = useParams()
+  const history = useHistory()
   
   useEffect(() => {
     if (canvas) {
@@ -32,6 +38,7 @@ const ReplayView = () => {
       canvasDiv.style.height = (canvasDiv.clientWidth / 2) + 'px'
       window.onresize = () => canvasDiv.style.height = (canvasDiv.clientWidth / 2) + 'px'
 
+      paper.setup(canvas)
       handleStartRoundReplay()
     } else {
       const thisCanvas = document.getElementById('paper-canvas')
@@ -61,20 +68,27 @@ const ReplayView = () => {
 
   const handleStartRoundReplay = async () => {
     try {
-      const replay = await getRoundReplay(params.gameId, params.roundNum)
-      console.log(replay)
-      // const guesses = await startGuessingRound(canvas, guessInput, doodlesToGuess, ROUND_LEN, setTimeLeft, handleSetGuess, 
-      //   handleSetLabel, intervalRef, replayRef, setDoodleNum, handleStartRodal, setLastResult)
-      // setLoading(true)
-      // const newGame = await sendGuesses(guesses, userId, gameId)
-      // setLoading(false)
-      // setGame(newGame)
+      setEndRodalVisible(false)
 
-      // if (newGame.status === ServerGameStatus.active) setGameState(GameState.showThisResult)
-      // else setGameState(GameState.inactiveGame)
-      
+      if (!replay) {
+        const replayFromDB = await getRound(params.gameId, params.roundNum)
+        // console.log(replay)
+        setReplay(replayFromDB)
+        setLoading(false)
+        
+        // if (!paper.project) console.log(paper)
+        await replayRound(replayFromDB.doodles, replayFromDB.guesses, paper, replayFromDB.roundLen, setGuess, setDoodleNum, 
+          setTimeLeft, handleSetLabel, handleStartRodal, intervalRef, replayRef, setLastResult)
+      } else {
+        // if (!paper.project) console.log(paper)
+        await replayRound(replay.doodles, replay.guesses, paper, replay.roundLen, setGuess, setDoodleNum, 
+          setTimeLeft, handleSetLabel, handleStartRodal, intervalRef, replayRef, setLastResult)
+      }
+
+      setEndRodalVisible(true)
+      setLastResult(null)
     } catch (e) {
-      console.error('Error in handleStartGuessing', e)
+      console.error('Error in handleStartRoundReplay', e)
     }
   }
 
@@ -86,29 +100,42 @@ const ReplayView = () => {
 
   return (
     <div className='main-layout vertical-center-div'>
-      <div className='skinny-container'>
-        {loading && <Alert message='sending...' type='info' showIcon icon={<LoadingOutlined />}/>}
+      {loading && <Alert className='skinny-alert' message='loading...' type='warning' showIcon icon={<LoadingOutlined />}/>}
+      <div className='skinny-container' style={{ position: 'relative' }}>
+        <div className='replay-background'>REPLAY</div>
         <div className='vertical-center-div'>
           <b style={{ fontSize: '20px' }}>Time Left:</b>
-          <Typography.Title id='countdown-timer'>{timeLeft}s</Typography.Title>
+          <Typography.Title id='countdown-timer'>{timeLeft ? timeLeft+'s' : ''}</Typography.Title>
           <Progress className='guess-progress' percent={timeLeft/ROUND_LEN*100} showInfo={false} strokeColor='dodgerblue'/>
           <b>Guess:</b>
           <div id='guess-input-wrapper'>
-            <input className='borderless-input' id='guess-input' type='text' value={guess} onChange={event => handleSetGuess(event.target.value)} autoComplete='off' spellCheck='false' />
+            <input className='borderless-input' id='guess-input' type='text' value={guess} onChange={event => handleSetGuess(event.target.value)} 
+              autoComplete='off' spellCheck='false' disabled={true}/>
             <div id='underline-div'>{label}</div>
           </div>
           <div id='canvas-div' className='centered-div'>
             <canvas id="paper-canvas" resize="false"></canvas>
           </div>
-          {/* <Rodal visible={rodalVisible} onClose={() => setRodalVisible(false)} showCloseButton={false}
+          <Rodal visible={rodalVisible} onClose={() => setRodalVisible(false)} showCloseButton={false}
             width={600} height={450} animation='rotate' closeMaskOnClick={false} 
             customStyles={{ borderRadius: '10px', border: '2px solid tomato'}}>
             <div className='rodal-header'>{rodalHeader}</div>
             <div className='rodal-body'>
               {lastResult && <div style={{ fontSize: '1.5em', color: 'gold' }}>{lastResult}</div>}
-              <div>Doodle {doodleNum} of {doodlesToGuess.length}</div>
+              {replay && <div>Doodle {doodleNum} of {replay.doodles.length}</div>}
             </div>
-          </Rodal> */}
+          </Rodal>
+          <Rodal visible={endRodalVisible} onClose={() => setEndRodalVisible(false)} width={600} height={250} 
+            closeMaskonClick={false} customStyles={{ borderRadius: '10px', border: '2px solid tomato'}}>
+            <div className='rodal-body'>
+              <div>Replay Finished</div>
+              <Button onClick={handleStartRoundReplay} style={{ marginRight: '15px' }}>Watch Again</Button>
+              <Button onClick={() => {
+                history.push(`/game/${params.gameId}`)
+                history.go()
+              }}>Back to Game</Button>
+            </div>
+          </Rodal>
         </div>
       </div>
     </div>
