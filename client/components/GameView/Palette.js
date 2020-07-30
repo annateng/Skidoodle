@@ -1,16 +1,10 @@
 import React from 'react'
 import {Col, Row, Typography, Card } from 'antd'
 
+import { STROKE_WIDTH } from 'Utilities/common'
+
 // note: removing sizes for now because large sizes create jagged lines on paperjs
 const Palette = () => {
-
-  const handleSetColor = color => {
-    localStorage.setItem('scribbleColor', color)
-  }
-
-  const handleSetSize = size => {
-    localStorage.setItem('scribbleSize', size)
-  }
 
   const colors = ['black', 'saddlebrown', 'crimson', 'deeppink', 'pink', 'coral', 'orange', 'gold', 'limegreen', 'darkgreen', 
   'lightseagreen', 'paleturquoise', 'cadetblue', 'cornflowerblue', 'mediumblue', 'mediumpurple', 'indigo', 'dimgray']
@@ -23,15 +17,18 @@ const Palette = () => {
       <Row gutter={[6, 6]}>
         { colors.map(color => 
           <Col span={6} key={color}>
-            <div onClick={() => handleSetColor(color)}>
+            <div onClick={() => {
+              localStorage.setItem('scribbleColor', color)
+              localStorage.setItem('scribbleSize', STROKE_WIDTH)
+            }}>
               <Card hoverable='true' style={{ backgroundColor: color }} ></Card>
             </div>
           </Col>) 
         }
         <Col span={12} key={'eraser'}>
           <div onClick={() => {
-            handleSetColor('white')
-            handleSetSize(20)
+            localStorage.setItem('scribbleColor', 'white')
+            localStorage.setItem('scribbleSize', 20)
           }}>
             <Card hoverable='true' style={{ backgroundColor: 'white', maxHeight: '50px', padding: '0px' }} bodyStyle={{ padding: '10px' }}>Eraser</Card>
           </div>

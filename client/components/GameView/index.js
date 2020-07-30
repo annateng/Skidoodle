@@ -85,7 +85,7 @@ const GameView = () => {
           <div className='centered-div'>
             {isHighScore && <Alert message='New High Score!' type='success' showIcon className='skinny-alert' />}
             <Typography.Title>Game finished!</Typography.Title>
-            <GameResults result={game.result} />
+            <GameResults result={game.result} gameId={game.id}/>
             {backHomeButton}
           </div> 
         )
@@ -95,7 +95,7 @@ const GameView = () => {
           <div className='centered-div'>
             <Typography.Title level={2}>It's {game.activePlayer.username}'s turn</Typography.Title>
             {game.currentRoundNum > 1 && <Typography.Title level={4}>Game results so far: Round {game.currentRoundNum-1} of {game.numRounds} </Typography.Title>}
-            <GameResults result={game.result} />
+            <GameResults result={game.result} gameId={game.id} />
             {backHomeButton}
           </div>
         )
@@ -155,9 +155,8 @@ const GameView = () => {
         // Regular round results
         return ( 
           <div className='centered-div'>
-            <Button onClick={() => history.push(`/game/${game.id}/replay/${game.currentRoundNum - 1}`)}>Watch Replay</Button>
             <RoundResults roundResults={game.result.roundScores[game.currentRoundNum - 2]} roundNum={game.currentRoundNum - 1} 
-              artist={game.activePlayer.username} guesser={game.inactivePlayer.username} />
+              artist={game.activePlayer.username} guesser={game.inactivePlayer.username} gameId={game.id} />
             <Typography.Title level={3}>Ready for round {game.currentRoundNum}?</Typography.Title>
             {beginRoundButton('Start Guessing')}
           </div>
@@ -197,7 +196,7 @@ const GameView = () => {
         return (
           <div className='centered-div'>
             <RoundResults roundResults={game.result.roundScores[game.currentRoundNum - 2]} roundNum={game.currentRoundNum - 1}
-              guesser={game.activePlayer.username} artist={game.inactivePlayer.username} />
+              guesser={game.activePlayer.username} artist={game.inactivePlayer.username} gameId={game.id} />
             <Typography.Title level={3}>Ready for round {game.currentRoundNum}?</Typography.Title>
             {beginRoundButton('Let\'s Doodle')}
           </div>

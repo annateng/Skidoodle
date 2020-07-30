@@ -1,8 +1,7 @@
 import { PaperScope, Path, Point, Color } from 'paper/dist/paper-core'
 import axios from 'axios'
-import _ from 'lodash'
 
-import { STROKE_WIDTH, ROUND_LEN } from 'Utilities/common'
+import { STROKE_WIDTH } from 'Utilities/common'
 
 const basePath = '/api/games'
 let token
@@ -231,7 +230,7 @@ const getReplay = (guessInput, roundLen, drawing, label, scale, paper) => {
     if (!replayDrawing.isActive || !replayDrawing.drawing) return
 
     const timeElapsed = Date.now() - replayDrawing.startTime
-    const i = _.findIndex(replayDrawing.drawing.timeElapsed, p => p >= timeElapsed, replayDrawing.lastI)
+    const i = replayDrawing.drawing.timeElapsed.findIndexFrom(p => p >= timeElapsed, null, replayDrawing.lastI)
     if (i == -1) {
       replayDrawing.isActive = false
       return
@@ -402,14 +401,14 @@ const getRoundReplay = (roundLen, doodle, guess, scale, paper, setGuess) => {
     if (!replayDrawing.isActive || !replayDrawing.drawing) return
     
     const timeElapsed = Date.now() - replayDrawing.startTime
-    let i = _.findIndex(replayDrawing.drawing.timeElapsed, p => p >= timeElapsed, replayDrawing.lastI)
+    let i = replayDrawing.drawing.timeElapsed.findIndexFrom(p => p >= timeElapsed, null, replayDrawing.lastI)
     if (i == -1) {
       replayDrawing.isActive = false
       return
     }
 
     // find the corresponding guess at the time of the frame
-    let j = _.findIndex(replayDrawing.guess.timeElapsed, p => p >= timeElapsed, replayDrawing.lastJ)
+    let j = replayDrawing.guess.timeElapsed.findIndexFrom(p => p >= timeElapsed, null, replayDrawing.lastJ)
     if (j == -1) {
       j = guess.timeElapsed.length - 1
     }

@@ -1,7 +1,10 @@
 import React from 'react'
-import { Table, Typography } from 'antd'
+import { Table, Typography, Button } from 'antd'
+import { PlaySquareFilled } from '@ant-design/icons'
+import { useHistory } from 'react-router-dom'
 
-const RoundResults = ({ roundResults, roundNum, artist, guesser }) => {
+const RoundResults = ({ roundResults, roundNum, artist, guesser, gameId }) => {
+  const history = useHistory()
 
   const datasource = roundResults.doodles.map((doodle, index) => ({
     key: index,
@@ -30,7 +33,10 @@ const RoundResults = ({ roundResults, roundNum, artist, guesser }) => {
 
   return (
     <div>
-      <Typography.Title level={3}>Round {roundNum} Results</Typography.Title>
+      <Typography.Title level={3}>
+        Round {roundNum} Results
+        <Button type='danger' style={{ marginLeft: '15px' }} icon={<PlaySquareFilled />}onClick={() => history.push(`/game/${gameId}/replay/${roundNum}`)}>Watch Replay</Button>
+      </Typography.Title>
         <div style={{ width: '100%' }}>
           <Typography.Text style={{ align: 'left' }}><b>artist:</b> {artist}&nbsp;&nbsp;&nbsp;&nbsp;
             <b>guesser:</b> {guesser}</Typography.Text><br />

@@ -10,8 +10,11 @@ import 'rodal/lib/rodal.css'
 
 import App from 'Components/App'
 import ErrorBoundary from 'Components/ErrorBoundary'
-
+import { addFindIndexFrom } from 'Utilities/helper'
 import { store, persistor } from 'Utilities/reduxStore'
+
+// add Array.prototype.findIndexFrom
+addFindIndexFrom()
 
 const refresh = () => render(
   <BrowserRouter>

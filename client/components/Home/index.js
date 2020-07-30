@@ -168,7 +168,7 @@ const Home = () => {
     if (isPendingA && !isPendingB) return 1
     if (!isPendingA && isPendingB) return -1
 
-    return a.timeOfLastMove - b.timeOfLastMove
+    return new Date(a.timeOfLastMove) - new Date(b.timeOfLastMove)
   }
 
   // handlers for alert message, 5sec

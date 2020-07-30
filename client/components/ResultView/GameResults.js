@@ -1,7 +1,10 @@
 import React from 'react'
 import { Table } from 'antd'
+import { useHistory, Link } from 'react-router-dom'
 
-const GameResults = ({ result }) => {
+const GameResults = ({ result, gameId }) => {
+  const history = useHistory()
+
   // if there's no results to display, return nothing
   if (!result || result.roundScores.length < 1) return null
   
@@ -15,7 +18,9 @@ const GameResults = ({ result }) => {
     { title: 'Round #', dataIndex: 'key', key: 'key', render: i => i + 1 },
     { title: 'Words Guessed Correctly', dataIndex: 'numCorrect', key: 'numCorrect' },
     { title: 'Total Time', dataIndex: 'totalTimeSpent', key: 'totalTimeSpent', 
-        render: time => (time/1000).toFixed(2)+'s' }
+        render: time => (time/1000).toFixed(2)+'s' },
+    { dataIndex: 'key', key: 'watchReplay', 
+        render: i => <Link to={`/game/${gameId}/replay/${i+1}`}>Watch Replay</Link>}
   ]
 
   const footer = () => (
