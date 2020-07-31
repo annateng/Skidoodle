@@ -1,8 +1,6 @@
 import { PaperScope, Path, Point, Color } from 'paper/dist/paper-core'
 import axios from 'axios'
 
-import { STROKE_WIDTH } from 'Utilities/common'
-
 const basePath = '/api/games'
 let token
 
@@ -64,7 +62,7 @@ export const getDrawing = (roundLen, paper, isSaved) => {
       r: [],
       g: [],
       b: [],
-      // width: []
+      width: [],
       isDrawing: []
     },
     curPath: null,
@@ -82,6 +80,7 @@ export const getDrawing = (roundLen, paper, isSaved) => {
       segments: [event.point],
       strokeColor: localStorage.getItem('scribbleColor'),
       strokeWidth: localStorage.getItem('scribbleSize'),
+      strokeCap: 'round',
     })
 
     drawing.isDrawing = true
@@ -109,6 +108,7 @@ export const getDrawing = (roundLen, paper, isSaved) => {
     if (drawing.isDrawing) {
       drawing.curPath.lineTo(drawing.curPoint)
       drawing.curPath.moveTo(drawing.curPoint)
+      drawing.curPath.smooth()
     }
 
     if (!drawing.isSaved) return
@@ -119,7 +119,7 @@ export const getDrawing = (roundLen, paper, isSaved) => {
     drawing.paths.r.push(drawing.curPath ? drawing.curPath.strokeColor.red : null)
     drawing.paths.g.push(drawing.curPath ? drawing.curPath.strokeColor.green : null)
     drawing.paths.b.push(drawing.curPath ? drawing.curPath.strokeColor.blue : null)
-    // drawing.paths.width.push(drawing.curPath ? drawing.curPath.strokeWidth : null)
+    drawing.paths.width.push(drawing.curPath ? drawing.curPath.strokeWidth : null)
     drawing.paths.isDrawing.push(drawing.curPoint ? drawing.isDrawing : false)
   }
   
@@ -244,12 +244,14 @@ const getReplay = (guessInput, roundLen, drawing, label, scale, paper) => {
       replayDrawing.path = new Path({ 
         segments: [point],
         strokeColor: new Color(replayDrawing.drawing.r[i], replayDrawing.drawing.g[i], replayDrawing.drawing.b[i]),
-        strokeWidth: replayDrawing.scale * STROKE_WIDTH, // replayDrawing.scale * point.width
+        strokeWidth: replayDrawing.scale * replayDrawing.drawing.width[i],
+        strokeCap: 'round',
         project: paper.project // sometimes Path will pick up the wrong 'paper' object on init unless this is included. im not sure why. maybe has to do with import method / global scope
       })
     } else if (isDrawing) {
       replayDrawing.path.lineTo(point)
       replayDrawing.path.moveTo(point)
+      replayDrawing.path.smooth()
     }
 
     replayDrawing.lastIsDrawing = isDrawing
@@ -423,12 +425,14 @@ const getRoundReplay = (roundLen, doodle, guess, scale, paper, setGuess) => {
       replayDrawing.path = new Path({ 
         segments: [point],
         strokeColor: new Color(replayDrawing.drawing.r[i], replayDrawing.drawing.g[i], replayDrawing.drawing.b[i]),
-        strokeWidth: replayDrawing.scale * STROKE_WIDTH, // replayDrawing.scale * point.width
+        strokeWidth: replayDrawing.scale * replayDrawing.drawing.width[i],
+        strokeCap: 'round',
         project: paper.project // sometimes Path will pick up the wrong 'paper' object on init unless this is included. im not sure why. maybe has to do with import method / global scope
       })
     } else if (isDrawing) {
       replayDrawing.path.lineTo(point)
       replayDrawing.path.moveTo(point)
+      replayDrawing.path.smooth()
     }
 
     replayDrawing.lastIsDrawing = isDrawing

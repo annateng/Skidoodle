@@ -7,7 +7,7 @@ const drawingSchema = new mongoose.Schema({
   r: [Number],
   g: [Number],
   b: [Number],
-  // width: [String],
+  width: [String],
   isDrawing: [Boolean]
 }, { _id: false })
 

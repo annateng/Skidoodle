@@ -19,7 +19,6 @@ const Palette = () => {
           <Col span={6} key={color}>
             <div onClick={() => {
               localStorage.setItem('scribbleColor', color)
-              localStorage.setItem('scribbleSize', STROKE_WIDTH)
             }}>
               <Card hoverable='true' style={{ backgroundColor: color }} ></Card>
             </div>
@@ -28,21 +27,21 @@ const Palette = () => {
         <Col span={12} key={'eraser'}>
           <div onClick={() => {
             localStorage.setItem('scribbleColor', 'white')
-            localStorage.setItem('scribbleSize', 20)
           }}>
             <Card hoverable='true' style={{ backgroundColor: 'white', maxHeight: '50px', padding: '0px' }} bodyStyle={{ padding: '10px' }}>Eraser</Card>
           </div>
         </Col>
       </Row>
-      {/* <Typography.Text>Size</Typography.Text>
+      <Typography.Text>Size</Typography.Text>
       <Row gutter={[4, 8]}>
         { sizes.map(size => 
           <Col span={4} key={'size-' + size}>
-            <div style={{ height: 50, display: 'flex', justifyContent: 'center', alignItems: 'center' }} onClick={() => handleSetSize(size)}>
+            <div style={{ height: 50, display: 'flex', justifyContent: 'center', alignItems: 'center' }} 
+              onClick={() => {localStorage.setItem('scribbleSize', size)}}>
               <div className='dot' style={{ height: size+'px', width: size+'px' }} ></div>
             </div>
           </Col>) }
-      </Row> */}
+      </Row>
     </Col>
   )
 }
