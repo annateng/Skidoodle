@@ -12,6 +12,10 @@ export const sendInvite = async (emailAddr, name, friendId) => {
     headers: { Authorization: token },
   }
 
-  const res = await axios.post(`${basePath}/invite`, { emailAddr, name, friendId }, config)
-  return res.data
+  try {
+    const res = await axios.post(`${basePath}/invite`, { emailAddr, name, friendId }, config)
+    return res.data
+  } catch (e) {
+    throw e.response
+  }
 }

@@ -20,12 +20,18 @@ const GameView = () => {
   const history = useHistory()
   const [game, setGame] = useState()
   const [gameState, setGameState] = useState()
+  const [error, setError] = useState()
   const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     if (!user) return
 
-    const getGameFromDB = async () => {
+      getGameFromDB()
+    
+  }, [])
+
+  const getGameFromDB = async () => {
+    try {
       const gameData = await getGame(gameId, user.user.id)
       setGame(gameData)
 
@@ -44,12 +50,15 @@ const GameView = () => {
       else if (gameData.currentRound.state === ServerRoundState.guess) setGameState(GameState.showLastResult)
       else if (gameData.currentRound.state === ServerRoundState.doodle) setGameState(GameState.showThisResult)
       else if (gameData.currentRound.state === ServerRoundState.over) setGameState(GameState.over)
-      else console.error('Error with game state obtained with gameService.getGame', gameData.currentRound.state)
+      else {
+        console.error('Error with game state obtained with gameService.getGame', gameData.currentRound.state)
+        setError('')
+      }
+    } catch (e) {
+      console.warn(e)
+      setError(e.status)
     }
-
-    getGameFromDB()
-
-  }, [])
+  }
 
   // set auth tokens for Services
   if (user) setAllTokens(user.token)
@@ -75,6 +84,12 @@ const GameView = () => {
   }
   
   const getGameBody = () => {
+    if (error) return (
+      <div className='centered-div'>
+      <Typography.Title level={4}>{error === 404 ? 'Game not found' : 'Something went wrong'}</Typography.Title>
+      <Button type='primary' size='large' onClick={() => history.goBack()}>Go back</Button>
+      </div>
+    )
     if (!game || !gameState) return ( <div>loading...</div> )
 
     switch (gameState) {

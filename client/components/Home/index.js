@@ -23,6 +23,7 @@ const Home = () => {
   const [userData, setUserData] = useState()
   const [notifications, setNotifications] = useState()
   const [alertMessage, setAlertMessage] = useState()
+  const [error, setError] = useState()
   const [visible, setVisible] = useState(false) // Modal
   const alertRef = useRef()
   const history = useHistory()
@@ -34,9 +35,14 @@ const Home = () => {
   useEffect(() => {
     if (!user || ! user.user) return
 
-    handleGetActiveGames()
-    handleGetFriends()
-    handleGetNotifications()
+    try {
+      handleGetActiveGames()
+      handleGetFriends()
+      handleGetNotifications()
+    } catch (e) {
+      console.warn(e)
+      setError(e.status)
+    }
   }, [user])
 
   // if user was referred through a friend, automatically send a friend request
@@ -52,6 +58,17 @@ const Home = () => {
     handleNewUser()
 
   }, [friendId])
+
+  if (error) {
+    return (
+      <div className='main-layout' >
+        <div className='vertical-center-div'>
+        <Typography.Title level={4}>Something went wrong</Typography.Title>
+        <Button type='primary' size='large' onClick={() => history.push('/login')}>Log in</Button>
+        </div>
+      </div>
+    )
+  }
 
   if (!user || !user.user) {
     return (

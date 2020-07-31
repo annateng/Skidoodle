@@ -15,6 +15,7 @@ const Profile = () => {
   const user = useSelector(state => state.user)
   const [alertMessage, setAlertMessage] = useState()
   const [userData, setUserData] = useState()
+  const [error, setError] = useState()
   const alertRef = useRef()
   const history = useHistory()
 
@@ -23,14 +24,19 @@ const Profile = () => {
   useEffect(() => {
     handleGetUserData()
 
-  }, [])
+  }, [userData])
 
   const handleGetUserData = async () => {
-    const userFromDB = await getUserData(userId)
-    setUserData(userFromDB)
+    try {
+      const userFromDB = await getUserData(userId)
+      setUserData(userFromDB)
+    } catch (e) {
+      console.warn(e)
+      setError(e.status)
+    }
   }
 
-  if (!userData) {
+  if (!error && !userData) {
     return (
       <div className='main-layout' >
         <div className='vertical-center-div'>
@@ -38,6 +44,24 @@ const Profile = () => {
         </div>
       </div>
     )
+  }
+
+  if (error) {
+    if (error === 404) { return (
+      <div className='main-layout' >
+        <div className='vertical-center-div'>
+        <Typography.Title level={4}>User not found</Typography.Title>
+        <Button type='primary' size='large' onClick={() => history.push('/home')}>Go back home</Button>
+        </div>
+      </div>
+    )} else { return (
+      <div className='main-layout' >
+        <div className='vertical-center-div'>
+        <Typography.Title level={4}>Something went wrong</Typography.Title>
+        <Button type='primary' size='large' onClick={() => history.push('/home')}>Go back home</Button>
+        </div>
+      </div>
+    )}
   }
 
   // create new game, navigate to game play page. game request to partner is generated
@@ -131,17 +155,17 @@ const Profile = () => {
       <Alert message={alertMessage} type="success" showIcon style={displayStyle} className='skinny-alert' />
       <div className='skinny-container'>
         <Typography.Title ><UserOutlined style={{ color: 'dodgerblue' }}/>&nbsp;&nbsp;{userData.username}</Typography.Title>
-        {userData.dateJoined && <div><b>Date joined: {getFormattedDate(userData.dateJoined)}</b></div>}
-        <div>{friendDisplay}</div>
-        <Row gutter={26}>
-          <Col span={18}>
-            <Typography.Title level={4} style={{ marginTop: '15px' }}>High scores</Typography.Title>
-            {userData.highScores && userData.highScores.length > 0  ? 
-              <Table dataSource={highScoreData} columns={highScoreColumns} tableLayout='fixed' pagination={false} />
-              : <div>No high scores yet</div>}
-          </Col>
-          {userData && userData.friends && <FriendSidebar userData={userData} handleNewGame={handleNewGame} handleSeeProfile={handleSeeProfile} />}
-        </Row>
+          {userData.dateJoined && <div><b>Date joined: {getFormattedDate(userData.dateJoined)}</b></div>}
+          <div>{friendDisplay}</div>
+          <Row gutter={26}>
+            <Col span={18}>
+              <Typography.Title level={4} style={{ marginTop: '15px' }}>High scores</Typography.Title>
+              {userData.highScores && userData.highScores.length > 0  ? 
+                <Table dataSource={highScoreData} columns={highScoreColumns} tableLayout='fixed' pagination={false} />
+                : <div>No high scores yet</div>}
+            </Col>
+            {userData && userData.friends && <FriendSidebar userData={userData} handleNewGame={handleNewGame} handleSeeProfile={handleSeeProfile} />}
+          </Row>
       </div>
     </div>
   )

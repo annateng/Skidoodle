@@ -12,8 +12,12 @@ export const getActiveGames = async userId => {
     headers: { Authorization: token },
   }
   
-  const res = await axios.get(`${basePath}/${userId}/active-games`, config)
-  return res.data
+  try {
+    const res = await axios.get(`${basePath}/${userId}/active-games`, config)
+    return res.data
+  } catch (e) {
+    throw e.response
+  }
 }
 
 export const getUserData = async userId => {
@@ -21,8 +25,12 @@ export const getUserData = async userId => {
     headers: { Authorization: token },
   }
 
-  const res = await axios.get(`${basePath}/${userId}`, config)
-  return res.data
+  try {
+    const res = await axios.get(`${basePath}/${userId}`, config)
+    return res.data
+  } catch (e) {
+    throw e.response
+  }
 }
 
 export const getNotifications = async userId => {
@@ -30,8 +38,12 @@ export const getNotifications = async userId => {
     headers: { Authorization: token },
   }
 
-  const res = await axios.get(`${basePath}/${userId}/notifications`, config)
-  return res.data
+  try {
+    const res = await axios.get(`${basePath}/${userId}/notifications`, config)
+    return res.data
+  } catch (e) {
+    throw e.response
+  }
 }
 
 export const acceptGameRequest = async (userId, gameRequestId) => {
@@ -40,8 +52,12 @@ export const acceptGameRequest = async (userId, gameRequestId) => {
     params: { action: 'accept' }
   }
 
-  const res = await axios.post(`${basePath}/${userId}/game-requests/${gameRequestId}`, null, config)
-  return res.data
+  try {
+    const res = await axios.post(`${basePath}/${userId}/game-requests/${gameRequestId}`, null, config)
+    return res.data
+  } catch (e) {
+    throw e.response
+  }
 }
 
 export const rejectGameRequest = async (userId, gameRequestId) => {
@@ -50,8 +66,12 @@ export const rejectGameRequest = async (userId, gameRequestId) => {
     params: { action: 'reject' }
   }
 
-  const res = await axios.post(`${basePath}/${userId}/game-requests/${gameRequestId}`, null, config)
-  return res.data
+  try {
+    const res = await axios.post(`${basePath}/${userId}/game-requests/${gameRequestId}`, null, config)
+    return res.data
+  } catch (e) {
+    throw e.response
+  }
 }
 
 export const signUpUser = async userData => {
@@ -68,8 +88,12 @@ export const searchForUsers = async (userId, queryString) => {
     params: { search: queryString, requesterId: userId }
   }
 
-  const res = await axios.get(`${basePath}/search`, config)
-  return res.data
+  try {
+    const res = await axios.get(`${basePath}/search`, config)
+    return res.data
+  } catch (e) {
+    throw e.response
+  }
 }
 
 export const addFriend = async (requesterId, receiverId) => {
@@ -78,8 +102,12 @@ export const addFriend = async (requesterId, receiverId) => {
     params: { requesterId }
   }
 
-  const res = await axios.post(`${basePath}/${receiverId}/friend-requests`, null, config)
-  return res.data
+  try {
+    const res = await axios.post(`${basePath}/${receiverId}/friend-requests`, null, config)
+    return res.data
+  } catch (e) {
+    throw e.response
+  }
 }
 
 export const acceptFriendRequest = async (userId, frId) => {
@@ -88,8 +116,12 @@ export const acceptFriendRequest = async (userId, frId) => {
     params: { action: 'accept' }
   }
 
-  const res = await axios.post(`${basePath}/${userId}/friend-requests/${frId}`, null, config)
-  return res.data
+  try {
+    const res = await axios.post(`${basePath}/${userId}/friend-requests/${frId}`, null, config)
+    return res.data
+  } catch (e) {
+    throw e.response
+  }
 }
 
 export const rejectFriendRequest = async (userId, frId) => {
@@ -98,8 +130,12 @@ export const rejectFriendRequest = async (userId, frId) => {
     params: { action: 'reject' }
   }
 
-  const res = await axios.post(`${basePath}/${userId}/friend-requests/${frId}`, null, config)
-  return res.data
+  try {
+    const res = await axios.post(`${basePath}/${userId}/friend-requests/${frId}`, null, config)
+    return res.data
+  } catch (e) {
+    throw e.response
+  }
 }
 
 export const sendUpdateSettings = async (settings, userId) => {
@@ -107,6 +143,10 @@ export const sendUpdateSettings = async (settings, userId) => {
     headers: { Authorization: token }
   }
 
-  const res = await axios.put(`${basePath}/${userId}/update-settings`, settings, config)
-  return res.data
+  try {
+    const res = await axios.put(`${basePath}/${userId}/update-settings`, settings, config)
+    return res.data
+  } catch (e) {
+    throw e.response
+  }
 }

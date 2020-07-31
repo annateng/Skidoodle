@@ -66,6 +66,7 @@ const getUser = async (req, res) => {
   if (requestingUser && requestingUser._id.toString() === userId) return res.json(requestingUser.toJSON())
 
   const user = await User.findById(userId)
+  if (!user) throw new ApplicationError('User not found.', 404)
   let frStatus
   let frId
   if (requestingUser) {

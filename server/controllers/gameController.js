@@ -349,6 +349,8 @@ const getGame = async (req, res) => {
     .populate({ path: 'player2', select: 'username'})
     .populate({ path: 'activePlayer', select: 'username'})
 
+  if (!game) throw new ApplicationError('Game not found.', 404)
+
   if (userId === game.player1._id.toString()) checkAuthorization(req, game.player1._id)
   else if (userId === game.player2._id.toString()) checkAuthorization(req, game.player2._id)
   else throw new ApplicationError('Not authorized.', 401)

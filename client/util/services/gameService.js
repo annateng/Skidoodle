@@ -19,8 +19,12 @@ export const sendDoodles = async (doodles, userId, gameId) => {
     doodles
   }
 
-  const res = await axios.post(`${basePath}/${gameId}`, body, config)
-  return res.data
+  try {
+    const res = await axios.post(`${basePath}/${gameId}`, body, config)
+    return res.data
+  } catch (e) {
+    throw e.response
+  }
 }
 
 export const sendGuesses = async (guesses, userId, gameId) => {
@@ -34,8 +38,12 @@ export const sendGuesses = async (guesses, userId, gameId) => {
     guesses
   }
 
-  const res = await axios.post(`${basePath}/${gameId}`, body, config)
-  return res.data
+  try {
+    const res = await axios.post(`${basePath}/${gameId}`, body, config)
+    return res.data
+  } catch (e) {
+    throw e.response
+  }
 }
 
 export const getNewGame = async (requesterId, receiverId) => {
@@ -45,8 +53,13 @@ export const getNewGame = async (requesterId, receiverId) => {
       requesterId, receiverId
     }
   }
-  const res = await axios.get(`${basePath}/new-game`, config)
-  return res.data
+  
+  try {
+    const res = await axios.get(`${basePath}/new-game`, config)
+    return res.data
+  } catch (e) {
+    throw e.response
+  }
 }
 
 export const getDrawing = (roundLen, paper, isSaved) => {
@@ -182,8 +195,12 @@ export const getGame = async (gameId, userId) => {
     }
   }
   
-  const res = await axios.get(`${basePath}/${gameId}`, config)
-  return res.data
+  try {
+    const res = await axios.get(`${basePath}/${gameId}`, config)
+    return res.data
+  } catch (e) {
+    throw e.response
+  }
 }
 
 const startReplay = (replayDrawing, setTimeLeft, intervalRef, replayRef, paper) => {
@@ -339,8 +356,12 @@ export const startRodal = (setRodalVisible, setRodalHeader, modalIntervalRef, mo
 }
 
 export const getRandomDoodle = async () => {
-  const res = await axios.get(`${basePath}/random-doodle`)
-  return res.data
+  try {
+    const res = await axios.get(`${basePath}/random-doodle`)
+    return res.data
+  } catch (e) {
+    throw e.response
+  }
 }
 
 
@@ -349,13 +370,21 @@ export const deleteGameOverNote = async noteId => {
     headers: { Authorization: token }
   }
 
-  const res = await axios.put(`${basePath}/delete-gameover-note/${noteId}`, null, config)
-  return res.data
+  try {
+    const res = await axios.put(`${basePath}/delete-gameover-note/${noteId}`, null, config)
+    return res.data
+  } catch (e) {
+    throw e.response
+  }
 }
 
 export const getRound = async (gameId, roundNum) => {
-  const res = await axios.get(`${basePath}/${gameId}/get-replay/${roundNum}`)
-  return res.data
+  try {
+    const res = await axios.get(`${basePath}/${gameId}/get-replay/${roundNum}`)
+    return res.data
+  } catch (e) {
+    throw e.response
+  }
 }
 
 export const replayRound = async (doodles, guesses, inputPaper, roundLen, setGuess, setDoodleNum, setTimeLeft,
