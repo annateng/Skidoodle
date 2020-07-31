@@ -15,7 +15,7 @@ const RoundResults = ({ roundResults, roundNum, artist, guesser, gameId }) => {
 
   const columns =
   [
-    { title: 'Doodle #', dataIndex: 'key', key: 'key' },
+    { title: 'Doodle #', dataIndex: 'key', key: 'key', render: i => i+1 },
     { title: 'Word', dataIndex: 'label', key: 'label'},
     { title: 'Guess', dataIndex: 'isCorrect', key: 'isCorrect',
         render: guess => guess ? 

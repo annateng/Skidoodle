@@ -7,6 +7,7 @@ const GameRequest = require('@models/game-request')
 const Game = require('@models/game')
 const GameOverNote = require('@models/game-over-note')
 const { getDecodedToken, checkAuthorization, isFriendsWith } = require('@util/authUtil')
+const { sendUpdate } = require('@util/emailUtil')
 
 /** send search string, requesterId in query params */
 const findUsers = async (req, res) => {
@@ -81,18 +82,19 @@ const getUser = async (req, res) => {
                     frStatus === 'outgoing' ? outgoingFr.find(fr => fr.receiver.toString() === userId)._id.toString() :
                     null
 
-  // // not friends: return partial data
-  // if (!requestingUser || !user.friends.includes(requestingUser._id)) return res.json(
-  //   { 
-  //     id: user._id.toString(),
-  //     username: user.username,
-  //     dateJoined: user.dateJoined,
-  //     isFriends: false,
-  //     frStatus,
-  //     frId
-  //   })
+  // not friends: return partial data
+  if (!requestingUser || !user.friends.includes(requestingUser._id)) return res.json(
+    { 
+      id: user._id.toString(),
+      username: user.username,
+      dateJoined: user.dateJoined,
+      highScores: user.highScores,
+      isFriends: false,
+      frStatus,
+      frId
+    })
 
-  // not friends or friends: return partial data
+  // friends: return partial data
   res.json({
     id: user._id.toString(),
     username: user.username, 
@@ -225,6 +227,12 @@ const addFriend = async (req, res) => {
     isActive: true
   })
 
+  // email alert about friend requests
+  const receivingUser = await User.findById(req.params.id)
+  const requestingUser = await User.findById(req.query.requesterId)
+  if (receivingUser.settings.alertFrequency === 'ALL') sendUpdate(receivingUser.email, `New friend request from <b style="color:tomato;">
+    ${requestingUser.username}</b>.`, requestingUser.username, `See ${requestingUser.username}'s profile`, `/profile/${requestingUser._id.toString()}`)
+
   const savedRequest = await newFriendRequest.save()
 
   res.json(savedRequest.toJSON())
@@ -305,10 +313,8 @@ const updateSettings = async (req, res) => {
 
   const user = await User.findById(req.params.id)
   user.settings = req.body
-  console.log(user.settings)
 
   const savedUser = await user.save()
-  console.log(savedUser)
   res.json(user.settings)
 }
 

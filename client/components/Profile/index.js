@@ -121,8 +121,8 @@ const Profile = () => {
   userData.frStatus === 'incoming' ? 
     (<div>
       Friend request pending
-      <div style={{ float: 'right'}}>
-        <Button style={{ marginRight: '15px' }} onClick={() => handleAcceptRequest(userData.frId)}>Accept</Button>
+      <div>
+        <Button style={{ marginRight: '15px' }} type='primary' onClick={() => handleAcceptRequest(userData.frId)}>Accept</Button>
         <Button onClick={() => handleRejectRequest(userData.frId)}>Reject</Button>
       </div>
     </div>) : 

@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react'
 import { Form, Radio, Alert, Typography, Button } from 'antd'
 import { SettingTwoTone } from '@ant-design/icons'
 import { useSelector, useDispatch } from 'react-redux'
-import { Link } from 'react-router-dom'
+import { Link, useHistory } from 'react-router-dom'
 
 import { setAllTokens } from 'Utilities/common'
 import { updateSettings } from 'Utilities/reducers/loginReducer'
@@ -14,6 +14,7 @@ const Settings = () => {
   const [alertType, setAlertType] = useState()
   const [loading, setLoading] = useState(false)
   const alertRef = useRef()
+  const history = useHistory()
 
   // Clean up alert settimeouts if component unmounts
   useEffect(() => () => clearTimeout(alertRef.current), [])
@@ -24,7 +25,8 @@ const Settings = () => {
     return (
       <div className='main-layout' >
         <div className='vertical-center-div'>
-        <Typography.Title level={4}>loading...</Typography.Title>
+        <Typography.Title level={4}>Log in to see your settings</Typography.Title>
+        <Button type='primary' size='large' onClick={() => history.push('/login?redirect=settings')}>Log In</Button>
         </div>
       </div>
     )
@@ -51,8 +53,6 @@ const Settings = () => {
   }
   // Set alert invisible unless unsuccessful login
   const displayStyle = alertMessage ? null : { display: 'none' }
-  
-  console.log( user.user.settings.alertFrequency)
   
   return (
     <div className='main-layout vertical-center-div'>

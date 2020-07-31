@@ -4,7 +4,7 @@ import { useHistory } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { useQueryParam, StringParam } from 'use-query-params'
 
-import { signUpUser, addFriend } from 'Utilities/services/userService'
+import { signUpUser } from 'Utilities/services/userService'
 import { loginUser } from 'Utilities/reducers/loginReducer'
 
 const Signup = () => {

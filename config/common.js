@@ -21,7 +21,7 @@ const ServerRoundState = Object.freeze({
 // game variables
 const NUM_ROUNDS = inProduction ? 6 : 3
 const ROUND_LEN = inProduction ? 30 : 30
-const WORDS_PER_ROUND = inProduction ? 3 : 5
+const WORDS_PER_ROUND = inProduction ? 4 : 1
 
 module.exports = {
   inProduction, ServerGameStatus, ServerRoundState,

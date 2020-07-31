@@ -18,7 +18,7 @@ const NotificationCard = ({ notification, handleAcceptGame, handleAcceptFriend, 
             <div style={{ fontSize: '1.1em' }}>New friend request from <br/><b>{notification.requester}!</b></div>
             <div>Sent on {monthNames[date.getMonth()].substring(0,3)} {date.getDate()}</div>
             <div>
-              <Button size='small' style={{ marginRight: '10px' }} onClick={() => handleAcceptFriend(notification.id)}>Accept</Button>
+              <Button size='small' style={{ marginRight: '10px' }} type='primary' onClick={() => handleAcceptFriend(notification.id)}>Accept</Button>
               <Button size='small' onClick={() => handleRejectFriend(notification.id)}>Reject</Button>
             </div>
             <div><Button size='small' onClick={() => handleSeeProfile(notification.requesterId)}>View Profile</Button></div>
@@ -30,7 +30,7 @@ const NotificationCard = ({ notification, handleAcceptGame, handleAcceptFriend, 
             <div style={{ fontSize: '1.1em' }}>New game request from <br/><b>{notification.requester}!</b></div>
             <div>Sent on {monthNames[date.getMonth()].substring(0,3)} {date.getDate()}</div>
             <div>
-              <Button size='small' style={{ marginRight: '10px' }} onClick={() => handleAcceptGame(notification.id)}>Accept</Button>
+              <Button size='small' style={{ marginRight: '10px' }} type='primary' onClick={() => handleAcceptGame(notification.id)}>Accept</Button>
               <Button size='small' onClick={() => handleRejectGame(notification.id)}>Reject</Button>
             </div>
           </div>

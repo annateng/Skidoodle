@@ -3,6 +3,7 @@ import { loginUser, logout } from 'Utilities/reducers/loginReducer'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory } from 'react-router-dom'
 import { Form, Input, Button, Typography, Space, Alert } from 'antd'
+import { useQueryParam, StringParam } from 'use-query-params'
 
 const Login = () => {
   const dispatch = useDispatch()
@@ -10,6 +11,7 @@ const Login = () => {
   const history = useHistory()
   const [alertMessage, setAlertMessage] = useState()
   const alertRef = useRef()
+  const [redirect,] = useQueryParam('redirect', StringParam)
 
   // Clean up alert settimeouts if component unmounts
   useEffect(() => () => clearTimeout(alertRef.current), [])
@@ -33,7 +35,9 @@ const Login = () => {
         username: values.username, 
         password: values.password 
       }))
-      history.push('/home')
+
+      if (!redirect) history.push('/home')
+      else history.push(`${redirect}`)
     } catch (e) {
       console.warn(e.message)
       handleSetAlert(e.message)

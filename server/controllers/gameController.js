@@ -7,6 +7,7 @@ const Game = require('@models/game')
 const GameRequest = require('@models/game-request')
 const User = require('@models/user')
 const GameOverNote = require('@models/game-over-note')
+const { sendUpdate } = require('@util/emailUtil')
 
 const { NUM_ROUNDS, ROUND_LEN, NUM_HIGH_SCORES, ServerGameStatus, ServerRoundState } = common
 
@@ -153,6 +154,12 @@ const sendRound = async (req, res) => {
     // active player switches after draw
     game.activePlayer = game.activePlayer.toString() === game.player1.toString() ? game.player2 : game.player1
 
+    // send email update to new active player
+    const inactive = game.activePlayer.toString() === game.player1.toString() ? await User.findById(game.player2) : await User.findById(game.player1)
+    const active = await User.findById(game.activePlayer)
+    if (active.settings.alertFrequency === 'ALL') sendUpdate(active.email, `It's your turn against <b style="color:tomato;">${inactive.username}</b>`, 
+      inactive.username, 'Let\'s play', `/game/${game._id.toString()}`)
+
     // update game state
     currentRound.state = ServerRoundState.guess
   } 
@@ -225,6 +232,15 @@ const sendRound = async (req, res) => {
         isActive: true
       })
       await gon.save()
+
+      const p1 = await User.findById(game.player1)
+      const p2 = await User.findById(game.player2)
+
+      // send e-mail alert to inactive player
+      const inactive = p1._id.toString() === game.activePlayer.toString() ? p2 : p1
+      const active = p1._id.toString() === game.activePlayer.toString() ? p1 : p2
+      if (inactive.settings.alertFrequency === 'ALL') sendUpdate(inactive.email, `Game with <b style="color:tomato;">${active.username}</b> 
+        has ended.`, active.username, 'See results', `/home`)
       
       // Game over
       game.status = ServerGameStatus.inactive
@@ -233,9 +249,6 @@ const sendRound = async (req, res) => {
       game.currentRoundNum = null
 
       // calculate whether game qualifies as a high score
-      const p1 = await User.findById(game.player1)
-      const p2 = await User.findById(game.player2)
-
       if (p1.highScores.length > NUM_HIGH_SCORES || p2.highScores.length > NUM_HIGH_SCORES) throw new ApplicationError('Player has too many high scores.', 500)
 
       // if player has less than NUM_HIGH_SCORES total scores, just add this game to the high score list
@@ -305,13 +318,18 @@ const sendRound = async (req, res) => {
   const savedGame = await game.save()
   await savedGame
     .populate({ path: 'player1', select: 'username'})
-    .populate({ path: 'player2', select: 'username'})
+    .populate({ path: 'player2', select: 'username settings email'})
     .populate({ path: 'activePlayer', select: 'username'})
     .execPopulate()
 
   // if it's the first round, create a game request for this game
   if (savedGame.status === ServerGameStatus.pending) {
     const gameRequestId = await createGameRequest(req, savedGame.player1._id, savedGame.player2._id, savedGame._id)
+    // if player2 has email notifications on, send email
+    if (savedGame.player2.settings.alertFrequency === 'ALL') sendUpdate(savedGame.player2.email, `You have a new game request from 
+      <b style="color:tomato;">${savedGame.player1.username}</b>.`, savedGame.player1.username, 'Let\'s play', `/home`)
+    delete savedGame.player2.settings
+    delete savedGame.player2.email
     return res.status(201).json({ ...savedGame.toJSON(), gameRequestId })
   }
   
