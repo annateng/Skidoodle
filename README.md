@@ -27,7 +27,7 @@ Stack is:
 
 Anna Teng / [email me](mailto:anna.w.teng@gmail.com?subject=[Skidoodle])
 
-Any and all feedback is welcome.
+Feedback is welcome.
 
 ## License
 
