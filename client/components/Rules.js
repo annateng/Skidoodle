@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import { Typography } from 'antd'
 
+import { NUM_ROUNDS, ROUND_LEN, WORDS_PER_ROUND } from 'Utilities/common'
+
 const Rules = () => {
   const user = useSelector(state => state.user)
 
@@ -19,13 +21,13 @@ const Rules = () => {
         <Typography.Paragraph>
           <ul>
             <b>Gameplay</b>
-              <li>Each game consists of <b>6</b> rounds</li>
-              <li>During each round, one player will have <b>45 seconds</b> to doodle each of <b>3</b> words</li>
+              <li>Each game consists of <b>{NUM_ROUNDS}</b> rounds</li>
+              <li>During each round, one player will have <b>{ROUND_LEN} seconds</b> to doodle each of <b>{WORDS_PER_ROUND}</b> words</li>
               <li>The doodles will then be sent to his partner, who will have a chance to guess what each doodle is</li>
             <b>Scoring</b>
               <li>Total score is computed as the sum of the time taken to guess each word</li>
               <li>Players should aim for the lowest score possible</li>
-              <li>If a player fails to guess a word, a full 45 seconds will be added to the score for that word.</li>
+              <li>If a player fails to guess a word, a full {ROUND_LEN} seconds will be added to the score for that word.</li>
               <li>View your high scores on your <Link to={profileLink}>profile</Link></li>
           </ul>
         </Typography.Paragraph>
