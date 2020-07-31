@@ -1,6 +1,6 @@
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { useHistory } from 'react-router-dom'
+import { useHistory, useLocation, Link } from 'react-router-dom'
 import { Layout, Menu, Dropdown } from 'antd'
 import { MenuOutlined, HomeOutlined, SearchOutlined, UserOutlined, MailOutlined, SettingOutlined } from '@ant-design/icons'
 
@@ -11,6 +11,7 @@ const NavBar = () => {
   const dispatch = useDispatch()
   const history = useHistory()
   const user = useSelector(state => state.user)
+  const location = useLocation()
 
   const handleMenuClick = ({ key }) => {
     switch (key) {
@@ -68,6 +69,8 @@ const NavBar = () => {
           <MenuOutlined id='header-user-info' />
         </Dropdown>
       }
+      { (!user || !user.user) && <div style={{ position: 'absolute', top: '0', right: '50px' }}>
+        You are not logged in <Link to={`/login?redirect=${encodeURIComponent(location.pathname)}`}>Log In</Link></div>}
     </Layout.Header>
   )
 }

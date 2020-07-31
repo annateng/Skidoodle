@@ -37,7 +37,7 @@ const Login = () => {
       }))
 
       if (!redirect) history.push('/home')
-      else history.push(`${redirect}`)
+      else history.push(`${decodeURIComponent(redirect)}`)
     } catch (e) {
       console.warn(e.message)
       handleSetAlert(e.message)

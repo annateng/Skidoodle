@@ -21,11 +21,9 @@ const Profile = () => {
   if (user) setAllTokens(user.token)
 
   useEffect(() => {
-    if (!user || !user.user) return
-
     handleGetUserData()
 
-  }, [user])
+  }, [])
 
   const handleGetUserData = async () => {
     const userFromDB = await getUserData(userId)
@@ -36,8 +34,7 @@ const Profile = () => {
     return (
       <div className='main-layout' >
         <div className='vertical-center-div'>
-        <Typography.Title level={4}>Log in to see profile</Typography.Title>
-        <Button type='primary' size='large' onClick={() => history.push('/login')}>Log In</Button>
+        <Typography.Title level={4}>loading...</Typography.Title>
         </div>
       </div>
     )
@@ -127,7 +124,7 @@ const Profile = () => {
         <Button onClick={() => handleRejectRequest(userData.frId)}>Reject</Button>
       </div>
     </div>) : 
-  <Button onClick={() => handleAddFriend(userData.id)}>Add Friend</Button>
+  user && user.user && <Button onClick={() => handleAddFriend(userData.id)}>Add Friend</Button>
 
   return (
     <div className='main-layout vertical-center-div' >
