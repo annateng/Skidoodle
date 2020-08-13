@@ -1,11 +1,14 @@
-import axios from 'axios'
-const basePath = '/api/login'
+import axios from 'axios';
 
-export const login = async loginInfo => {
+const basePath = '/api/login';
+
+const login = async (loginInfo) => {
   try {
-    const res = await axios.post(basePath, loginInfo)
-    return res.data
+    const res = await axios.post(basePath, loginInfo);
+    return res.data;
   } catch (e) {
-    throw new Error(`status ${e.response.status}: ${e.response.data.error}`)
+    throw new Error(`status ${e.response.status}: ${e.response.data.error}`);
   }
-}
+};
+
+export default login;

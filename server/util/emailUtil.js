@@ -1,7 +1,7 @@
-const nodemailer = require('nodemailer')
-const common = require('@util/common')
+const nodemailer = require('nodemailer');
+const common = require('@util/common');
 
-const sendInvite = async (emailAddr, name, friendId)  => {
+const sendInvite = async (emailAddr, name, friendId) => {
   const emailHtml = `
   <!doctype html>
   <html>
@@ -398,27 +398,26 @@ const sendInvite = async (emailAddr, name, friendId)  => {
       </table>
     </body>
   </html>
-  `
-  
+  `;
+
   const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
       user: 'skidoodle.mail@gmail.com',
-      pass: common.EMAIL_PWORD
-    }
-  })
+      pass: common.EMAIL_PWORD,
+    },
+  });
 
   const message = {
     from: 'skidoodle.mail@gmail.com',
     to: emailAddr,
-    subject: `Skidoodle Invitation`,
-    html: emailHtml
-  }
+    subject: 'Skidoodle Invitation',
+    html: emailHtml,
+  };
 
-  const info = await transporter.sendMail(message)
-  return info.response
-
-}
+  const info = await transporter.sendMail(message);
+  return info.response;
+};
 
 const sendUpdate = async (emailAddr, text, name, buttonText, path) => {
   const emailHtml = `
@@ -817,25 +816,25 @@ const sendUpdate = async (emailAddr, text, name, buttonText, path) => {
       </table>
     </body>
   </html>
-  `
-  
+  `;
+
   const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
       user: 'skidoodle.mail@gmail.com',
-      pass: common.EMAIL_PWORD
-    }
-  })
+      pass: common.EMAIL_PWORD,
+    },
+  });
 
   const message = {
     from: 'skidoodle.mail@gmail.com',
     to: emailAddr,
     subject: `Notification from ${name}`,
-    html: emailHtml
-  }
+    html: emailHtml,
+  };
 
-  const info = await transporter.sendMail(message)
-  return info.response
-}
+  const info = await transporter.sendMail(message);
+  return info.response;
+};
 
-module.exports = { sendInvite, sendUpdate }
+module.exports = { sendInvite, sendUpdate };

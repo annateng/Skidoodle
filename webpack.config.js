@@ -1,16 +1,15 @@
-const path = require('path')
-const HtmlWebpackPlugin = require('html-webpack-plugin')
+const path = require('path');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 // const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
-const webpack = require('webpack')
+const webpack = require('webpack');
 
 module.exports = (env, argv) => {
-  const { mode } = argv
+  const { mode } = argv;
   const additionalPlugins = mode === 'production'
-    ? [] //new BundleAnalyzerPlugin() 
-    : [new webpack.HotModuleReplacementPlugin()] // Enable hot module replacement
+    ? [] // new BundleAnalyzerPlugin()
+    : [new webpack.HotModuleReplacementPlugin()]; // Enable hot module replacement
 
-  const additionalEntries = mode === 'production' ? [] : ['webpack-hot-middleware/client?http://localhost:8000']
-  const outputSettings = mode === 'production' ? { publicPath: '/' } : { publicPath: '/' }
+  const additionalEntries = mode === 'production' ? [] : ['webpack-hot-middleware/client?http://localhost:8000'];
 
   return {
     mode,
@@ -26,12 +25,13 @@ module.exports = (env, argv) => {
         Assets: path.resolve(__dirname, 'client/assets/'),
         '@root': path.resolve(__dirname),
       },
+      extensions: ['.js', '.jsx'],
     },
     module: {
       rules: [
         {
           // Load JS files
-          test: /\.js$/,
+          test: /\.(js|jsx)$/,
           exclude: /node_modules/,
           use: {
             loader: 'babel-loader',
@@ -49,7 +49,7 @@ module.exports = (env, argv) => {
           }, {
             loader: 'css-loader', // translates CSS into CommonJS
           }, {
-            // Less loader is for modifying ant.design default theme 
+            // Less loader is for modifying ant.design default theme
             loader: 'less-loader', // compiles Less to CSS
             options: {
               lessOptions: {
@@ -67,9 +67,9 @@ module.exports = (env, argv) => {
                   'error-color': '#FF6347',
                 },
                 javascriptEnabled: true,
-              }
-            }
-          }]
+              },
+            },
+          }],
         },
         {
           // Load other files
@@ -91,7 +91,7 @@ module.exports = (env, argv) => {
       ...additionalPlugins,
     ],
     output: {
-      ...outputSettings
-    }
-  }
-}
+      publicPath: '/',
+    },
+  };
+};

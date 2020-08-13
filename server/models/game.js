@@ -1,37 +1,39 @@
-const mongoose = require('mongoose')
+/* eslint-disable no-underscore-dangle */
+
+const mongoose = require('mongoose');
 
 const roundSchema = new mongoose.Schema({
   state: String, // GUESS, DOODLE, OVER
   doodles: [{
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Doodle'
+    ref: 'Doodle',
   }],
   guesses: [{
     guesses: [String],
     timeElapsed: [Number],
     isCorrect: Boolean,
     timeSpent: Number,
-  }]
-})
+  }],
+});
 
 roundSchema.set('toJSON', {
   transform: (document, returnedObject) => {
-    if (returnedObject._id) returnedObject.id = returnedObject._id.toString()
-  }
-})
+    if (returnedObject._id) returnedObject.id = returnedObject._id.toString();
+  },
+});
 
 const gameSchema = new mongoose.Schema({
   player1: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User'
+    ref: 'User',
   },
   player2: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User'
+    ref: 'User',
   },
   dateStarted: {
     type: Date,
-    default: Date.now
+    default: Date.now,
   },
   numRounds: Number,
   roundLen: Number,
@@ -42,8 +44,8 @@ const gameSchema = new mongoose.Schema({
   currentRoundNum: Number,
   allWords: [String],
   activePlayer: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'User'
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
   },
   nextWords: [String],
   result: {
@@ -51,41 +53,44 @@ const gameSchema = new mongoose.Schema({
       doodles: [{
         isCorrect: Boolean,
         timeSpent: Number,
-        label: String
+        label: String,
       }],
       roundTotals: {
         numCorrect: Number,
-        totalTimeSpent: Number
-      }
+        totalTimeSpent: Number,
+      },
     }],
     gameTotals: {
       numCorrect: Number,
-      totalTimeSpent: Number
-    }
+      totalTimeSpent: Number,
+    },
   },
   isHighScore: {
     p1: Boolean,
-    p2: Boolean
-  }
-})
+    p2: Boolean,
+  },
+});
 
 gameSchema.set('toJSON', {
   transform: (document, returnedObject) => {
-      returnedObject.id = returnedObject._id.toString()
-      delete returnedObject.rounds
-      delete returnedObject.allWords
-      delete returnedObject._id
-      delete returnedObject.__v
-      if (!returnedObject.currentRound || returnedObject.currentRound.state != 'DOODLE') delete returnedObject.nextWords
-      
-      // return active/inactive players instead of player1/player2
-      if (returnedObject.activePlayer) {
-        const activePlayerIdStr = returnedObject.activePlayer.id ? returnedObject.activePlayer.id.toString() : returnedObject.activePlayer.toString()
-        const p1IdStr = returnedObject.player1.id ? returnedObject.player1.id.toString() : returnedObject.player1.toString()
-        returnedObject.inactivePlayer = activePlayerIdStr === p1IdStr ? returnedObject.player2 : returnedObject.player1
-        delete returnedObject.player2
-      }
-  }
-})
+    returnedObject.id = returnedObject._id.toString();
+    delete returnedObject.rounds;
+    delete returnedObject.allWords;
+    delete returnedObject._id;
+    delete returnedObject.__v;
+    if (!returnedObject.currentRound || returnedObject.currentRound.state !== 'DOODLE') delete returnedObject.nextWords;
 
-module.exports = mongoose.model('Game', gameSchema)
+    // return active/inactive players instead of player1/player2
+    if (returnedObject.activePlayer) {
+      const activePlayerIdStr = returnedObject.activePlayer.id
+        ? returnedObject.activePlayer.id.toString() : returnedObject.activePlayer.toString();
+      const p1IdStr = returnedObject.player1.id
+        ? returnedObject.player1.id.toString() : returnedObject.player1.toString();
+      returnedObject.inactivePlayer = activePlayerIdStr === p1IdStr
+        ? returnedObject.player2 : returnedObject.player1;
+      delete returnedObject.player2;
+    }
+  },
+});
+
+module.exports = mongoose.model('Game', gameSchema);
