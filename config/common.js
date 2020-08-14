@@ -4,6 +4,7 @@
  */
 
 const inProduction = process.env.NODE_ENV === 'production';
+const PORT = process.env.PORT || 8000;
 
 // server game states enum. used by frontend logic too.
 const ServerGameStatus = Object.freeze({
@@ -31,4 +32,5 @@ module.exports = {
   NUM_ROUNDS,
   ROUND_LEN,
   WORDS_PER_ROUND,
+  PORT,
 };

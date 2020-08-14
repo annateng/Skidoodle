@@ -33,9 +33,9 @@ module.exports = {
   rules: {
     'react/jsx-filename-extension': [1, { extensions: ['.js', '.jsx'] }],
     'no-console': ['error', { allow: ['warn', 'error'] }],
-    'no-param-reassign': 'off',
     'no-extend-native': 'off',
     'no-bitwise': 'off',
+    'no-param-reassign': 'off',
   },
   parserOptions: {
     ecmaFeatures: {

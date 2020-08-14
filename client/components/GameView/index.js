@@ -58,7 +58,7 @@ const GameView = () => {
   };
 
   useEffect(() => {
-    if (!user) return;
+    if (!user || !user.user) return;
 
     getGameFromDB();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps

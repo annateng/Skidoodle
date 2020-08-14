@@ -363,7 +363,7 @@ const getGame = async (req, res) => {
 };
 
 const getRandomDoodle = async (req, res) => {
-  const numDoodles = await Doodle.count();
+  const numDoodles = await Doodle.countDocuments();
   const randomIndex = Math.floor(Math.random() * numDoodles);
   const doodle = await Doodle.findOne().skip(randomIndex);
 

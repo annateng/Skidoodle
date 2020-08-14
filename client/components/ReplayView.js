@@ -145,9 +145,11 @@ const ReplayView = () => {
               {replay && (
               <div>
                 Doodle
+                {' '}
                 {doodleNum}
                 {' '}
                 of
+                {' '}
                 {replay.doodles.length}
               </div>
               )}

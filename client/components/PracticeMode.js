@@ -137,6 +137,7 @@ const PracticeMode = () => {
               <div style={{ fontSize: '1.5em', color: 'gold' }}>{lastResult}</div>
               <div style={{ fontSize: '22px' }}>
                 The word was:
+                {' '}
                 {lastWord}
               </div>
               <Button size="large" onClick={handleStartPractice} style={{ marginRight: '15px' }}>Play Again</Button>

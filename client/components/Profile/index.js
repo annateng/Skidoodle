@@ -180,6 +180,7 @@ const Profile = () => {
         <div>
           <b>
             Date joined:
+            {' '}
             {getFormattedDate(userData.dateJoined)}
           </b>
         </div>

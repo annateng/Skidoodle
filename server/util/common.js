@@ -1,7 +1,6 @@
 const common = require('@root/config/common');
 require('dotenv').config();
 
-const PORT = process.env.PORT || 8000;
 const { MONGODB_URI } = process.env;
 const { PRIVATE_KEY } = process.env;
 const { EMAIL_PWORD } = process.env;
@@ -14,7 +13,6 @@ const BASE_URL = common.inProduction ? 'https://skidoodle.herokuapp.com' : 'http
 
 module.exports = {
   ...common,
-  PORT,
   MONGODB_URI,
   PRIVATE_KEY,
   NUM_HIGH_SCORES,
