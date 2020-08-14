@@ -155,6 +155,7 @@ const GameView = () => {
           <div className="centered-div">
             <Typography.Title level={4}>
               Accept game request from
+              {' '}
               {game.player1.username}
               ?
             </Typography.Title>
@@ -242,6 +243,7 @@ const GameView = () => {
             <div className="centered-div">
               <Typography.Title level={2}>
                 New Game with
+                {' '}
                 {game.inactivePlayer.username}
               </Typography.Title>
               <Typography.Paragraph>
