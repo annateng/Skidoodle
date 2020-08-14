@@ -28,6 +28,8 @@ const Signup = () => {
     else if (errorMessage.toLowerCase().includes('email')) setAlertMessage('User already exists for this email address.');
     else setAlertMessage(errorMessage);
 
+    setAlertType('error');
+
     if (alertRef.current) clearTimeout(alertRef.current);
     alertRef.current = setTimeout(() => setAlertMessage(null), 5000);
   };
