@@ -34,53 +34,13 @@ const Home = () => {
 
   if (user) setAllTokens(user.token);
 
-  useEffect(() => {
-    if (!user || !user.user) return;
-
-    try {
-      handleGetActiveGames();
-      handleGetFriends();
-      handleGetNotifications();
-    } catch (e) {
-      console.warn(e);
-      setError(e.status);
-    }
-  }, [user]);
-
-  // if user was referred through a friend, automatically send a friend request
-  useEffect(() => {
-    if (!friendId || !user || !user.user) return;
-
-    const handleNewUser = async () => {
-      await addFriend(user.user.id, friendId);
-      handleSetAlert(`Friend request to ${friendName} sent`);
-      handleGetUserData(); // re-render page
-    };
-
-    handleNewUser();
-  }, [friendId]);
-
-  if (error) {
-    return (
-      <div className="main-layout">
-        <div className="vertical-center-div">
-          <Typography.Title level={4}>Something went wrong</Typography.Title>
-          <Button type="primary" size="large" onClick={() => history.push('/login')}>Log in</Button>
-        </div>
-      </div>
-    );
-  }
-
-  if (!user || !user.user) {
-    return (
-      <div className="main-layout">
-        <div className="vertical-center-div">
-          <Typography.Title level={4}>Log in to see your home page</Typography.Title>
-          <Button type="primary" size="large" onClick={() => history.push('/login')}>Log In</Button>
-        </div>
-      </div>
-    );
-  }
+  // handlers for alert message, 5sec
+  const handleSetAlert = (alertTxt) => {
+    setAlertMessage(alertTxt);
+    if (alertRef.current) clearTimeout(alertRef.current);
+    alertRef.current = setTimeout(() => setAlertMessage(null), 5000);
+  };
+  const displayStyle = alertMessage ? null : { display: 'none' };
 
   const handleGetActiveGames = async () => {
     const gamesFromDB = await getActiveGames(user.user.id);
@@ -125,6 +85,53 @@ const Home = () => {
 
     setNotifications(formattedNotifications);
   };
+
+  useEffect(() => {
+    if (!user || !user.user) return;
+
+    try {
+      handleGetActiveGames();
+      handleGetFriends();
+      handleGetNotifications();
+    } catch (e) {
+      console.warn(e);
+      setError(e.status);
+    }
+  }, [user]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // if user was referred through a friend, automatically send a friend request
+  useEffect(() => {
+    if (!friendId || !user || !user.user) return;
+
+    const handleNewUser = async () => {
+      await addFriend(user.user.id, friendId);
+      handleSetAlert(`Friend request to ${friendName} sent`);
+    };
+
+    handleNewUser();
+  }, [friendId]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  if (error) {
+    return (
+      <div className="main-layout">
+        <div className="vertical-center-div">
+          <Typography.Title level={4}>Something went wrong</Typography.Title>
+          <Button type="primary" size="large" onClick={() => history.push('/login')}>Log in</Button>
+        </div>
+      </div>
+    );
+  }
+
+  if (!user || !user.user) {
+    return (
+      <div className="main-layout">
+        <div className="vertical-center-div">
+          <Typography.Title level={4}>Log in to see your home page</Typography.Title>
+          <Button type="primary" size="large" onClick={() => history.push('/login')}>Log In</Button>
+        </div>
+      </div>
+    );
+  }
 
   // create new game, navigate to game play page. game request to partner is generated
   // after first round is sent automatically on the backend
@@ -175,7 +182,8 @@ const Home = () => {
     history.push(`/game/${gameId}`);
   };
 
-  // sorting function for active games sort by status first (players turn > others turn > pending), then sort games within each category by date
+  /* sorting function for active games sort by status first
+  (players turn > others turn > pending), then sort games within each category by date */
   const sortByActivePlayerThenDate = (a, b) => {
     const isActiveA = user.user.id === a.activePlayer.id;
     const isActiveB = user.user.id === b.activePlayer.id;
@@ -190,21 +198,18 @@ const Home = () => {
     return new Date(a.timeOfLastMove) - new Date(b.timeOfLastMove);
   };
 
-  // handlers for alert message, 5sec
-  const handleSetAlert = (alertMessage) => {
-    setAlertMessage(alertMessage);
-    if (alertRef.current) clearTimeout(alertRef.current);
-    alertRef.current = setTimeout(() => setAlertMessage(null), 5000);
-  };
-  const displayStyle = alertMessage ? null : { display: 'none' };
-
   // antd row gutter settings
   const rowGutter = [{ xs: 8, sm: 8, md: 16 }, { xs: 8, sm: 8, md: 16 }];
 
   return (
     <div className="main-layout vertical-center-div">
       <Alert message={alertMessage} type="success" showIcon style={displayStyle} className="skinny-alert" />
-      <NewGameModal visible={visible} setVisible={setVisible} handleNewGame={handleNewGame} userId={user.user.id} />
+      <NewGameModal
+        visible={visible}
+        setVisible={setVisible}
+        handleNewGame={handleNewGame}
+        userId={user.user.id}
+      />
       <div className="skinny-container">
         <Typography.Title>
           <HomeTwoTone />
@@ -227,6 +232,7 @@ const Home = () => {
                     <img
                       style={{ marginRight: '5px' }}
                       src={images.GuessIcon}
+                      alt="question mark icon"
                     />
 )}
                   onClick={() => history.push('/practice-mode')}
@@ -243,6 +249,7 @@ const Home = () => {
                     <img
                       style={{ marginRight: '5px' }}
                       src={images.PenIcon}
+                      alt="pen icon"
                     />
 )}
                   onClick={() => history.push('/free-doodle')}
@@ -270,12 +277,22 @@ const Home = () => {
             </Row>
             <Typography.Title level={4}><b>My Games</b></Typography.Title>
             <Row gutter={rowGutter}>
-              {activeGames && activeGames.length > 0 ? activeGames.sort(sortByActivePlayerThenDate)
-                .map((ag) => <ActiveGameCard key={ag.id} game={ag} user={user.user} getGame={getGame} />)
+              {activeGames && activeGames.length > 0 ? activeGames
+                .sort(sortByActivePlayerThenDate)
+                .map((ag) => (
+                  <ActiveGameCard key={ag.id} game={ag} user={user.user} getGame={getGame} />
+                ))
                 : <p style={{ paddingLeft: '8px' }}>No active games</p>}
             </Row>
           </Col>
-          {userData && userData.friends && <FriendSidebar userData={userData} handleNewGame={handleNewGame} handleSeeProfile={handleSeeProfile} />}
+          {userData && userData.friends
+            && (
+              <FriendSidebar
+                friends={userData.friends}
+                handleNewGame={handleNewGame}
+                handleSeeProfile={handleSeeProfile}
+              />
+            )}
         </Row>
       </div>
     </div>

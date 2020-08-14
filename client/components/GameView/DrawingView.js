@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import PropTypes from 'prop-types';
 import {
   Typography, Progress, Row, Col,
 } from 'antd';
@@ -22,39 +23,14 @@ const DrawingView = ({
   const modalIntervalRef = useRef();
   const modalRef = useRef();
 
-  useEffect(() => {
-    if (canvas) {
-      // keep fixed canvas aspect ratio 2:1 for scaling
-      const canvasDiv = document.getElementById('canvas-div');
-      canvasDiv.style.height = `${canvasDiv.clientWidth / 2}px`;
-      window.onresize = () => canvasDiv.style.height = `${canvasDiv.clientWidth / 2}px`;
-
-      handleStartRound();
-    } else {
-      const thisCanvas = document.getElementById('paper-canvas');
-
-      setCanvas(thisCanvas);
-      localStorage.setItem('scribbleColor', 'black');
-      localStorage.setItem('scribbleSize', STROKE_WIDTH);
-    }
-
-    // clean up intervals and unresolved promises
-    return () => {
-      clearInterval(intervalRef.current);
-      if (roundRef.current) roundRef.current();
-      clearInterval(modalIntervalRef.current);
-      if (modalRef.current) modalRef.current();
-    };
-  }, [canvas]);
-
   const handleStartRodal = async () => {
     await startRodal(setRodalVisible, setRodalHeader, modalIntervalRef, modalRef);
   };
 
   const handleStartRound = async () => {
     try {
-      const doodles = await startRound(canvas, setTimeLeft, wordsToDraw, roundLen, setWord, intervalRef,
-        roundRef, handleStartRodal);
+      const doodles = await startRound(canvas, setTimeLeft, wordsToDraw, roundLen,
+        setWord, intervalRef, roundRef, handleStartRodal);
       setLoading(true);
       const newGame = await sendDoodles(doodles, userId, gameId);
       setLoading(false);
@@ -71,6 +47,33 @@ const DrawingView = ({
     }
   };
 
+  useEffect(() => {
+    if (canvas) {
+      // keep fixed canvas aspect ratio 2:1 for scaling
+      const canvasDiv = document.getElementById('canvas-div');
+      canvasDiv.style.height = `${canvasDiv.clientWidth / 2}px`;
+      window.onresize = () => { canvasDiv.style.height = `${canvasDiv.clientWidth / 2}px`; };
+
+      handleStartRound();
+    } else {
+      const thisCanvas = document.getElementById('paper-canvas');
+
+      setCanvas(thisCanvas);
+      localStorage.setItem('scribbleColor', 'black');
+      localStorage.setItem('scribbleSize', STROKE_WIDTH);
+    }
+
+    /* eslint-disable react-hooks/exhaustive-deps */
+    // clean up intervals and unresolved promises
+    return () => {
+      clearInterval(intervalRef.current);
+      if (roundRef.current) roundRef.current();
+      clearInterval(modalIntervalRef.current);
+      if (modalRef.current) modalRef.current();
+    };
+    /* eslint-enable react-hooks/exhaustive-deps */
+  }, [canvas]); // eslint-disable-line react-hooks/exhaustive-deps
+
   return (
     <div className="vertical-center-div">
       <b style={{ fontSize: '20px' }}>Time Left:</b>
@@ -78,7 +81,7 @@ const DrawingView = ({
         {timeLeft}
         s
       </Typography.Title>
-      <Progress className="draw-progress" percent={timeLeft / roundLen * 100} showInfo={false} strokeColor="dodgerblue" />
+      <Progress className="draw-progress" percent={(timeLeft / roundLen) * 100} showInfo={false} strokeColor="dodgerblue" />
       <Typography.Title id="word-to-draw">{word || ' '}</Typography.Title>
 
       <Row gutter={26}>
@@ -102,11 +105,22 @@ const DrawingView = ({
         <div className="rodal-header">{rodalHeader}</div>
         <div className="rodal-body" style={{ fontSize: '26px' }}>
           Draw:
+          {' '}
           {word}
         </div>
       </Rodal>
     </div>
   );
+};
+
+DrawingView.propTypes = {
+  wordsToDraw: PropTypes.arrayOf(PropTypes.string).isRequired,
+  roundLen: PropTypes.number.isRequired,
+  gameId: PropTypes.string.isRequired,
+  userId: PropTypes.string.isRequired,
+  setGame: PropTypes.func.isRequired,
+  setGameState: PropTypes.func.isRequired,
+  setLoading: PropTypes.func.isRequired,
 };
 
 export default DrawingView;

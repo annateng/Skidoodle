@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 import {
   Modal, Input, Row, Col,
 } from 'antd';
@@ -35,7 +36,17 @@ const NewGameModal = ({
           {filteredUsers.map((u) => (
             <Col key={u.id} span={8}>
               <div style={{ borderRadius: '3px', border: '1px solid pink', backgroundColor: 'whitesmoke' }} className="centered-div">
-                <a onClick={() => handleNewGame(u.id)}>{u.username}</a>
+                {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
+                <a
+                  onClick={() => handleNewGame(u.id)}
+                  onKeyDown={(e) => {
+                    if (e.keyCode === 13) handleNewGame(u.id);
+                  }}
+                  role="link"
+                  tabIndex={0}
+                >
+                  {u.username}
+                </a>
               </div>
             </Col>
           ))}
@@ -43,6 +54,13 @@ const NewGameModal = ({
         )}
     </Modal>
   );
+};
+
+NewGameModal.propTypes = {
+  visible: PropTypes.bool.isRequired,
+  setVisible: PropTypes.func.isRequired,
+  handleNewGame: PropTypes.func.isRequired,
+  userId: PropTypes.string.isRequired,
 };
 
 export default NewGameModal;

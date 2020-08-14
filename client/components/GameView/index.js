@@ -15,7 +15,8 @@ import GuessingView from 'Components/GameView/GuessingView';
 import GameResults from 'Components/ResultView/GameResults';
 import RoundResults from 'Components/ResultView/RoundResults';
 
-// FRONTEND GAME STATES: SHOW-LAST-RESULT -> GUESS -> SHOW-THIS-RESULT -> DOODLE -> OVER ... INACTIVE-GAME, INACTIVE-PLAYER, PENDING
+/* FRONTEND GAME STATES: SHOW-LAST-RESULT -> GUESS -> SHOW-THIS-RESULT ->
+DOODLE -> OVER ... INACTIVE-GAME, INACTIVE-PLAYER, PENDING */
 const GameView = () => {
   const { gameId } = useParams();
   const user = useSelector((state) => state.user);
@@ -24,12 +25,6 @@ const GameView = () => {
   const [gameState, setGameState] = useState();
   const [error, setError] = useState();
   const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    if (!user) return;
-
-    getGameFromDB();
-  }, []);
 
   const getGameFromDB = async () => {
     try {
@@ -40,18 +35,19 @@ const GameView = () => {
       // if game status is PENDING and you are NOT the requester, set state pending
       else if (gameData.status === ServerGameStatus.pending) {
         if (user.user.id !== gameData.player1.id) setGameState(GameState.pending);
-        else {
-          // if its before the first turn (sending the game request), set state to pre-doodle
-          if (gameData.currentRound && gameData.currentRound.state === ServerRoundState.doodle && gameData.currentRoundNum === 1) setGameState(GameState.showThisResult);
-          else setGameState(GameState.pending);
-        }
-      }
+        // if its before the first turn (sending the game request), set state to pre-doodle
+        else if (gameData.currentRound && gameData.currentRound.state === ServerRoundState.doodle
+            && gameData.currentRoundNum === 1) setGameState(GameState.showThisResult);
+        else setGameState(GameState.pending);
       // if it's not your turn, just display results
-      else if (gameData.activePlayer.id !== user.user.id) setGameState(GameState.inactivePlayer);
-      else if (gameData.currentRound.state === ServerRoundState.guess) setGameState(GameState.showLastResult);
-      else if (gameData.currentRound.state === ServerRoundState.doodle) setGameState(GameState.showThisResult);
-      else if (gameData.currentRound.state === ServerRoundState.over) setGameState(GameState.over);
-      else {
+      } else if (gameData.activePlayer.id !== user.user.id) setGameState(GameState.inactivePlayer);
+      else if (gameData.currentRound.state === ServerRoundState.guess) {
+        setGameState(GameState.showLastResult);
+      } else if (gameData.currentRound.state === ServerRoundState.doodle) {
+        setGameState(GameState.showThisResult);
+      } else if (gameData.currentRound.state === ServerRoundState.over) {
+        setGameState(GameState.over);
+      } else {
         console.error('Error with game state obtained with gameService.getGame', gameData.currentRound.state);
         setError('');
       }
@@ -60,6 +56,12 @@ const GameView = () => {
       setError(e.status);
     }
   };
+
+  useEffect(() => {
+    if (!user) return;
+
+    getGameFromDB();
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // set auth tokens for Services
   if (user) setAllTokens(user.token);
@@ -96,8 +98,9 @@ const GameView = () => {
     if (!game || !gameState) return (<div>loading...</div>);
 
     switch (gameState) {
-      case GameState.inactiveGame:
-        const isHighScore = game.player1.id === user.user.id ? game.isHighScore.p1 : game.isHighScore.p2;
+      case GameState.inactiveGame: {
+        const isHighScore = game.player1.id === user.user.id
+          ? game.isHighScore.p1 : game.isHighScore.p2;
         return (
           <div className="centered-div">
             {isHighScore && <Alert message="New High Score!" type="success" showIcon className="skinny-alert" />}
@@ -106,21 +109,24 @@ const GameView = () => {
             {backHomeButton}
           </div>
         );
-
+      }
       case GameState.inactivePlayer:
         return (
           <div className="centered-div">
             <Typography.Title level={2}>
-              It's
+              It&#39;s
+              {' '}
               {game.activePlayer.username}
-              's turn
+              &#39;s turn
             </Typography.Title>
             {game.currentRoundNum > 1 && (
             <Typography.Title level={4}>
               Game results so far: Round
+              {' '}
               {game.currentRoundNum - 1}
               {' '}
               of
+              {' '}
               {game.numRounds}
             </Typography.Title>
             )}
@@ -136,6 +142,7 @@ const GameView = () => {
             <div className="centered-div">
               <Typography.Title level={4}>
                 Game request to
+                {' '}
                 {game.activePlayer.username}
                 {' '}
                 sent
@@ -160,7 +167,8 @@ const GameView = () => {
         );
 
       case GameState.showLastResult:
-        if (!game.result || !game.result.roundScores || game.result.roundScores.length < game.currentRoundNum - 2) {
+        if (!game.result || !game.result.roundScores
+          || game.result.roundScores.length < game.currentRoundNum - 2) {
           console.error('previous round results not available');
           return (<div>previous round results not available</div>);
         }
@@ -171,6 +179,7 @@ const GameView = () => {
             <div className="centered-div">
               <Typography.Title level={2}>
                 New Game with
+                {' '}
                 {game.inactivePlayer.username}
               </Typography.Title>
               <Typography.Title level={3}>Guessing Round</Typography.Title>
@@ -212,6 +221,7 @@ const GameView = () => {
             />
             <Typography.Title level={3}>
               Ready for round
+              {' '}
               {game.currentRoundNum}
               ?
             </Typography.Title>
@@ -220,7 +230,8 @@ const GameView = () => {
         );
 
       case GameState.showThisResult:
-        if (!game.result || !game.result.roundScores || game.result.roundScores.length < Math.max(game.currentRoundNum - 1, 0)) {
+        if (!game.result || !game.result.roundScores
+          || game.result.roundScores.length < Math.max(game.currentRoundNum - 1, 0)) {
           console.error('this round results not available');
           return (<div>this round results not available</div>);
         }
@@ -250,7 +261,7 @@ const GameView = () => {
                     words per round
                   </li>
                   <li>
-                    Don't spell out the word, it's against the rules!
+                    Don&#39;t spell out the word, it&#39;s against the rules!
                   </li>
                 </ul>
               </Typography.Paragraph>

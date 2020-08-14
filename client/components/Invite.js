@@ -17,6 +17,14 @@ const Invite = () => {
   // Clean up alert settimeouts if component unmounts
   useEffect(() => () => clearTimeout(alertRef.current), []);
 
+  const handleSetAlert = (message, type) => {
+    setAlertType(type);
+    setAlertMessage(message);
+
+    if (alertRef.current) clearTimeout(alertRef.current);
+    alertRef.current = setTimeout(() => setAlertMessage(null), 5000);
+  };
+
   const handleSendInvite = async (values) => {
     if (!user || !user.user) {
       handleSetAlert('Log in to send e-mail invites.', 'error');
@@ -34,26 +42,15 @@ const Invite = () => {
     }
   };
 
-  const handleSetAlert = (message, type) => {
-    setAlertType(type);
-    setAlertMessage(message);
-
-    if (alertRef.current) clearTimeout(alertRef.current);
-    alertRef.current = setTimeout(() => setAlertMessage(null), 5000);
-  };
   // Set alert invisible unless unsuccessful login
   const displayStyle = alertMessage ? null : { display: 'none' };
-  // antd form layout settings
-  const layout = {
-    layout: 'vertical',
-  };
 
   return (
     <div className="main-layout vertical-center-div">
       <Alert message={alertMessage} type={alertType} showIcon style={displayStyle} className="skinny-skinny-alert" />
       <div className="skinny-skinny-container">
         <Typography.Title level={3}>Invite your friends to play skidoodle</Typography.Title>
-        <Form {...layout} onFinish={handleSendInvite} onFinishFailed={() => console.error('Required form fields missing.')}>
+        <Form layout="vertical" onFinish={handleSendInvite} onFinishFailed={() => console.error('Required form fields missing.')}>
           <Form.Item
             label="E-mail address"
             name="email"

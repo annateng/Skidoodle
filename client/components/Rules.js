@@ -15,9 +15,10 @@ const Rules = () => {
         <Typography.Title level={3}>About</Typography.Title>
         <Typography.Title level={4}>What is Skidoodle?</Typography.Title>
         <Typography.Text>
-          Skidoodle is a multi-player doodling game similar to pictionary. Players take turns sketching words, then trying
-          to guess each word that their partner has sketched. The goal is to complete each round as quickly as possible to get on the
-          high score board.
+          Skidoodle is a multi-player doodling game similar to pictionary.
+          Players take turns sketching words, then trying to guess each word
+          that their partner has sketched. The goal is to complete each round
+          as quickly as possible to get on the high score board.
         </Typography.Text>
         <Typography.Title level={4}>Rules</Typography.Title>
         <Typography.Paragraph>
@@ -25,12 +26,14 @@ const Rules = () => {
             <b>Gameplay</b>
             <li>
               Each game consists of
+              {' '}
               <b>{NUM_ROUNDS}</b>
               {' '}
               rounds
             </li>
             <li>
               During each round, one player will have
+              {' '}
               <b>
                 {ROUND_LEN}
                 {' '}
@@ -38,22 +41,28 @@ const Rules = () => {
               </b>
               {' '}
               to doodle each of
+              {' '}
               <b>{WORDS_PER_ROUND}</b>
               {' '}
               words
             </li>
-            <li>The doodles will then be sent to his partner, who will have a chance to guess what each doodle is</li>
+            <li>
+              The doodles will then be sent to his partner, who will have a chance to
+              guess what each doodle is
+            </li>
             <b>Scoring</b>
             <li>Total score is computed as the sum of the time taken to guess each word</li>
             <li>Players should aim for the lowest score possible</li>
             <li>
               If a player fails to guess a word, a full
+              {' '}
               {ROUND_LEN}
               {' '}
               seconds will be added to the score for that word.
             </li>
             <li>
               View your high scores on your
+              {' '}
               <Link to={profileLink}>profile</Link>
             </li>
           </ul>

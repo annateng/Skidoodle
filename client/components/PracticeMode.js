@@ -32,7 +32,7 @@ const PracticeMode = () => {
       // keep fixed canvas aspect ratio 2:1 for scaling
       const canvasDiv = document.getElementById('canvas-div');
       canvasDiv.style.height = `${canvasDiv.clientWidth / 2}px`;
-      window.onresize = () => canvasDiv.style.height = `${canvasDiv.clientWidth / 2}px`;
+      window.onresize = () => { canvasDiv.style.height = `${canvasDiv.clientWidth / 2}px`; };
 
       paper.setup(canvas);
     } else {
@@ -41,24 +41,32 @@ const PracticeMode = () => {
       setGuessInput(document.getElementById('guess-input'));
     }
 
+    /* eslint-disable react-hooks/exhaustive-deps */
     // clean up intervals and unresolved promises
     return () => {
       clearInterval(intervalRef.current);
       if (replayRef.current) replayRef.current();
       clearInterval(modalIntervalRef.current);
       if (modalRef.current) modalRef.current();
+      /* eslint-enable react-hooks/exhaustive-deps */
     };
-  }, [canvas]);
+  }, [canvas, paper]);
 
   // Label shows number of characters
-  const handleSetLabel = (label) => {
-    const disp = label.replace(/[a-z]/gi, '_');
+  const handleSetLabel = (labelText) => {
+    const disp = labelText.replace(/[a-z]/gi, '_');
 
     setLabel(disp);
   };
 
   const handleStartRodal = async () => {
     await startRodal(setRodalVisible, setRodalHeader, modalIntervalRef, modalRef);
+  };
+
+  // Cap guess input len at number of characters
+  const handleSetGuess = (guessVal) => {
+    if (!label) setGuess(guessVal);
+    else setGuess(guessVal.substring(0, label.length));
   };
 
   const handleStartPractice = async () => {
@@ -80,19 +88,15 @@ const PracticeMode = () => {
     }
   };
 
-  // Cap guess input len at number of characters
-  const handleSetGuess = (guessVal) => {
-    if (!label) setGuess(guessVal);
-    else setGuess(guessVal.substring(0, label.length));
-  };
-
   return (
     <div className="main-layout vertical-center-div">
       <div className="skinny-container">
         <div className="vertical-center-div">
           <Card style={{ margin: '10px' }}>
             <Typography.Title level={4}>Practice Mode</Typography.Title>
-            <Typography.Text>Practice guessing with random doodles made by our users</Typography.Text>
+            <Typography.Text>
+              Practice guessing with random doodles made by our users
+            </Typography.Text>
           </Card>
           <div style={{ display: 'flex', flexDirection: 'vertical' }}>
             <div className="centered-div" style={{ marginRight: '20px' }}>
@@ -103,10 +107,10 @@ const PracticeMode = () => {
               </Typography.Title>
             </div>
             <div style={{ display: 'flex', alignItems: 'center' }}>
-              <Button style={{ height: '80px' }} size="large" type="primary" onClick={handleStartPractice} size="large">Start</Button>
+              <Button style={{ height: '80px' }} size="large" type="primary" onClick={handleStartPractice}>Start</Button>
             </div>
           </div>
-          <Progress className="guess-progress" percent={timeLeft / ROUND_LEN * 100} showInfo={false} strokeColor="dodgerblue" />
+          <Progress className="guess-progress" percent={(timeLeft / ROUND_LEN) * 100} showInfo={false} strokeColor="dodgerblue" />
           <b>Guess:</b>
           <div id="guess-input-wrapper">
             <input className="borderless-input" id="guess-input" type="text" value={guess} onChange={(event) => handleSetGuess(event.target.value)} autoComplete="off" spellCheck="false" />

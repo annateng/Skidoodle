@@ -51,6 +51,7 @@ const NavBar = () => {
     <Menu onClick={handleMenuClick} style={{ padding: '10px' }}>
       <b>
         Logged in as
+        {' '}
         {user && user.user && user.user.username}
       </b>
       <Menu.Item className="navbar-hamburger-item" key="about">About Skidoodle</Menu.Item>

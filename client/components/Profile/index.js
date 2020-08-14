@@ -24,10 +24,6 @@ const Profile = () => {
 
   if (user) setAllTokens(user.token);
 
-  useEffect(() => {
-    handleGetUserData();
-  }, [userData]);
-
   const handleGetUserData = async () => {
     try {
       const userFromDB = await getUserData(userId);
@@ -37,6 +33,10 @@ const Profile = () => {
       setError(e.status);
     }
   };
+
+  useEffect(() => {
+    handleGetUserData();
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (!error && !userData) {
     return (
@@ -68,6 +68,15 @@ const Profile = () => {
     );
   }
 
+  /* handlers for alert message, 5sec - successfully request friend,
+  accept friend request, reject request */
+  const handleSetAlert = (alertTxt) => {
+    setAlertMessage(alertTxt);
+    if (alertRef.current) clearTimeout(alertRef.current);
+    alertRef.current = setTimeout(() => setAlertMessage(null), 5000);
+  };
+  const displayStyle = alertMessage ? null : { display: 'none' };
+
   // create new game, navigate to game play page. game request to partner is generated
   // after first round is sent automatically on the backend
   const handleNewGame = async (receiverId) => {
@@ -90,25 +99,17 @@ const Profile = () => {
   };
 
   // send friend request handler
-  const handleAddFriend = async (userId) => {
-    await addFriend(user.user.id, userId);
+  const handleAddFriend = async (thatUserId) => {
+    await addFriend(user.user.id, thatUserId);
     handleSetAlert('Friend request sent');
     handleGetUserData(); // re-render page
   };
 
   // redirect to user profile
-  const handleSeeProfile = async (userId) => {
-    history.push(`/profile/${userId}`);
+  const handleSeeProfile = async (thatUserId) => {
+    history.push(`/profile/${thatUserId}`);
     history.go();
   };
-
-  // handlers for alert message, 5sec - successfully request friend, accept friend request, reject request
-  const handleSetAlert = (alertMessage) => {
-    setAlertMessage(alertMessage);
-    if (alertRef.current) clearTimeout(alertRef.current);
-    alertRef.current = setTimeout(() => setAlertMessage(null), 5000);
-  };
-  const displayStyle = alertMessage ? null : { display: 'none' };
 
   // function for getting MMM DD, YYYY date format
   const getFormattedDate = (dateStr) => {
@@ -137,26 +138,34 @@ const Profile = () => {
     },
   ];
 
-  // what to display under username. depends on whether users are friends, pending friends, not friends, or self
-  const friendDisplay = userData.friends ? <b><Link to="/home">Go to my games</Link></b> // if userData.friends, user is the requesting user
-    : userData.isFriends ? (
+  /* what to display under username. depends on whether users are friends,
+  pending friends, not friends, or self */
+  let friendDisplay;
+  if (userData.friends) {
+    friendDisplay = <b><Link to="/home">Go to my games</Link></b>;
+  } else if (userData.isFriends) {
+    friendDisplay = (
       <div>
         <div>Friends</div>
         <Button onClick={() => handleNewGame(userData.id)}>Start new game</Button>
       </div>
-    )
-      : userData.frStatus === 'outgoing' ? <div>friend request pending</div>
-        : userData.frStatus === 'incoming'
-          ? (
-            <div>
-              Friend request pending
-              <div>
-                <Button style={{ marginRight: '15px' }} type="primary" onClick={() => handleAcceptRequest(userData.frId)}>Accept</Button>
-                <Button onClick={() => handleRejectRequest(userData.frId)}>Reject</Button>
-              </div>
-            </div>
-          )
-          : user && user.user && <Button onClick={() => handleAddFriend(userData.id)}>Add Friend</Button>;
+    );
+  } else if (userData.frStatus === 'outgoing') {
+    friendDisplay = <div>friend request pending</div>;
+  } else if (userData.frStatus === 'incoming') {
+    friendDisplay = (
+      <div>
+        Friend request pending
+        <div>
+          <Button style={{ marginRight: '15px' }} type="primary" onClick={() => handleAcceptRequest(userData.frId)}>Accept</Button>
+          <Button onClick={() => handleRejectRequest(userData.frId)}>Reject</Button>
+        </div>
+      </div>
+    );
+  } else {
+    friendDisplay = user
+      && user.user && <Button onClick={() => handleAddFriend(userData.id)}>Add Friend</Button>;
+  }
 
   return (
     <div className="main-layout vertical-center-div">
@@ -164,7 +173,7 @@ const Profile = () => {
       <div className="skinny-container">
         <Typography.Title>
           <UserOutlined style={{ color: 'dodgerblue' }} />
-&nbsp;&nbsp;
+          &nbsp;&nbsp;
           {userData.username}
         </Typography.Title>
         {userData.dateJoined && (
@@ -183,7 +192,14 @@ const Profile = () => {
               ? <Table dataSource={highScoreData} columns={highScoreColumns} tableLayout="fixed" pagination={false} />
               : <div>No high scores yet</div>}
           </Col>
-          {userData && userData.friends && <FriendSidebar userData={userData} handleNewGame={handleNewGame} handleSeeProfile={handleSeeProfile} />}
+          {userData && userData.friends
+            && (
+            <FriendSidebar
+              friends={userData.friends}
+              handleNewGame={handleNewGame}
+              handleSeeProfile={handleSeeProfile}
+            />
+            )}
         </Row>
       </div>
     </div>

@@ -34,6 +34,14 @@ const Settings = () => {
     );
   }
 
+  const handleSetAlert = (message, type) => {
+    setAlertType(type);
+    setAlertMessage(message);
+
+    if (alertRef.current) clearTimeout(alertRef.current);
+    alertRef.current = setTimeout(() => setAlertMessage(null), 5000);
+  };
+
   const handleUpdateSettings = async (values) => {
     try {
       setLoading(true);
@@ -46,13 +54,6 @@ const Settings = () => {
     }
   };
 
-  const handleSetAlert = (message, type) => {
-    setAlertType(type);
-    setAlertMessage(message);
-
-    if (alertRef.current) clearTimeout(alertRef.current);
-    alertRef.current = setTimeout(() => setAlertMessage(null), 5000);
-  };
   // Set alert invisible unless unsuccessful login
   const displayStyle = alertMessage ? null : { display: 'none' };
 
@@ -71,7 +72,7 @@ const Settings = () => {
           onFinishFailed={() => console.error('Required form fields missing.')}
           initialValues={{ alertFreq: user.user.settings.alertFrequency }}
         >
-          <Form.Item label="How frequently would you like to receive e-mail game alerts?" name="alertFreq">
+          <Form.Item label="How frequently would you like to receive e-mail game alerts" name="alertFreq">
             <Radio.Group>
               <Radio value="ALL">As they come</Radio>
               <br />

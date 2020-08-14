@@ -6,7 +6,7 @@ const path = require('path');
 const mongoose = require('mongoose');
 require('express-async-errors');
 
-const { PORT, inProduction } = require('@util/common');
+const { PORT, inProduction } = require('@root/config/common');
 
 const app = express();
 

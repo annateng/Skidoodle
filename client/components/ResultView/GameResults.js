@@ -1,10 +1,9 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { Table } from 'antd';
-import { useHistory, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 const GameResults = ({ result, gameId }) => {
-  const history = useHistory();
-
   // if there's no results to display, return nothing
   if (!result || result.roundScores.length < 1) return null;
 
@@ -28,6 +27,7 @@ const GameResults = ({ result, gameId }) => {
     {
       dataIndex: 'key',
       key: 'watchReplay',
+      // eslint-disable-next-line react/display-name
       render: (i) => <Link to={`/game/${gameId}/replay/${i + 1}`}>Watch Replay</Link>,
     },
   ];
@@ -68,6 +68,7 @@ const GameResults = ({ result, gameId }) => {
         title: 'Guess',
         dataIndex: 'isCorrect',
         key: 'isCorrect',
+        // eslint-disable-next-line react/display-name
         render: (guess) => (guess
           ? <span style={{ color: 'darkgreen' }}>Correct</span>
           : <span style={{ color: 'tomato' }}>Timed Out</span>),
@@ -91,6 +92,28 @@ const GameResults = ({ result, gameId }) => {
       style={{ marginBottom: '15px' }}
     />
   );
+};
+
+GameResults.propTypes = {
+  result: PropTypes.shape({
+    gameTotals: PropTypes.shape({
+      numCorrect: PropTypes.number.isRequired,
+      totalTimeSpent: PropTypes.number.isRequired,
+    }).isRequired,
+    roundScores: PropTypes.arrayOf(PropTypes.shape({
+      doodles: PropTypes.arrayOf(PropTypes.shape({
+        isCorrect: PropTypes.bool.isRequired,
+        label: PropTypes.string.isRequired,
+        timeSpent: PropTypes.number.isRequired,
+        _id: PropTypes.string,
+      })).isRequired,
+      roundTotals: PropTypes.shape({
+        numCorrect: PropTypes.number.isRequired,
+        totalTimeSpent: PropTypes.number.isRequired,
+      }).isRequired,
+    })).isRequired,
+  }).isRequired,
+  gameId: PropTypes.string.isRequired,
 };
 
 export default GameResults;

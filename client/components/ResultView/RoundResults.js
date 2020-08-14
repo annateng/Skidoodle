@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { Table, Typography, Button } from 'antd';
 import { PlaySquareFilled } from '@ant-design/icons';
 import { useHistory } from 'react-router-dom';
@@ -24,6 +25,7 @@ const RoundResults = ({
       title: 'Guess',
       dataIndex: 'isCorrect',
       key: 'isCorrect',
+      // eslint-disable-next-line react/display-name
       render: (guess) => (guess
         ? <span style={{ color: 'darkgreen' }}>Correct</span>
         : <span style={{ color: 'tomato' }}>Timed Out</span>),
@@ -56,14 +58,21 @@ const RoundResults = ({
         {roundNum}
         {' '}
         Results
-        <Button type="danger" style={{ marginLeft: '15px' }} icon={<PlaySquareFilled />} onClick={() => history.push(`/game/${gameId}/replay/${roundNum}`)}>Watch Replay</Button>
+        <Button
+          type="danger"
+          style={{ marginLeft: '15px' }}
+          icon={<PlaySquareFilled />}
+          onClick={() => history.push(`/game/${gameId}/replay/${roundNum}`)}
+        >
+          Watch Replay
+        </Button>
       </Typography.Title>
       <div style={{ width: '100%' }}>
         <Typography.Text style={{ align: 'left' }}>
           <b>artist:</b>
           {' '}
           {artist}
-&nbsp;&nbsp;&nbsp;&nbsp;
+          &nbsp;&nbsp;&nbsp;&nbsp;
           <b>guesser:</b>
           {' '}
           {guesser}
@@ -80,6 +89,26 @@ const RoundResults = ({
       />
     </div>
   );
+};
+
+RoundResults.propTypes = {
+  roundResults: PropTypes.shape({
+    doodles: PropTypes.arrayOf(PropTypes.shape({
+      isCorrect: PropTypes.bool.isRequired,
+      label: PropTypes.string.isRequired,
+      timeSpent: PropTypes.number.isRequired,
+      _id: PropTypes.string,
+    })).isRequired,
+    roundTotals: PropTypes.shape({
+      numCorrect: PropTypes.number.isRequired,
+      totalTimeSpent: PropTypes.number.isRequired,
+    }).isRequired,
+    _id: PropTypes.string,
+  }).isRequired,
+  roundNum: PropTypes.number.isRequired,
+  artist: PropTypes.string.isRequired,
+  guesser: PropTypes.string.isRequired,
+  gameId: PropTypes.string.isRequired,
 };
 
 export default RoundResults;

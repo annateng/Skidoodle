@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { Button, Card } from 'antd';
 
 const FriendCard = ({ friend, handleNewGame, handleSeeProfile }) => (
@@ -10,5 +11,14 @@ const FriendCard = ({ friend, handleNewGame, handleSeeProfile }) => (
     </Card>
   </div>
 );
+
+FriendCard.propTypes = {
+  friend: PropTypes.shape({
+    id: PropTypes.string.isRequired,
+    username: PropTypes.string.isRequired,
+  }).isRequired,
+  handleNewGame: PropTypes.func.isRequired,
+  handleSeeProfile: PropTypes.func.isRequired,
+};
 
 export default FriendCard;

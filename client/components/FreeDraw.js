@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Typography, Button, Row, Col,
 } from 'antd';
@@ -14,6 +14,16 @@ const FreeDraw = () => {
   const [paper] = useState(new PaperScope());
 
   useEffect(() => {
+    const handleStartRound = async () => {
+      try {
+        paper.setup(canvas);
+        const drawing = getDrawing(-1, paper, false);
+        drawing.isActive = true;
+      } catch (e) {
+        console.error('Error in handleStartRound', e);
+      }
+    };
+
     if (canvas) {
       // keep fixed canvas aspect ratio 2:1 for scaling
       const canvasDiv = document.getElementById('canvas-div');
@@ -30,17 +40,7 @@ const FreeDraw = () => {
       localStorage.setItem('scribbleColor', 'black');
       localStorage.setItem('scribbleSize', STROKE_WIDTH);
     }
-  }, [canvas]);
-
-  const handleStartRound = async () => {
-    try {
-      paper.setup(canvas);
-      const drawing = getDrawing(-1, paper, false);
-      drawing.isActive = true;
-    } catch (e) {
-      console.error('Error in handleStartRound', e);
-    }
-  };
+  }, [canvas, paper]);
 
   const clear = () => {
     paper.project.activeLayer.removeChildren();

@@ -25,6 +25,7 @@ const Login = () => {
         <div className="skinny-skinny-container">
           <Typography.Title level={2}>
             You are already logged in as
+            {' '}
             {user.user.username}
           </Typography.Title>
           <div style={{ marginBottom: '15px' }}><Button type="danger" size="large" onClick={() => dispatch(logout())}>Log Out</Button></div>
@@ -33,6 +34,16 @@ const Login = () => {
       </div>
     );
   }
+
+  const handleSetAlert = (errorMessage) => {
+    if (!errorMessage) setAlertMessage('Error while logging in.');
+    else if (errorMessage.includes('Invalid username.')) setAlertMessage('Username not found.');
+    else if (errorMessage.includes('Incorrect password.')) setAlertMessage('Invalid password.');
+    else setAlertMessage(errorMessage);
+
+    if (alertRef.current) clearTimeout(alertRef.current);
+    alertRef.current = setTimeout(() => setAlertMessage(null), 5000);
+  };
 
   const handleLogin = async (values) => {
     try {
@@ -47,16 +58,6 @@ const Login = () => {
       console.warn(e.message);
       handleSetAlert(e.message);
     }
-  };
-
-  const handleSetAlert = (errorMessage) => {
-    if (!errorMessage) setAlertMessage('Error while logging in.');
-    else if (errorMessage.includes('Invalid username.')) setAlertMessage('Username not found.');
-    else if (errorMessage.includes('Incorrect password.')) setAlertMessage('Invalid password.');
-    else setAlertMessage(errorMessage);
-
-    if (alertRef.current) clearTimeout(alertRef.current);
-    alertRef.current = setTimeout(() => setAlertMessage(null), 5000);
   };
 
   // Set alert invisible unless unsuccessful login

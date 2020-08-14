@@ -3,7 +3,7 @@ import {
   Form, Input, Button, Typography, Alert,
 } from 'antd';
 import { useHistory } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { useQueryParam, StringParam } from 'use-query-params';
 
 import { signUpUser } from 'Utilities/services/userService';
@@ -18,10 +18,19 @@ const Signup = () => {
   const [email] = useQueryParam('email', StringParam);
   const [friendId] = useQueryParam('friendId', StringParam);
   const [friendName] = useQueryParam('friendName', StringParam);
-  const user = useSelector((state) => state.user);
 
   // Clean up alert settimeouts if component unmounts
   useEffect(() => () => clearTimeout(alertRef.current), []);
+
+  const handleSetError = (errorMessage) => {
+    if (!errorMessage) setAlertMessage('Error while logging in.');
+    else if (errorMessage.toLowerCase().includes('username')) setAlertMessage('Username taken.');
+    else if (errorMessage.toLowerCase().includes('email')) setAlertMessage('User already exists for this email address.');
+    else setAlertMessage(errorMessage);
+
+    if (alertRef.current) clearTimeout(alertRef.current);
+    alertRef.current = setTimeout(() => setAlertMessage(null), 5000);
+  };
 
   const handleSignUp = async (values) => {
     try {
@@ -49,18 +58,8 @@ const Signup = () => {
     }
   };
 
-  const handleSetError = (errorMessage) => {
-    if (!errorMessage) setAlertMessage('Error while logging in.');
-    else if (errorMessage.toLowerCase().includes('username')) setAlertMessage('Username taken.');
-    else if (errorMessage.toLowerCase().includes('email')) setAlertMessage('User already exists for this email address.');
-    else setAlertMessage(errorMessage);
-
-    if (alertRef.current) clearTimeout(alertRef.current);
-    alertRef.current = setTimeout(() => setAlertMessage(null), 5000);
-  };
-
   const validateMessages = {
-    required: '${label} required!',
+    required: '${label} required!', // eslint-disable-line no-template-curly-in-string
     types: {
       email: 'Please enter valid email address.',
     },
@@ -69,19 +68,14 @@ const Signup = () => {
   // Alert message settings
   const displayStyle = alertMessage ? null : { display: 'none' };
 
-  // antd form layout settings
-  const layout = {
-    labelCol: { span: 8 },
-    wrapperCol: { span: 16 },
-  };
-
   return (
     <div className="main-layout vertical-center-div">
       <Alert message={alertMessage} type={alertType} showIcon style={displayStyle} className="skinny-skinny-alert" />
       <div className="skinny-skinny-container">
         <Typography.Title>Sign Up</Typography.Title>
         <Form
-          {...layout}
+          labelCol={{ span: 8 }}
+          wrapperCol={{ span: 16 }}
           onFinish={handleSignUp}
           validateMessages={validateMessages}
           onFinishFailed={() => console.error('Required form fields missing.')}

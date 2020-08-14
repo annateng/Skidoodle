@@ -32,33 +32,9 @@ const ReplayView = () => {
   const params = useParams();
   const history = useHistory();
 
-  useEffect(() => {
-    if (canvas) {
-      // keep fixed canvas aspect ratio 2:1 for scaling
-      const canvasDiv = document.getElementById('canvas-div');
-      canvasDiv.style.height = `${canvasDiv.clientWidth / 2}px`;
-      window.onresize = () => canvasDiv.style.height = `${canvasDiv.clientWidth / 2}px`;
-
-      paper.setup(canvas);
-      handleStartRoundReplay();
-    } else {
-      const thisCanvas = document.getElementById('paper-canvas');
-      setCanvas(thisCanvas);
-      setGuessInput(document.getElementById('guess-input'));
-    }
-
-    // clean up intervals and unresolved promises
-    return () => {
-      clearInterval(intervalRef.current);
-      if (replayRef.current) replayRef.current();
-      clearInterval(modalIntervalRef.current);
-      if (modalRef.current) modalRef.current();
-    };
-  }, [canvas]);
-
   // Label shows number of characters
-  const handleSetLabel = (label) => {
-    const disp = label.replace(/[a-z]/gi, '_');
+  const handleSetLabel = (labelTxt) => {
+    const disp = labelTxt.replace(/[a-z]/gi, '_');
 
     setLabel(disp);
   };
@@ -78,12 +54,14 @@ const ReplayView = () => {
         setLoading(false);
 
         // if (!paper.project) console.log(paper)
-        await replayRound(replayFromDB.doodles, replayFromDB.guesses, paper, replayFromDB.roundLen, setGuess, setDoodleNum,
-          setTimeLeft, handleSetLabel, handleStartRodal, intervalRef, replayRef, setLastResult);
+        await replayRound(replayFromDB.doodles, replayFromDB.guesses,
+          paper, replayFromDB.roundLen, setGuess, setDoodleNum, setTimeLeft,
+          handleSetLabel, handleStartRodal, intervalRef, replayRef, setLastResult);
       } else {
         // if (!paper.project) console.log(paper)
-        await replayRound(replay.doodles, replay.guesses, paper, replay.roundLen, setGuess, setDoodleNum,
-          setTimeLeft, handleSetLabel, handleStartRodal, intervalRef, replayRef, setLastResult);
+        await replayRound(replay.doodles, replay.guesses, paper, replay.roundLen,
+          setGuess, setDoodleNum, setTimeLeft, handleSetLabel, handleStartRodal,
+          intervalRef, replayRef, setLastResult);
       }
 
       setEndRodalVisible(true);
@@ -92,6 +70,32 @@ const ReplayView = () => {
       console.error('Error in handleStartRoundReplay', e);
     }
   };
+
+  useEffect(() => {
+    if (canvas) {
+      // keep fixed canvas aspect ratio 2:1 for scaling
+      const canvasDiv = document.getElementById('canvas-div');
+      canvasDiv.style.height = `${canvasDiv.clientWidth / 2}px`;
+      window.onresize = () => { canvasDiv.style.height = `${canvasDiv.clientWidth / 2}px`; };
+
+      paper.setup(canvas);
+      handleStartRoundReplay();
+    } else {
+      const thisCanvas = document.getElementById('paper-canvas');
+      setCanvas(thisCanvas);
+      setGuessInput(document.getElementById('guess-input'));
+    }
+
+    /* eslint-disable react-hooks/exhaustive-deps */
+    // clean up intervals and unresolved promises
+    return () => {
+      clearInterval(intervalRef.current);
+      if (replayRef.current) replayRef.current();
+      clearInterval(modalIntervalRef.current);
+      if (modalRef.current) modalRef.current();
+    };
+    /* eslint-enable react-hooks/exhaustive-deps */
+  }, [canvas]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Cap guess input len at number of characters
   const handleSetGuess = (guessVal) => {
@@ -107,7 +111,7 @@ const ReplayView = () => {
         <div className="vertical-center-div">
           <b style={{ fontSize: '20px' }}>Time Left:</b>
           <Typography.Title id="countdown-timer">{timeLeft ? `${timeLeft}s` : ''}</Typography.Title>
-          <Progress className="guess-progress" percent={timeLeft / ROUND_LEN * 100} showInfo={false} strokeColor="dodgerblue" />
+          <Progress className="guess-progress" percent={(timeLeft / ROUND_LEN) * 100} showInfo={false} strokeColor="dodgerblue" />
           <b>Guess:</b>
           <div id="guess-input-wrapper">
             <input

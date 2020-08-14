@@ -1,12 +1,14 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { Col, Button, Card } from 'antd';
 
 import { monthNames } from 'Utilities/common';
 
 const NotificationCard = ({
-  notification, handleAcceptGame, handleAcceptFriend, handleRejectGame, handleRejectFriend, handleSeeProfile, handleSeeGame,
+  notification, handleAcceptGame, handleAcceptFriend, handleRejectGame,
+  handleRejectFriend, handleSeeProfile, handleSeeGame,
 }) => {
-  const notificationBody = (notification) => {
+  const notificationBody = () => {
     // console.log(notification)
     if (!notification) return null;
 
@@ -26,6 +28,7 @@ const NotificationCard = ({
             </div>
             <div>
               Sent on
+              {' '}
               {monthNames[date.getMonth()].substring(0, 3)}
               {' '}
               {date.getDate()}
@@ -50,6 +53,7 @@ const NotificationCard = ({
             </div>
             <div>
               Sent on
+              {' '}
               {monthNames[date.getMonth()].substring(0, 3)}
               {' '}
               {date.getDate()}
@@ -76,11 +80,17 @@ const NotificationCard = ({
             <Button size="small" onClick={() => handleSeeGame(notification.gameId, notification.id)}>See Results</Button>
           </div>
         );
+      default:
+        return null;
     }
   };
 
+  let borderStyle;
+  if (notification.type === 'friendRequest') borderStyle = '2px solid #f59ab1';
+  else if (notification.type === 'gameRequest') borderStyle = '2px solid #c2b2d6';
+  else borderStyle = '2px solid goldenrod';
   const cardStyle = {
-    border: notification.type === 'friendRequest' ? '2px solid #f59ab1' : notification.type === 'gameRequest' ? '2px solid #c2b2d6' : '2px solid goldenrod',
+    border: borderStyle,
     backgroundColor: notification.type === 'friendRequest' ? null : null,
     height: '100%',
   };
@@ -88,10 +98,27 @@ const NotificationCard = ({
   return (
     <Col xs={12} sm={12} lg={8}>
       <Card className="home-card" bordered="true" bodyStyle={{ padding: '10px' }} style={cardStyle}>
-        {notificationBody(notification)}
+        {notificationBody()}
       </Card>
     </Col>
   );
+};
+
+NotificationCard.propTypes = {
+  notification: PropTypes.shape({
+    dateRequested: PropTypes.string.isRequired,
+    id: PropTypes.string.isRequired,
+    requester: PropTypes.string.isRequired,
+    type: PropTypes.string.isRequired,
+    requesterId: PropTypes.string,
+    gameId: PropTypes.string,
+  }).isRequired,
+  handleAcceptGame: PropTypes.func.isRequired,
+  handleAcceptFriend: PropTypes.func.isRequired,
+  handleRejectGame: PropTypes.func.isRequired,
+  handleRejectFriend: PropTypes.func.isRequired,
+  handleSeeProfile: PropTypes.func.isRequired,
+  handleSeeGame: PropTypes.func.isRequired,
 };
 
 export default NotificationCard;

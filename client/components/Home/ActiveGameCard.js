@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { useHistory } from 'react-router-dom';
 import { Col, Card } from 'antd';
 
@@ -12,9 +13,17 @@ const ActiveGameCard = ({ game, user }) => {
   };
 
   let cardType;
-  if (user.id === game.activePlayer.id) cardType = 'usersTurn';
-  else if (game.status === ServerGameStatus.pending) cardType = 'pending';
-  else cardType = 'othersTurn';
+  let backgroundColor;
+  if (user.id === game.activePlayer.id) {
+    cardType = 'usersTurn';
+    backgroundColor = null;
+  } else if (game.status === ServerGameStatus.pending) {
+    cardType = 'pending';
+    backgroundColor = '#ffe8e8';
+  } else {
+    cardType = 'othersTurn';
+    backgroundColor = null;
+  }
 
   const partner = cardType === 'usersTurn' ? game.inactivePlayer.username : game.activePlayer.username;
   const date = game.timeOfLastMove ? new Date(game.timeOfLastMove) : null;
@@ -22,7 +31,7 @@ const ActiveGameCard = ({ game, user }) => {
 
   const cardStyle = {
     border: cardType === 'usersTurn' ? '2px solid limegreen' : null,
-    backgroundColor: cardType === 'pending' ? '#ffe8e8' : cardType === 'usersTurn' ? null : null,
+    backgroundColor,
     height: '100%',
   };
 
@@ -37,15 +46,17 @@ const ActiveGameCard = ({ game, user }) => {
     cardHeader = (
       <b>
         Your turn to
+        {' '}
         <b style={textStyle}>{game.currentRound.state.toLowerCase()}</b>
       </b>
     );
   } else {
     cardHeader = (
       <b>
-        It's
+        It&#39;s
+        {' '}
         {partner}
-        's turn
+        &#39;s turn
       </b>
     );
   }
@@ -55,6 +66,7 @@ const ActiveGameCard = ({ game, user }) => {
     cardBody = (
       <div>
         Waiting for
+        {' '}
         <b>{partner}</b>
         {' '}
         to accept
@@ -64,6 +76,7 @@ const ActiveGameCard = ({ game, user }) => {
     cardBody = (
       <div>
         Game with
+        {' '}
         <b>{partner}</b>
       </div>
     );
@@ -72,16 +85,25 @@ const ActiveGameCard = ({ game, user }) => {
   return (
     <Col xs={12} sm={12} lg={8}>
       <Card className="home-card" bordered="true" hoverable="true" bodyStyle={{ padding: '10px' }} style={cardStyle}>
-        <div onClick={handleChooseGame}>
+        <div
+          onClick={handleChooseGame}
+          onKeyDown={(e) => {
+            if (e.keyCode === 13) handleChooseGame();
+          }}
+          role="button"
+          tabIndex={0}
+        >
           <div style={{ fontSize: '1.1em' }}>{cardHeader}</div>
           <div>{cardBody}</div>
           <div>
             Round
+            {' '}
             {game.currentRoundNum}
           </div>
           {date && (
           <div>
             Last move on
+            {' '}
             {monthNames[date.getMonth()].substring(0, 3)}
             {' '}
             {date.getDate()}
@@ -94,6 +116,38 @@ const ActiveGameCard = ({ game, user }) => {
     </Col>
 
   );
+};
+
+ActiveGameCard.propTypes = {
+  game: PropTypes.shape({
+    activePlayer: PropTypes.shape({
+      username: PropTypes.string.isRequired,
+      id: PropTypes.string.isRequired,
+    }).isRequired,
+    inactivePlayer: PropTypes.shape({
+      username: PropTypes.string.isRequired,
+      id: PropTypes.string.isRequired,
+    }).isRequired,
+    player1: PropTypes.shape({
+      username: PropTypes.string.isRequired,
+      id: PropTypes.string.isRequired,
+    }).isRequired,
+    currentRound: PropTypes.shape({
+      state: PropTypes.string.isRequired,
+    }),
+    currentRoundNum: PropTypes.number.isRequired,
+    id: PropTypes.string.isRequired,
+    status: PropTypes.string.isRequired,
+    timeOfLastMove: PropTypes.string,
+  }).isRequired,
+  user: PropTypes.shape({
+    displayName: PropTypes.string,
+    id: PropTypes.string.isRequired,
+    settings: PropTypes.shape({
+      alertFrequency: PropTypes.string,
+    }),
+    username: PropTypes.string.isRequired,
+  }).isRequired,
 };
 
 export default ActiveGameCard;

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 import {
   Col, Typography, Button, Input,
 } from 'antd';
@@ -6,7 +7,7 @@ import { useHistory } from 'react-router-dom';
 
 import FriendCard from 'Components/Home/FriendCard';
 
-const FriendSidebar = ({ userData, handleNewGame, handleSeeProfile }) => {
+const FriendSidebar = ({ friends, handleNewGame, handleSeeProfile }) => {
   const [filter, setFilter] = useState();
   const history = useHistory();
 
@@ -17,12 +18,28 @@ const FriendSidebar = ({ userData, handleNewGame, handleSeeProfile }) => {
         <Button style={{ border: '1px solid limegreen', marginBottom: '8px' }} onClick={() => history.push('/add-friends')}>Find New Friends</Button>
         <Input placeholder="filter" onChange={(event) => setFilter(event.target.value)} />
       </div>
-      {userData && userData.friends.length > 0 ? userData.friends
+      {friends.length > 0 ? friends
         .filter((friend) => (filter ? friend.username.toLowerCase().includes(filter) : true))
-        .map((friend) => <FriendCard key={friend.id} friend={friend} handleNewGame={handleNewGame} handleSeeProfile={handleSeeProfile} />)
+        .map((friend) => (
+          <FriendCard
+            key={friend.id}
+            friend={friend}
+            handleNewGame={handleNewGame}
+            handleSeeProfile={handleSeeProfile}
+          />
+        ))
         : <p>No friends yet</p>}
     </Col>
   );
+};
+
+FriendSidebar.propTypes = {
+  friends: PropTypes.arrayOf(PropTypes.shape({
+    username: PropTypes.string.isRequired,
+    id: PropTypes.string.isRequired,
+  })).isRequired,
+  handleNewGame: PropTypes.func.isRequired,
+  handleSeeProfile: PropTypes.func.isRequired,
 };
 
 export default FriendSidebar;
