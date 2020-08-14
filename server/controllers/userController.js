@@ -113,8 +113,8 @@ const getUser = async (req, res) => {
         dateJoined: user.dateJoined,
         highScores: user.highScores,
         isFriends: false,
-        frStatus: null,
-        frId: null,
+        frStatus,
+        frId,
       },
     );
   }
