@@ -140,7 +140,7 @@ const Profile = () => {
 
   /* what to display under username. depends on whether users are friends,
   pending friends, not friends, or self */
-  console.log(userData);
+  // console.log(userData);
   let friendDisplay;
   if (userData.friends) {
     friendDisplay = <b><Link to="/home">Go to my games</Link></b>;

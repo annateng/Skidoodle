@@ -64,16 +64,14 @@ if (!inProduction) {
   const INDEX_PATH = path.resolve(DIST_PATH, 'index.html.gz');
 
   // serve gzipped files
-  app.get(/\.(js|png)$/, (req, res, next) => {
+  app.get(/(main.js$)|(7826fb3f944c02e7a282b86aaf1d3849.png$)/, (req, res, next) => {
     req.url = `${req.url}.gz`;
     res.set('content-encoding', 'gzip');
+    console.log('1', req.url); // DEBUG
     next();
   });
   app.use(express.static(DIST_PATH));
-  app.get('*', (req, res) => {
-    res.set('content-encoding', 'gzip');
-    res.sendFile(INDEX_PATH);
-  });
+  app.get('*', (req, res) => res.sendFile(INDEX_PATH));
 }
 
 app.listen(PORT, () => {
