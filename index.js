@@ -61,10 +61,19 @@ if (!inProduction) {
   });
 } else {
   const DIST_PATH = path.resolve(__dirname, './dist');
-  const INDEX_PATH = path.resolve(DIST_PATH, 'index.html');
+  const INDEX_PATH = path.resolve(DIST_PATH, 'index.html.gz');
 
+  // serve gzipped files
+  app.get(/\.(js|png)$/, (req, res, next) => {
+    req.url = `${req.url}.gz`;
+    res.set('content-encoding', 'gzip');
+    next();
+  });
   app.use(express.static(DIST_PATH));
-  app.get('*', (req, res) => res.sendFile(INDEX_PATH));
+  app.get('*', (req, res) => {
+    res.set('content-encoding', 'gzip');
+    res.sendFile(INDEX_PATH);
+  });
 }
 
 app.listen(PORT, () => {
