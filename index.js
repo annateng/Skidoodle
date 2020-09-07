@@ -61,13 +61,18 @@ if (!inProduction) {
   });
 } else {
   const DIST_PATH = path.resolve(__dirname, './dist');
-  const INDEX_PATH = path.resolve(DIST_PATH, 'index.html.gz');
+  const INDEX_PATH = path.resolve(DIST_PATH, 'index.html');
 
-  // serve gzipped files
-  app.get(/(main.js$)|(7826fb3f944c02e7a282b86aaf1d3849.png$)/, (req, res, next) => {
+  app.get(/main.js$/, (req, res, next) => {
     req.url = `${req.url}.gz`;
-    res.set('content-encoding', 'gzip');
-    // console.log('1', req.url); // DEBUG
+    res.set('Content-Encoding', 'gzip');
+    res.set('Content-Type', 'text/javascript');
+    next();
+  });
+  app.get(/7826fb3f944c02e7a282b86aaf1d3849.png$/, (req, res, next) => {
+    req.url = `${req.url}.gz`;
+    res.set('Content-Encoding', 'gzip');
+    res.set('Content-Type', 'image/png');
     next();
   });
   app.use(express.static(DIST_PATH));
