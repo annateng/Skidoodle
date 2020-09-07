@@ -67,7 +67,7 @@ if (!inProduction) {
   app.get(/(main.js$)|(7826fb3f944c02e7a282b86aaf1d3849.png$)/, (req, res, next) => {
     req.url = `${req.url}.gz`;
     res.set('content-encoding', 'gzip');
-    console.log('1', req.url); // DEBUG
+    // console.log('1', req.url); // DEBUG
     next();
   });
   app.use(express.static(DIST_PATH));
