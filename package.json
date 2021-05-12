@@ -39,7 +39,7 @@
     "module-alias": "^2.2.2",
     "mongoose": "^5.9.26",
     "mongoose-unique-validator": "^2.0.3",
-    "nodemailer": "^6.4.10",
+    "nodemailer": "^6.4.16",
     "paper": "^0.12.11",
     "prop-types": "^15.7.2",
     "query-string": "^6.13.1",
